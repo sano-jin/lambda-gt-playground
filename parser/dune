@@ -5,5 +5,5 @@
 
 (library
  (name parse)
- (public_name lambda_gt_alpha.parser)
- (libraries lambda_gt_alpha.util))
+ (public_name lambda_gt_beta.parser)
+ (libraries lambda_gt_beta.util))

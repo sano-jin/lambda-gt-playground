@@ -17,7 +17,6 @@ rule token = parse
   | '.'			{ DOT }
   | ','			{ COMMA }
   | "nu"		{ NU }
-  | "--->"		{ LONGRIGHTARROW }
   | "><"		{ NECKTIE }
   | "case"      { CASE }
   | "of"        { OF }

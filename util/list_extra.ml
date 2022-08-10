@@ -207,6 +207,7 @@ let rec transpose lists =
   let hs, ts = unconses lists in
   hs :: transpose ts
 
+(** [\[x -> y1; x -> y2; ...\]] を [\[x -> \[y1; y2; ...\]; ...\] にする *)
 let gather mappings =
   let rec insert (x, y) = function
     | [] -> [ (x, [ y ]) ]
@@ -214,3 +215,13 @@ let gather mappings =
         if x = x2 then (x2, y :: ys) :: t else (x2, ys) :: insert (x, y) t
   in
   List.fold_right insert mappings []
+
+(** 要素のリストから，その要素が何個含まれていたかの連想リストを作って返す *)
+let multiset l =
+  let rec update f x default = function
+    | [] -> [ default ]
+    | (h1, h2) :: t ->
+        if x = h1 then (h1, f h2) :: t else (h1, h2) :: update f x default t
+  in
+  let helper multiset x = update succ x (x, 1) multiset in
+  List.fold_left helper [] l

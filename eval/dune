@@ -1,4 +1,4 @@
 (library
- (public_name lambda_gt_alpha.eval)
+ (public_name lambda_gt_beta.eval)
  (name eval)
- (libraries lambda_gt_alpha.util lambda_gt_alpha.parser))
+ (libraries lambda_gt_beta.util lambda_gt_beta.parser))

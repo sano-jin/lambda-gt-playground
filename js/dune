@@ -1,0 +1,11 @@
+(executable
+ (name js)
+ (modes js)
+ (preprocess
+  (pps js_of_ocaml-ppx))
+ (libraries
+  lambda_gt_beta.parser
+  lambda_gt_beta.util
+  lambda_gt_beta.eval
+  lambda_gt_beta.vis
+  js_of_ocaml))

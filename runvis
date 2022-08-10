@@ -1,0 +1,4 @@
+#!/bin/bash
+output=$(opam exec -- dune exec vis -- "$@")
+echo "$output"
+# echo "$output" | dot -Tpng >image.png

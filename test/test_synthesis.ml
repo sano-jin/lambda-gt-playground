@@ -12,8 +12,8 @@ let test_synthesis graph1 lhs graph2 =
   let _, (lhs_atoms, lhs_ctxs) = alpha100 lhs in
   let graph1 = alpha_min graph1 in
   prerr_endline @@ string_of_graph graph1;
-  prerr_endline @@ string_of_graph lhs_atoms ^ ", " ^ string_of_ctxs lhs_ctxs;
-  prerr_endline @@ Parse.string_of_graph graph2;
+  prerr_endline @@ Pretty.string_of_e_graph (lhs_atoms, lhs_ctxs);
+  prerr_endline @@ Pretty.string_of_p_graph graph2;
   prerr_endline
     (match Eval.match_and_synthesis graph1 (lhs_atoms, lhs_ctxs) graph2 with
     | None -> "match failed"

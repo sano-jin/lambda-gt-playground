@@ -11,8 +11,8 @@ A reference interpreter of the lambda GT language.
 ### Installation
 
 ```bash
-git clone https://github.com/sano-jin/lambda-gt-alpha.git
-cd lambda-gt-alpha
+git clone git@gitlab.ueda.info.waseda.ac.jp:sano/lambda-gt-alpha.git
+cd lambda-gt-alpha/lambda_gt_alpha
 opam install .
 dune build
 ```

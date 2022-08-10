@@ -29,32 +29,13 @@ type e_graph = atom list * ctx list
 
 let string_of_atom_name = function
   | Constr name -> name
-  | Lam (ctx, e, _) ->
-      "<\\ " ^ string_of_ctx ctx ^ " . " ^ string_of_exp e ^ ">"
-  | RecLam (ctx1, ctx2, e, _) ->
-      "<rec " ^ string_of_ctx ctx1 ^ " = \\ " ^ string_of_ctx ctx2 ^ " . "
-      ^ string_of_exp e ^ ">"
+  | Lam _ | RecLam _ -> "<fun>"
 
 let string_of_atom (atom_name, args) =
   string_of_atom_name atom_name
   ^ " ("
   ^ String.concat ", " (List.map string_of_link args)
   ^ ")"
-
-let string_of_ctx (name, args) =
-  name ^ " [" ^ String.concat ", " (List.map string_of_link args) ^ "]"
-
-let string_of_e_graph (atoms, gctxs) =
-  "{"
-  ^ String.concat ", "
-      (List.map string_of_atom atoms @ List.map string_of_ctx gctxs)
-  ^ "}"
-
-let string_of_ctxs ctxs =
-  "{" ^ String.concat ", " (List.map string_of_ctx ctxs) ^ "}"
-
-type link_env = (int * link) list
-(** target graph のリンクから template graph のリンクへの対応 *)
 
 let string_of_link_env =
   let helper (x, y) = string_of_link (LocalLink x) ^ "->" ^ string_of_link y in
@@ -69,12 +50,6 @@ let local_links_of_graph =
 let string_of_graph atoms =
   let graph_str = String.concat ", " (List.map string_of_atom atoms) in
   "{" ^ graph_str ^ "}"
-
-let string_of_theta (theta : theta) =
-  let helper (ctx, graph) =
-    string_of_ctx ctx ^ " -> " ^ string_of_graph graph
-  in
-  ListExtra.string_of_list helper theta
 
 let string_of_graph_with_nu atoms =
   let graph_str = String.concat ", " (List.map string_of_atom atoms) in

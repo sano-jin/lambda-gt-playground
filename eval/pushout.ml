@@ -17,20 +17,15 @@ let check_functor (v1, args1) (v2, args2) =
   (v1, List.length args1) = (v2, List.length args2)
 
 (** matching 後の代入 *)
-let synthesis prerr (theta : theta) template_graph =
+let synthesis (theta : theta) template_graph =
   let i, (atoms, ctxs) = alpha 0 [] template_graph in
   let atoms = make_closures theta atoms in
   let subst_graph i ctx =
     match List.find_opt (check_functor ctx <. fst) theta with
-    | None -> failwith @@ "unbound graph context " ^ string_of_ctx ctx
+    | None -> failwith @@ "unbound graph context " ^ fst ctx
     | Some (ctx2, graph) ->
         let link_theta = List.combine (snd ctx2) (snd ctx) in
-        prerr @@ "link_theta = "
-        ^ ListExtra.string_of_list
-            (fun (x, y) -> string_of_link x ^ " -> " ^ string_of_link y)
-            link_theta;
         let i, graph = alpha_atoms (i, link_theta) graph in
-        prerr @@ "alpha converted graph = " ^ string_of_graph graph;
         (i, graph)
   in
   let _, graphs = List.fold_left_map subst_graph i ctxs in
@@ -52,10 +47,6 @@ let fuse_fusions graph =
   whileM fuse_fusion graph
 
 let match_and_synthesis graph1 lhs graph2 =
-  match match_atoms prerr_endline lhs graph1 with
-  | Some theta ->
-      prerr_endline @@ "match succeded with theta = " ^ string_of_theta theta;
-      Some (synthesis prerr_endline theta graph2)
-  | _ ->
-      prerr_endline @@ "match failed";
-      None
+  match match_atoms lhs graph1 with
+  | Some theta -> Some (synthesis theta graph2)
+  | _ -> None

@@ -1,6 +1,6 @@
 (lang dune 3.0)
 
-(name lambda_gt_alpha)
+(name lambda_gt_beta)
 
 (generate_opam_files true)
 
@@ -18,7 +18,7 @@
 (using menhir 2.1)
 
 (package
- (name lambda_gt_alpha)
+ (name lambda_gt_beta)
  (synopsis "Lambda GT")
  (description "A reference interpreter of the untyped Lambda GT language")
  (depends

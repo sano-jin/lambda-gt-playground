@@ -50,32 +50,25 @@ let has_link_of_atom x (_, args) = List.exists (( = ) x) args
 let has_links_of_atom xs atom = List.exists (flip has_link_of_atom atom) xs
 let has_link_of_atoms x = List.exists @@ List.exists @@ ( = ) x <. snd
 
-let free_links_of_atoms =
-  List.concat_map @@ List.filter is_free_link <. List.map snd
+let free_links_of_atoms atoms =
+  (List.concat_map @@ List.filter is_free_link <. List.map snd) atoms
 
-let links_of_atoms = List.concat_map snd
+let links_of_atoms atoms = List.concat_map snd atoms
 
 (** 全てのアトムをマッチさせる．ただし，必要に応じて fusion を補う atoms_lhs はまだマッチングしていない LHS のアトムのリスト．
     atoms_rest はマッチング対象のグラフにおいて，まだマッチングを試していないアトムのリスト *)
-let match_ctxs prerr ctxs_lhs target_graph =
+let match_ctxs ctxs_lhs target_graph =
   let rec match_ctxs theta target_graph = function
     | [] -> Some (theta, target_graph)
     | ctx :: rest_lhs_ctxs ->
-        prerr @@ "matching ctx " ^ string_of_ctx ctx ^ " to "
-        ^ string_of_graph target_graph;
         (* ターゲットのグラフのマッチングを試していないアトムのリストを引数にとる *)
         let free_links = snd ctx in
         let rec traverse_links traversed_graph target_graph traversed_links
             traversing_links =
-          prerr @@ "traverse_links traversing_links = "
-          ^ ListExtra.string_of_list string_of_link traversing_links;
           let traversed_graph2, rest =
             List.partition (has_links_of_atom traversing_links) target_graph
           in
-          prerr @@ "traversed_graph2 = " ^ string_of_graph traversed_graph2;
-          if traversed_graph2 = [] then (
-            prerr @@ "traversing ended with matched graph = "
-            ^ string_of_graph traversed_graph;
+          if traversed_graph2 = [] then
             if
               (* ListExtra.set_eq free_links (links_of_atoms traversed_graph)
                  && *)
@@ -83,12 +76,8 @@ let match_ctxs prerr ctxs_lhs target_graph =
                 (free_links_of_atoms traversed_graph)
                 free_links
               = []
-            then (
-              prerr @@ "ctx matching succeeded";
-              Some (traversed_graph, rest))
-            else (
-              prerr @@ "ctx matching failed";
-              None))
+            then Some (traversed_graph, rest)
+            else None
           else
             let new_links = links_of_atoms traversed_graph2 in
             let traversed_links = traversing_links @ traversed_links in

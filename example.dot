@@ -1,0 +1,29 @@
+digraph G {
+  // undirected links
+  edge [
+    arrowhead = none,
+  ]
+  
+  // local links has no label but drawed with a point
+  l1[label="", shape=point];
+
+  // free link
+  f1[label="X", shape=plain];
+  
+
+  // atoms
+  atom_0 [label="AtomName"];
+  atom_1 [label="AtomName"];
+  atom_2 [label="AtomName"];
+  atom_3 [label="AtomName"];
+  atom_4 [label="AtomName"];
+
+  // links
+  atom_0 -> l1;
+  start -> b0;
+  a1 -> b3;
+  b2 -> a3;
+  a3 -> a0;
+  a3 -> end;
+  b3 -> end;
+}

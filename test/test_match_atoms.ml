@@ -1,4 +1,5 @@
 open Eval
+open Pretty
 
 let test_find_atoms graph lhs =
   prerr_endline @@ "testing whether '" ^ graph ^ "' can be matched with (" ^ lhs
@@ -11,7 +12,7 @@ let test_find_atoms graph lhs =
   prerr_endline @@ string_of_graph graph;
   prerr_endline @@ string_of_graph lhs_atoms ^ ", " ^ string_of_ctxs lhs_ctxs;
   prerr_endline
-    (match Eval.match_atoms prerr_endline (lhs_atoms, lhs_ctxs) graph with
+    (match Eval.match_atoms (lhs_atoms, lhs_ctxs) graph with
     | None -> "match failed"
     | Some theta -> "match succeded with theta = " ^ string_of_theta theta);
   prerr_newline ()

@@ -1,4 +1,4 @@
 (executable
- (public_name lambda_gt_alpha)
+ (public_name lambda_gt_beta)
  (name main)
- (libraries lambda_gt_alpha.util lambda_gt_alpha.eval))
+ (libraries lambda_gt_beta.util lambda_gt_beta.eval))
