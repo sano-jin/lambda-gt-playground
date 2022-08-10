@@ -1,0 +1,351 @@
+testing parser
+testing ... Cons
+testing ... Cons (_Z, _X)
+testing ... x [_Z, _X]
+testing ... nu _Z. (Cons (_Z, _X), Cons(_Y, _Z))
+testing ... nu _Z. (x [_Z, _X], y [_Y, _Z])
+testing ... nu _Z1. nu _Z2. (x [_Z1, _X], y [_Z2, _Z1], Cons(_Y, _Z2))
+testing ... x [_Y, _X] ---> nu _Z. (x [_Z, _X], y [_Y, _Z])
+testing ... {nu _Z. (x [_Z, _X], y [_Y, _Z])}
+testing ... {f} {nu _Z. (x [_Z, _X], y [_Y, _Z])}
+testing ... case {nu _Z. (x [_Z, _X], y [_Y, _Z])} of {nu _Z. (x [_Z, _X], y [_Y, 
+  _Z])} -> {A ()} | otherwise -> {B ()}
+testing ... {<\x.{x}>}
+testing ... {<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}
+testing ... {<\x[_Y, _X]. {<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}>}
+testing ... {<\x[_Y, _X]. {<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}>} {Cons (_X1, _Y, _X), Zero (_X1)} {Cons (_X1, _Y, _X), Zero (_X1)} 
+
+testing preprocessor
+testing ... Cons
+testing ... Cons (_Z, _X)
+testing ... x [_Z, _X]
+testing ... nu _Z. (Cons (_Z, _X), Cons(_Y, _Z))
+testing ... nu _Z. (x [_Z, _X], y [_Y, _Z])
+testing ... nu _Z1. nu _Z2. (x [_Z1, _X], y [_Z2, _Z1], Cons(_Y, _Z2))
+testing ... x [_Y, _X] ---> nu _Z. (x [_Z, _X], y [_Y, _Z])
+testing ... nu _Z. nu _X. A (_X)
+
+testing find_atoms
+Hello world!
+testing whether 'Cons' can be matched with (Cons:- ...)
+{Cons ()}
+{Cons ()}
+matching atom Cons () to {Cons ()}
+match_links_of_atom succeededs
+match succeded with link_env = [] where graph = {} left
+
+testing whether 'Cons, Cons' can be matched with (Cons:- ...)
+{Cons (), Cons ()}
+{Cons ()}
+matching atom Cons () to {Cons (), Cons ()}
+match_links_of_atom succeededs
+match succeded with link_env = [] where graph = {Cons ()} left
+
+testing whether 'Cons' can be matched with (Cons, Cons:- ...)
+{Cons ()}
+{Cons (), Cons ()}
+matching atom Cons () to {Cons ()}
+match_links_of_atom succeededs
+matching atom Cons () to {}
+match failed
+
+testing whether 'nu _X. (A(_X), B(_X))' can be matched with (nu _X. (B(_X), A(_X)):- ...)
+{A (_L0), B (_L0)}
+{B (_L100), A (_L100)}
+matching atom B (_L100) to {A (_L0), B (_L0)}
+match_links_of_atom succeededs
+matching atom A (_L100) to {A (_L0)}
+match_links_of_atom succeededs
+match succeded with link_env = [_L100->_L0] where graph = {} left
+
+testing whether 'nu _X. (A(_X), B(_X)), C' can be matched with (nu _X. (B(_X), A(_X)):- ...)
+{A (_L0), B (_L0), C ()}
+{B (_L100), A (_L100)}
+matching atom B (_L100) to {A (_L0), B (_L0), C ()}
+match_links_of_atom succeededs
+matching atom A (_L100) to {A (_L0), C ()}
+match_links_of_atom succeededs
+match succeded with link_env = [_L100->_L0] where graph = {C ()} left
+
+testing whether 'Cons (_Z, _X)' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_Z, _X)}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _Z. (Cons (_Z, _X), Cons(_Y, _Z))' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1), Cons (_L2, _L0)}
+{Cons (_Z, _X)}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1), Cons (_L2, _L0)}
+match failed
+
+testing whether 'nu _Z. nu _W. (Cons (_W, _X), Cons(_Y, _W))' can be matched with (nu _Z. (Cons (_Z, _X), Cons(_Y, _Z)):- ...)
+{Cons (_L0, _L1), Cons (_L2, _L0)}
+{Cons (_L100, _X), Cons (_Y, _L100)}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1), Cons (_L2, _L0)}
+match failed
+
+testing whether 'Cons (_Z, _X)' can be matched with (nu _Z. Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _X)}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. Cons (_W, _X)' can be matched with (nu _Z. Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _X)}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. Cons (_W, _X)' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_Z, _X)}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _Z. nu _X. Cons (_Z, _X)' can be matched with (nu _W. Cons (_W, _W):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _L100)}
+matching atom Cons (_L100, _L100) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. (Cons (_W, _W), A (_W))' can be matched with (nu _Z. nu _X. (Cons (_Z, _X), x [_Z, _X]):- ...)
+{Cons (_L0, _L0), A (_L0)}
+{Cons (_L100, _L101)}
+matching atom Cons (_L100, _L101) to {Cons (_L0, _L0), A (_L0)}
+match_links_of_atom succeededs
+match succeded with link_env = [_L101->_L0; _L100->_L0] where graph = {A (_L0)} left
+
+
+testing match_atoms
+Hello world!
+testing whether 'Cons' can be matched with (Cons:- ...)
+{Cons ()}
+{Cons ()}, {}
+matching atom Cons () to {Cons ()}
+match_links_of_atom succeededs
+match succeded with theta = []
+
+testing whether 'Cons, Cons' can be matched with (Cons:- ...)
+{Cons (), Cons ()}
+{Cons ()}, {}
+matching atom Cons () to {Cons (), Cons ()}
+match_links_of_atom succeededs
+partial matching succeeded but the graph {Cons ()} left
+match failed
+
+testing whether 'Cons' can be matched with (Cons, Cons:- ...)
+{Cons ()}
+{Cons (), Cons ()}, {}
+matching atom Cons () to {Cons ()}
+match_links_of_atom succeededs
+matching atom Cons () to {}
+match failed
+
+testing whether 'nu _X. (A(_X), B(_X))' can be matched with (nu _X. (B(_X), A(_X)):- ...)
+{A (_L0), B (_L0)}
+{B (_L100), A (_L100)}, {}
+matching atom B (_L100) to {A (_L0), B (_L0)}
+match_links_of_atom succeededs
+matching atom A (_L100) to {A (_L0)}
+match_links_of_atom succeededs
+match succeded with theta = []
+
+testing whether 'nu _X. (A(_X), B(_X)), C' can be matched with (nu _X. (B(_X), A(_X)):- ...)
+{A (_L0), B (_L0), C ()}
+{B (_L100), A (_L100)}, {}
+matching atom B (_L100) to {A (_L0), B (_L0), C ()}
+match_links_of_atom succeededs
+matching atom A (_L100) to {A (_L0), C ()}
+match_links_of_atom succeededs
+partial matching succeeded but the graph {C ()} left
+match failed
+
+testing whether 'Cons (_Z, _X)' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_Z, _X)}, {}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _Z. (Cons (_Z, _X), Cons(_Y, _Z))' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1), Cons (_L2, _L0)}
+{Cons (_Z, _X)}, {}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1), Cons (_L2, _L0)}
+match failed
+
+testing whether 'nu _Z. nu _W. (Cons (_W, _X), Cons(_Y, _W))' can be matched with (nu _Z. (Cons (_Z, _X), Cons(_Y, _Z)):- ...)
+{Cons (_L0, _L1), Cons (_L2, _L0)}
+{Cons (_L100, _X), Cons (_Y, _L100)}, {}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1), Cons (_L2, _L0)}
+match failed
+
+testing whether 'Cons (_Z, _X)' can be matched with (nu _Z. Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _X)}, {}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. Cons (_W, _X)' can be matched with (nu _Z. Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _X)}, {}
+matching atom Cons (_L100, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. Cons (_W, _X)' can be matched with (Cons (_Z, _X):- ...)
+{Cons (_L0, _L1)}
+{Cons (_Z, _X)}, {}
+matching atom Cons (_Z, _X) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _Z. nu _X. Cons (_Z, _X)' can be matched with (nu _W. Cons (_W, _W):- ...)
+{Cons (_L0, _L1)}
+{Cons (_L100, _L100)}, {}
+matching atom Cons (_L100, _L100) to {Cons (_L0, _L1)}
+match failed
+
+testing whether 'nu _W. Cons (_W, _W)' can be matched with (nu _Z. nu _X. (Cons (_Z, _X), x [_Z, _X]):- ...)
+{Cons (_L0, _L0)}
+{Cons (_L100, _L101)}, {x [_L100, _L101]}
+matching atom Cons (_L100, _L101) to {Cons (_L0, _L0)}
+match_links_of_atom succeededs
+matching ctx x [_L100, _L101] to {>< (_L101, _L100)}
+traverse_links traversing_links = [_L100; _L101]
+traversed_graph2 = {>< (_L101, _L100)}
+traverse_links traversing_links = []
+traversed_graph2 = {}
+traversing ended with matched graph = {>< (_L101, _L100)}
+ctx matching succeeded
+match succeded with theta = [x [_L100, _L101] -> {>< (_L101, _L100)}]
+
+testing whether 'nu _W. (Cons (_W, _W), A (_W))' can be matched with (nu _Z. nu _X. (Cons (_Z, _X), x [_Z, _X]):- ...)
+{Cons (_L0, _L0), A (_L0)}
+{Cons (_L100, _L101)}, {x [_L100, _L101]}
+matching atom Cons (_L100, _L101) to {Cons (_L0, _L0), A (_L0)}
+match_links_of_atom succeededs
+matching ctx x [_L100, _L101] to {A (_L101), >< (_L101, _L100)}
+traverse_links traversing_links = [_L100; _L101]
+traversed_graph2 = {A (_L101), >< (_L101, _L100)}
+traverse_links traversing_links = []
+traversed_graph2 = {}
+traversing ended with matched graph = {A (_L101), >< (_L101, _L100)}
+ctx matching succeeded
+match succeded with theta = [x [_L100, _L101] -> {A (_L101), >< (_L101, _L100)}]
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Z2, _X), Zero (_Z1), Nil (_Z2))' can be matched with (nu _W1. nu _W2. (Cons (_W1, _W2, _X), h [_W1], t [_W2]):- ...)
+{Cons (_L0, _L1, _L2), Zero (_L0), Nil (_L1)}
+{Cons (_L100, _L101, _X)}, {h [_L100], t [_L101]}
+matching atom Cons (_L100, _L101, _X) to {Cons (_L0, _L1, _L2), Zero (_L0), Nil (_L1)}
+match failed
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))' can be matched with (nu _W1. nu _W2. (Cons (_W1, _W2, _X), h [_W1], t [_Y, _W2]):- ...)
+{Cons (_L0, _L1, _L2), Zero (_L0)}
+{Cons (_L100, _L101, _X)}, {h [_L100], t [_Y, _L101]}
+matching atom Cons (_L100, _L101, _X) to {Cons (_L0, _L1, _L2), Zero (_L0)}
+match failed
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))' can be matched with (nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1]):- ...)
+{Cons (_L0, _L1, _L2), Zero (_L0)}
+{Cons (_L100, _Y, _L101)}, {nodes [_L101, _X], h [_L100]}
+matching atom Cons (_L100, _Y, _L101) to {Cons (_L0, _L1, _L2), Zero (_L0)}
+match failed
+
+
+testing match_and_synthesis
+testing whether 'Cons' can be matched with (Cons:- ...) and substituted to Nil
+{Cons ()}
+{Cons ()}, {}
+Nil ()
+matching atom Cons () to {Cons ()}
+match_links_of_atom succeededs
+match succeded with theta = []
+match succeded and reduced to graph = {Nil ()}
+
+testing whether 'nu _X. (A(_X), B(_X))' can be matched with (nu _X. (B(_X), A(_X)):- ...) and substituted to nu _X. (B(_X), A(_X))
+{A (_L0), B (_L0)}
+{B (_L100), A (_L100)}, {}
+nu _X. (B (_X), A (_X))
+matching atom B (_L100) to {A (_L0), B (_L0)}
+match_links_of_atom succeededs
+matching atom A (_L100) to {A (_L0)}
+match_links_of_atom succeededs
+match succeded with theta = []
+match succeded and reduced to graph = {B (_L0), A (_L0)}
+
+testing whether 'nu _W. (Cons (_W, _W), A (_W))' can be matched with (nu _Z. nu _X. (Cons (_Z, _X), x [_Z, _X]):- ...) and substituted to x [_W1, _W2]
+{Cons (_L0, _L0), A (_L0)}
+{Cons (_L100, _L101)}, {x [_L100, _L101]}
+x [_W1, _W2]
+matching atom Cons (_L100, _L101) to {Cons (_L0, _L0), A (_L0)}
+match_links_of_atom succeededs
+matching ctx x [_L100, _L101] to {A (_L101), >< (_L101, _L100)}
+traverse_links traversing_links = [_L100; _L101]
+traversed_graph2 = {A (_L101), >< (_L101, _L100)}
+traverse_links traversing_links = []
+traversed_graph2 = {}
+traversing ended with matched graph = {A (_L101), >< (_L101, _L100)}
+ctx matching succeeded
+match succeded with theta = [x [_L100, _L101] -> {A (_L101), >< (_L101, _L100)}]
+link_theta = [_L100 -> _W1; _L101 -> _W2]
+alpha converted graph = {A (_W2), >< (_W2, _W1)}
+match succeded and reduced to graph = {A (_W2), >< (_W2, _W1)}
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Z2, _X), Zero (_Z1), Nil
+   (_Z2))' can be matched with (nu _W1. nu _W2. (Cons (_W1, _W2, _X), h [_W1], t [_W2]):- ...) and substituted to nu _W1. nu _W2. (Hoge (_W1, _W2, _X1), h [_W1], t [_W2])
+{Cons (_L0, _L1, _L2), Zero (_L0), Nil (_L1)}
+{Cons (_L100, _L101, _X)}, {h [_L100], t [_L101]}
+nu _W1. nu _W2. ((Hoge (_W1, _W2, _X1), h [_W1]), t [_W2])
+matching atom Cons (_L100, _L101, _X) to {Cons (_L0, _L1, _L2), Zero (_L0), Nil (_L1)}
+match failed
+match failed
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))' can be matched with (nu _W1. nu _W2. (Cons (_W1, _W2, _X), h [_W1], t [_Y, _W2]):- ...) and substituted to nu _W1. nu _W2. (Append (_W1, _W2, _X'), h [_W1], t [_Y', _W2])
+{Cons (_L0, _L1, _L2), Zero (_L0)}
+{Cons (_L100, _L101, _X)}, {h [_L100], t [_Y, _L101]}
+nu _W1. nu _W2. ((Append (_W1, _W2, _X'), h [_W1]), t [_Y', _W2])
+matching atom Cons (_L100, _L101, _X) to {Cons (_L0, _L1, _L2), Zero (_L0)}
+match failed
+match failed
+
+testing whether 'nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))' can be matched with (nu _W1. nu _W2. (Cons (_W1, _W2, _X), h [_W1], t [_Y, _W2]):- ...) and substituted to t [_Y, _X]
+{Cons (_L0, _L1, _L2), Zero (_L0)}
+{Cons (_L100, _L101, _X)}, {h [_L100], t [_Y, _L101]}
+t [_Y, _X]
+matching atom Cons (_L100, _L101, _X) to {Cons (_L0, _L1, _L2), Zero (_L0)}
+match failed
+match failed
+
+
+testing eval
+testing '{nu _Z. (A (_Z, _X), B (_Y, _Z))}'
+{nu _Z. (A (_Z, _X), B (_Y, _Z))}
+reduced to graph = {A (_L0, _X), B (_Y, _L0)}
+
+testing '{<\x.{x}>}'
+{<\ x [] . {x []}> ()}
+reduced to graph = {<\ x [] . {x []}> ()}
+
+testing '{<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}'
+{<\ y [_Y, _X] . {nu _Z. (x [_Z, _X], y [_Y, _Z])}> ()}
+reduced to graph = {<\ y [_Y, _X] . {nu _Z. (x [_Z, _X], y [_Y, _Z])}> ()}
+
+testing '{<\x[_Y, _X]. {<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}>}'
+{<\ x [_Y, _X] . {<\ y [_Y, _X] . {nu _Z. (x [_Z, _X], y [_Y, _Z])}> ()}> ()}
+reduced to graph = {<\ x [_Y, _X] . {<\ y [_Y, _X] . {nu _Z. (x [_Z, _X], y [_Y, _Z])}> ()}> ()}
+
+testing '{<\x[_Y, _X]. {<\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}>} {Cons (_X1, _Y, _X), Zero1 (_X1)} {Cons (_X1, _Y, _X), Zero2 (_X1)} '
+(({<\ x [_Y, _X] . {<\ y [_Y, _X] . {nu _Z. (x [_Z, _X], y [_Y, _Z])}> ()}> ()}, {(Cons (_X1, _Y, _X), Zero1 (_X1))}), {(Cons (_X1, _Y, _X), Zero2 (_X1))})
+reduced to graph = {Cons (_L1, _L0, _X), Zero1 (_L1), Cons (_L2, _Y, _L0), Zero2 (_L2)}
+
+testing 'case {nu _Z. (A (_Z, _X), B (_Y, _Z))} of {nu _Z. (x [_Z, _X], y [_Y, _Z])} -> {x [_U1, _U2]} | otherwise -> {B ()}'
+(case {nu _Z. (A (_Z, _X), B (_Y, _Z))} of {nu _Z. (x [_Z, _X], y [_Y, _Z])} -> {x [_U1, _U2]} | otherwise -> {B ()}
+reduced to graph = {B ()}
+
+testing 'case {nu _Z. (A (_Z, _X), B (_Y, _Z))} of {nu _Z. (A (_Z, _X), x [_Y, _Z])} -> {x [_U1, _U2]} | otherwise -> {B ()}'
+(case {nu _Z. (A (_Z, _X), B (_Y, _Z))} of {nu _Z. (A (_Z, _X), x [_Y, _Z])} -> {x [_U1, _U2]} | otherwise -> {B ()}
+reduced to graph = {B (_U1, _U2)}
+
+testing 'case {nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))} of {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])} -> { nodes [_Y, _X] } | otherwise -> { Error }'
+(case {nu _Z1. nu _Z2. (Cons (_Z1, _Y, _X), Zero (_Z1))} of {nu _W1. nu _W2. ((nodes [_W2, _X], Cons (_W1, _Y, _W2)), h [_W1])} -> {nodes [_Y, _X]} | otherwise -> {Error ()}
+reduced to graph = {>< (_Y, _X)}
+
+

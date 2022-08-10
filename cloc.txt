@@ -1,0 +1,18 @@
+----------------------------
+File                    code
+----------------------------
+parser/parser.mly        115
+eval/match_ctxs.ml        90
+eval/syntax.ml            65
+eval/eval.ml              63
+parser/lexer.mll          52
+eval/pushout.ml           51
+parser/syntax.ml          42
+eval/match_atoms.ml       39
+eval/preprocess.ml        36
+eval/match.ml             14
+parser/README.md          12
+parser/parse.ml            5
+----------------------------
+SUM:                     584
+----------------------------
