@@ -1,6 +1,6 @@
 # lambda-gt-alpha
 
-A reference interpreter of the lambda GT language.
+A reference interpreter of the Lambda GT language.
 
 ## Getting Started
 

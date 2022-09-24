@@ -70,14 +70,14 @@ atom_name:
 
 
 atom:
-  | atom_name				            { Atom ($1, []) }	(** e.g. a *)
-  | atom_name LPAREN args_inner RPAREN	{ Atom ($1, $3) }	(** e.g. a(X_1, ..., X_m) *)
+  | atom_name				            { Atom ($1, []) }	(** e.g. C *)
+  | atom_name LPAREN args_inner RPAREN	{ Atom ($1, $3) }	(** e.g. C (_X_1, ..., _X_m) *)
   | LINK NECKTIE LINK                   { Atom (PConstr "><", [$1; $3]) }
 
 
 ctx:
   | VAR { ($1, []) }	(** e.g. a *)
-  | VAR LBRACKET args_inner RBRACKET { ($1, $3) }	(** e.g. a(X_1, ..., X_m) *)
+  | VAR LBRACKET args_inner RBRACKET { ($1, $3) }	(** e.g. C (_X_1, ..., _X_m) *)
 
 
 
@@ -85,7 +85,7 @@ ctx:
 graph:
   | atom { $1 }
 
-  | ctx { let (v, args) = ($1) in Ctx (v, args) }	(** e.g. a *)
+  | ctx { let (v, args) = ($1) in Ctx (v, args) }	(** e.g. x[_X1, ..., _Xm] *)
 
   | graph COMMA graph { Mol ($1, $3) }
 

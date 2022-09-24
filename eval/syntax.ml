@@ -9,8 +9,6 @@ let string_of_link = function
   | FreeLink link -> link
   | LocalLink i -> "_L" ^ string_of_int i
 
-let map_local_link f = function LocalLink l -> LocalLink (f l) | link -> link
-
 type atom_name =
   | Constr of string  (** constructor name *)
   | Lam of Parse.ctx * exp * theta  (** lambda abstraction *)
@@ -48,11 +46,11 @@ let local_links_of_graph =
   List.concat_map (List.filter (not <. is_free_link)) <. List.map snd
 
 let string_of_graph atoms =
-  let graph_str = String.concat ", " (List.map string_of_atom atoms) in
+  let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
   "{" ^ graph_str ^ "}"
 
 let string_of_graph_with_nu atoms =
-  let graph_str = String.concat ", " (List.map string_of_atom atoms) in
+  let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
   let local_links = List.sort_uniq compare @@ local_links_of_graph atoms in
   let local_links_str =
     let helper local_link = "nu " ^ string_of_link local_link ^ ". " in
