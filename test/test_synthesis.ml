@@ -1,4 +1,7 @@
 open Eval
+open Util
+
+let alpha_min = snd <. alpha_atoms (0, [])
 
 let test_synthesis graph1 lhs graph2 =
   prerr_endline @@ "testing whether '" ^ graph1 ^ "' can be matched with ("

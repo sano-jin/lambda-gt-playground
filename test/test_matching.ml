@@ -1,4 +1,11 @@
 open Eval
+open Util
+
+let alpha_min = snd <. alpha_atoms (0, [])
+
+let string_of_link_env =
+  let helper (x, y) = string_of_link (LocalLink x) ^ "->" ^ string_of_link y in
+  ListExtra.string_of_list helper
 
 let test_find_atoms graph lhs =
   prerr_endline @@ "testing whether '" ^ graph ^ "' can be matched with (" ^ lhs

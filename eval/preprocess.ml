@@ -37,7 +37,3 @@ let alpha_atom env (v, args) =
 let alpha_atoms (i, link_env) atoms =
   let (i, _), atoms = List.fold_left_map alpha_atom (i, link_env) atoms in
   (i, atoms)
-
-let alpha_min atoms =
-  let _, atoms = alpha_atoms (0, []) atoms in
-  atoms

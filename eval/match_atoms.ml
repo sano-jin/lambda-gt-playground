@@ -24,7 +24,7 @@ let match_links_of_atom link_env (v1, args1) (v2, args2) =
 
 (** 全てのアトムをマッチさせる．ただし，必要に応じて fusion を補う atoms_lhs はまだマッチングしていない LHS のアトムのリスト．
     atoms_rest はマッチング対象のグラフにおいて，まだマッチングを試していないアトムのリスト *)
-let find_atoms f (atoms_lhs : atom list) target_graph =
+let find_atoms f target_graph atoms_lhs =
   (* find_atoms link_env graph atoms_rest atoms_lhs *)
   let rec find_atoms link_env target_graph = function
     | [] -> f (link_env, target_graph)

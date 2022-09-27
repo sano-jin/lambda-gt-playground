@@ -35,10 +35,6 @@ let string_of_atom (atom_name, args) =
   ^ String.concat ", " (List.map string_of_link args)
   ^ ")"
 
-let string_of_link_env =
-  let helper (x, y) = string_of_link (LocalLink x) ^ "->" ^ string_of_link y in
-  ListExtra.string_of_list helper
-
 let fusion_of x y = (Constr "><", [ x; y ])
 let is_free_link = function LocalLink _ -> false | FreeLink _ -> true
 

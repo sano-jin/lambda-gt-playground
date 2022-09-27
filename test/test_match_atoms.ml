@@ -1,5 +1,8 @@
 open Eval
 open Pretty
+open Util
+
+let alpha_min = snd <. alpha_atoms (0, [])
 
 let test_find_atoms graph lhs =
   prerr_endline @@ "testing whether '" ^ graph ^ "' can be matched with (" ^ lhs

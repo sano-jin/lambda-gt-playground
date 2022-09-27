@@ -6,8 +6,8 @@
 
 (** tokens with values *)
 (** Symbol atom name *)
-%token <string> VAR    (** X, Y, ABC, ... *)
-%token <string> CONSTR (** x, y, abc, ... *)
+%token <string> VAR    (** x, y, abc, ... *)
+%token <string> CONSTR (** Cons, Node, ... *)
 
 (** link name *)
 %token <string> LINK   (** _X, _Y, _ABC, ...  *)
@@ -28,7 +28,7 @@
 %token IN             (**  "in" *)
 %token EQ             (**  "=" *)
 
-(**  Parentheses *)
+(** Parentheses *)
 %token LPAREN         (**  '(' *)
 %token RPAREN         (**  ')' *)
 %token LBRACKET       (**  '[' *)
@@ -38,46 +38,44 @@
 %token LT             (**  '(' *)
 %token GT             (**  ')' *)
 
-(**  End of file *)
+(** End of file *)
 %token EOF
 
-(**  Operator associativity *)
+(** Operator associativity *)
 %nonassoc  DOT
 %left      COMMA
 
 
+
 %start graph_eof
-%type <Syntax.graph> graph_eof
+%type <graph> graph_eof
 
 %start exp_eof
-%type <Syntax.exp> exp_eof
+%type <exp> exp_eof
 
 %%
 
 
-(** inner arguments of an atom *)
-
-(**  arguments of an atom separated by comma without parentheses *)
-args_inner:
-  | separated_list(COMMA, LINK) { $1 }
+(** arguments of an atom separated by comma without parentheses *)
+args_inner: separated_list(COMMA, LINK) { $1 }
 
 
 (** Syntax for an atom *)
 
 atom_name:
- | CONSTR { PConstr ($1) }
- | LT LAMBDA ctx DOT exp GT { PLam ($3, $5) }
+  | CONSTR { PConstr ($1) }
+  | LT LAMBDA ctx DOT exp GT { PLam ($3, $5) }
 
 
 atom:
   | atom_name				            { Atom ($1, []) }	(** e.g. C *)
-  | atom_name LPAREN args_inner RPAREN	{ Atom ($1, $3) }	(** e.g. C (_X_1, ..., _X_m) *)
+  | atom_name LPAREN args_inner RPAREN	{ Atom ($1, $3) }	(** e.g. C (_X1, ..., _Xm) *)
   | LINK NECKTIE LINK                   { Atom (PConstr "><", [$1; $3]) }
 
 
 ctx:
   | VAR { ($1, []) }	(** e.g. a *)
-  | VAR LBRACKET args_inner RBRACKET { ($1, $3) }	(** e.g. C (_X_1, ..., _X_m) *)
+  | VAR LBRACKET args_inner RBRACKET { ($1, $3) }	(** e.g. x [_X1, ..., _Xm] *)
 
 
 
@@ -96,36 +94,29 @@ graph:
 
 
 (** the whole program *)
-graph_eof:
-  | graph EOF { $1 }
+graph_eof: graph EOF { $1 }
 
 
 exp_single:
- | LCBRACKET graph RCBRACKET { Graph ($2) }
+  | LCBRACKET graph RCBRACKET { Graph ($2) }
 
- | CASE exp OF LCBRACKET graph RCBRACKET ARROW exp VBAR OTHERWISE ARROW exp 
-     { Case ($2, $5, $8, $12) }
+  | CASE exp OF LCBRACKET graph RCBRACKET ARROW exp VBAR OTHERWISE ARROW exp
+      { Case ($2, $5, $8, $12) }
+
+  | LET REC ctx ctx EQ exp IN exp
+      { LetRec ($3, $4, $6, $8) }
+
+  | LET ctx EQ exp IN exp
+      { Let ($2, $4, $6) }
  
- | LET REC ctx ctx EQ exp IN exp 
-     { LetRec ($3, $4, $6, $8) }
- 
- | LET ctx EQ exp IN exp 
-     { Let ($2, $4, $6) }
- 
- | LPAREN exp RPAREN { $2 }
+  | LPAREN exp RPAREN { $2 }
 
 
 exp:
- | exp exp_single { App ($1, $2) }
- | exp_single { $1 }
+  | exp exp_single { App ($1, $2) }
+  | exp_single { $1 }
 
 
 
 (** the whole program *)
-exp_eof:
-  | exp EOF { $1 }
-
-
-
-
-
+exp_eof: exp EOF { $1 }
