@@ -57,7 +57,7 @@
 
 
 (** arguments of an atom separated by comma without parentheses *)
-args_inner: separated_list(COMMA, LINK) { $1 }
+let args_inner := ~ = separated_list(COMMA, LINK); <>
 
 
 (** Syntax for an atom *)

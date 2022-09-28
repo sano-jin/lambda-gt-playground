@@ -31,21 +31,21 @@ apt などだと，古いバージョンが入る可能性が高い．
 
 1. environment setup
 
-```bash
+```zsh
 opam init
 eval $(opam env)
 ```
 
 2. install given version of the compiler
 
-```bash
+```zsh
 opam switch create 4.14.0
 eval $(opam env)
 ```
 
 3. check you got what you want
 
-```bash
+```zsh
 which ocaml     # ----> /your_home_directory/4.14.0/bin/ocaml
 ocaml -version  # ----> The OCaml toplevel, version 4.14.0
 ```
