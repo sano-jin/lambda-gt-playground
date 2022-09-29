@@ -22,3 +22,5 @@ dune build
 ```bash
 ./run example/dlist.lgt
 ```
+
+which will result in `{>< (_Y, _X)}`.
