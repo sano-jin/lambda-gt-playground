@@ -53,7 +53,7 @@ For the syntax and semantics, please see
   {Log} exp
   ```
 
-  evaluates `exp`, prints the values, and result in the value.
+  evaluates `exp`, prints the value, and results in the value.
 
 See [/example](example) for more examples.
 
