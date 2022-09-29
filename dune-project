@@ -11,7 +11,7 @@
 
 (maintainers "Jin Sano")
 
-(license LICENSE)
+(license MIT)
 
 (documentation https://url/to/documentation)
 
@@ -22,6 +22,8 @@
  (synopsis "Lambda GT")
  (description "A reference interpreter of the untyped Lambda GT language")
  (depends
+  (ocaml
+   (>= 4.14.0))
   ; (ounit :with-test)
   (menhir
    (>= 2.1))
