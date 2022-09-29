@@ -1,7 +1,5 @@
 # A reference interpreter of Lambda GT language
 
-## About
-
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
 Normally, these structures are handled with destructive assignments to heaps,
