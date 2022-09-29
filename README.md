@@ -19,17 +19,6 @@ We implemented a reference interpreter, a reference implementation of the langua
 We believe this is usable for further investigation, including in the design of real languages based on λGT.
 The interpreter is written in only 500 lines of OCaml code.
 
-For the syntax and semantics, please see
-[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
-
-- We have enabled logging.
-
-  ```ocaml
-  {Log} exp
-  ```
-
-  evaluates `exp`, prints the value, and result in the value.
-
 We have also implemented a visualizing tool
 that runs on a browser, which is available at
 <https://sano-jin.github.io/lambda-gt-online/>.
@@ -56,6 +45,17 @@ dune build
 ```
 
 which will result in `{>< (_Y, _X)}`.
+
+For the syntax and semantics, please see
+[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
+
+- We have enabled logging.
+
+  ```ocaml
+  {Log} exp
+  ```
+
+  evaluates `exp`, prints the value, and result in the value.
 
 See [/example](example) for more examples.
 
