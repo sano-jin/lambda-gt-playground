@@ -1,4 +1,4 @@
-# A reference interpreter of Lambda GT language.
+# A reference interpreter of Lambda GT language
 
 ## About
 
