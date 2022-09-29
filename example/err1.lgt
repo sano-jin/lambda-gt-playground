@@ -1,1 +1,3 @@
+% Parser error
+
 { A ( }

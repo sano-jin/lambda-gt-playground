@@ -14,6 +14,9 @@ let rec eval theta = function
       let v1 = eval theta e1 in
       let v2 = eval theta e2 in
       match v1 with
+      | [ (Constr "Log", _) ] ->
+              print_endline @@ "> " ^ string_of_graph_with_nu v2;
+              v2
       | [ (Lam (ctx, e, theta), _) ] ->
           let ctx = ctx_of ctx in
           let theta = (ctx, v2) :: theta in
