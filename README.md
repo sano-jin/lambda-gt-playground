@@ -1,5 +1,7 @@
 # A reference interpreter of Lambda GT language
 
+![examples of graphs](./docs/graphs-image.svg)
+
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
 Normally, these structures are handled with destructive assignments to heaps,
@@ -63,7 +65,7 @@ See [/example](example) for more examples.
    [slide](https://www.ueda.info.waseda.ac.jp/~sano/materials/jssst2022.pdf))
    A functional language with graphs as first-class data,
    In Proc. The 39th JSSST Annual Conference, 2022
-   (15pp. unreferred paper).
+   (15pp. unreferred).
    <details><summary>Abstract</summary><div>
      Graphs are a generalized concept that encompasses more complex data structures than trees,
      such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees. Normally, these structures are handled
