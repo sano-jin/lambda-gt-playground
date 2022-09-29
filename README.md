@@ -1,4 +1,4 @@
-# A reference interpreter of the Lambda GT language.
+# A reference interpreter of Lambda GT language.
 
 ## About
 
@@ -7,7 +7,8 @@ such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees
 Normally, these structures are handled with destructive assignments to heaps,
 as opposed to a purely functional programming style.
 
-We proposed a new purely functional language, λGT, that handles graphs as immutable, first-class data structures with
+We proposed a new purely functional language, λGT,
+that handles graphs as immutable, first-class data structures with
 a pattern matching mechanism based on Graph Transformation.
 
 Since graphs can be more complex than trees and require non-trivial formalism,
@@ -22,9 +23,11 @@ For the syntax and semantics, please see
 [the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
 
 - We have enabled logging.
+
   ```ocaml
   {Log} exp
   ```
+
   evaluates `exp`, prints the value, and result in the value.
 
 We have also implemented a visualizing tool
@@ -59,11 +62,11 @@ See [/example](example) for more examples.
 ## Citation
 
 1. ([pdf](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf),
-   [slide](./materials/jssst2022.pdf))
+   [slide](https://www.ueda.info.waseda.ac.jp/~sano/materials/jssst2022.pdf))
    A functional language with graphs as first-class data,
    In Proc. The 39th JSSST Annual Conference, 2022
    (15pp. unreferred paper).
-   - <details><summary>Abstract</summary><div>
+   <details><summary>Abstract</summary><div>
      Graphs are a generalized concept that encompasses more complex data structures than trees,
      such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees. Normally, these structures are handled
      with destructive assignments to heaps, as opposed to a purely functional programming style. We proposed
@@ -74,12 +77,12 @@ See [/example](example) for more examples.
      We implemented a reference interpreter, a reference implementation of the language. We believe this
      is usable for further investigation, including in the design of real languages based on λGT. The interpreter
      is written in only 500 lines of OCaml code.
-     </div></details>
+   </div></details>
 2. ([arXiv](https://arxiv.org/abs/2209.05149),
-   [slide](./materials/pro2022.pdf))
+   [slide](https://www.ueda.info.waseda.ac.jp/~sano/materials/pro2022.pdf))
    Type checking data structures more complex than tree,
    to be appeared in Journal of Information Processing, 2022 (19pp. refferred).
-   - <details><summary>Abstract</summary><div>
+   <details><summary>Abstract</summary><div>
      Graphs are a generalized concept that encompasses more complex data structures than trees,
      such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
      Normally, these structures are handled with destructive assignments to heaps,
@@ -94,7 +97,7 @@ See [/example](example) for more examples.
      but pattern matchings over graphs provided by the new higher-level language that
      abstract pointers and heaps away and that
      (ii) we pursue what properties can be established automatically using a rather simple typing framework.
-     </div></details>
+   </div></details>
 
 ## Contact
 
