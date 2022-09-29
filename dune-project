@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github jin-sano/lambda-gt-alpha))
 
 (authors "Jin Sano")
 
