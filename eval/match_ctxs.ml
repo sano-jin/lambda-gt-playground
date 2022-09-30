@@ -2,52 +2,48 @@ open Util
 open Util.OptionExtra
 open Syntax
 
+(** atom のマッチング終了後，graph context のマッチングの前に，グラフのリンク名を変換し，fusion を補う．*)
+
 let subst_link_of_link link_env x =
   Option.value (List.assoc_opt x link_env) ~default:x
 
-let subst_link_of_atom link_env (v, args) =
-  (v, List.map (subst_link_of_link link_env) args)
-
-let subst_link_of_atoms link_env = (List.map <. subst_link_of_atom) link_env
+let subst_link_of_atoms = List.map <. second <. List.map <. subst_link_of_link
 
 (** target graph において同じリンク名となるリンクに対応している，テンプレートのリンクをまとめる， *)
-let gather_links link_env =
-  let link_family =
-    List.map snd @@ ListExtra.gather @@ List.map swap link_env
-  in
-  List.map (List.map (fun x -> LocalLink x)) link_family
+let gather_links =
+  (List.map @@ List.map @@ fun x -> LocalLink x)
+  <. List.map snd <. ListExtra.gather <. List.map swap
 
 (** link_env から補った，局所リンク同士を引数にもつ fusion を作る *)
-let local2local_fusions_of_link_env link_env =
-  let link_sets = gather_links link_env in
+let local2local_fusions_of_link_env =
   let helper = function [] -> [] | x :: xs -> List.map (fusion_of x) xs in
-  List.concat_map helper link_sets
+  List.concat_map helper <. gather_links
 
-(* マッチング対象のグラフでは自由リンクだが，テンプレートのリンクでは局所リンクであった場合に， 自由リンクと局所リンクの fusion
-   を作ってグラフに補う*)
-let local2free_fusions_of_link_env link_env =
-  let free_fusions = List.filter (is_free_link <. snd) link_env in
-  List.map (fun (x, y) -> fusion_of (LocalLink x) y) free_fusions
+(** マッチング対象のグラフでは自由リンクだが，テンプレートのリンクでは局所リンクであった場合に，自由リンクと局所リンクの fusion
+    を作ってグラフに補う． *)
+let local2free_fusions_of_link_env =
+  List.map (fun (x, y) -> fusion_of (LocalLink x) y)
+  <. List.filter (is_free_link <. snd)
 
-(* マッチング対象のグラフのリンク名をテンプレートのリンク名に変換する *)
-let subst_links_graph link_env rest_graph =
+(** マッチング対象のグラフのリンク名をテンプレートのリンク名に変換する． [link_env] と [rest_graph] を引数にとる． *)
+let subst_links_of_rest_graph =
   let helper = function
-    | x, (LocalLink _ as y) -> [ (y, LocalLink x) ]
-    | _ -> []
+    | x, (LocalLink _ as y) -> Some (y, LocalLink x)
+    | _ -> None
   in
-  let inverse_link_env = List.concat_map helper link_env in
-  (* マッチング対象のグラフのリンク名をテンプレートのリンク名に変換する *)
-  subst_link_of_atoms inverse_link_env rest_graph
+  subst_link_of_atoms <. List.filter_map helper
 
 (** find_atoms をした後の link_env の後処理をする． 自由リンクと局所リンクを引数にもつ fusion を作る．
     マッチング対象のグラフの局所リンク名をルール左辺のものに合わせる． *)
 let rest_graph_of (link_env, rest_graph) =
-  subst_links_graph link_env rest_graph
+  subst_links_of_rest_graph link_env rest_graph
   @ local2local_fusions_of_link_env link_env
   @ local2free_fusions_of_link_env link_env
 
-let has_link_of_atom x (_, args) = List.exists (( = ) x) args
-let has_links_of_atom xs atom = List.exists (flip has_link_of_atom atom) xs
+(** graph context のマッチングを行う．*)
+
+let has_link_of_atom (_, args) x = List.exists (( = ) x) args
+let has_links_of_atom xs atom = List.exists (has_link_of_atom atom) xs
 let has_link_of_atoms x = List.exists @@ List.exists @@ ( = ) x <. snd
 
 let free_links_of_atoms atoms =
@@ -63,15 +59,18 @@ let match_ctxs ctxs_lhs target_graph =
     | ctx :: rest_lhs_ctxs ->
         (* ターゲットのグラフのマッチングを試していないアトムのリストを引数にとる *)
         let free_links = snd ctx in
+        (* リンクを辿って，連結グラフを取得する *)
         let rec traverse_links traversed_graph target_graph traversed_links
             traversing_links =
-          let traversed_graph2, rest =
+          let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest =
             List.partition (has_links_of_atom traversing_links) target_graph
           in
-          if traversed_graph2 = [] then
+          if traversable_graph = [] then
             if
               (* ListExtra.set_eq free_links (links_of_atoms traversed_graph)
                  && *)
+              (* これ以上辿れない局所リンクは自由リンクとしてマッチングできる．従って，これは set_minus をすれば良い（厳密に
+                 graph context の自由リンクと同じである必要はない）．*)
               ListExtra.set_minus
                 (free_links_of_atoms traversed_graph)
                 free_links
@@ -79,13 +78,12 @@ let match_ctxs ctxs_lhs target_graph =
             then Some (traversed_graph, rest)
             else None
           else
-            let new_links = links_of_atoms traversed_graph2 in
+            let new_links = links_of_atoms traversable_graph in
             let traversed_links = traversing_links @ traversed_links in
             let new_links = ListExtra.set_minus new_links traversed_links in
-            let new_links = ListExtra.set_minus new_links free_links in
             traverse_links
-              (traversed_graph2 @ traversed_graph)
-              rest traversing_links new_links
+              (traversable_graph @ traversed_graph)
+              rest traversed_links new_links
         in
 
         let rec match_ctx tested_target_atoms = function

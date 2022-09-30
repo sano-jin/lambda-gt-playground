@@ -1,7 +1,12 @@
 open Eval
 open Util
+open OptionExtra
 
 let alpha_min = snd <. alpha_atoms (0, [])
+
+let match_and_synthesis graph1 lhs graph2 =
+  let+ theta = Eval.match_ lhs graph1 in
+  Eval.synthesis theta graph2
 
 let test_synthesis graph1 lhs graph2 =
   prerr_endline @@ "testing whether '" ^ graph1 ^ "' can be matched with ("
@@ -18,7 +23,7 @@ let test_synthesis graph1 lhs graph2 =
   prerr_endline @@ Pretty.string_of_e_graph (lhs_atoms, lhs_ctxs);
   prerr_endline @@ Pretty.string_of_p_graph graph2;
   prerr_endline
-    (match Eval.match_and_synthesis graph1 (lhs_atoms, lhs_ctxs) graph2 with
+    (match match_and_synthesis graph1 (lhs_atoms, lhs_ctxs) graph2 with
     | None -> "match failed"
     | Some graph ->
         "match succeded and reduced to graph = " ^ string_of_graph graph);

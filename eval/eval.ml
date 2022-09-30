@@ -30,7 +30,7 @@ let rec eval theta = function
   | Case (e1, template, e2, e3) -> (
       let v1 = eval theta e1 in
       let _, template = alpha100 template in
-      match match_atoms template v1 with
+      match match_ template v1 with
       | None -> eval theta e3
       | Some theta2 ->
           let theta = theta2 @ theta in
