@@ -60,10 +60,10 @@ let match_ctxs ctxs_lhs target_graph =
         (* ターゲットのグラフのマッチングを試していないアトムのリストを引数にとる *)
         let free_links = snd ctx in
         (* リンクを辿って，連結グラフを取得する *)
-        let rec traverse_links traversed_graph target_graph traversed_links
+        let rec traverse_links traversed_graph rest_graph traversed_links
             traversing_links =
           let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest =
-            List.partition (has_links_of_atom traversing_links) target_graph
+            List.partition (has_links_of_atom traversing_links) rest_graph
           in
           if traversable_graph = [] then
             if
