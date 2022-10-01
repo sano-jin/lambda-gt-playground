@@ -4,25 +4,23 @@ open Syntax
 
 (** graph context のマッチングを行う．*)
 
-let has_link_of_atom (_, args) x = List.exists (( = ) x) args
+let has_link_of_atom (_, args) x = List.mem x args
 let has_links_of_atom xs atom = List.exists (has_link_of_atom atom) xs
-let has_link_of_atoms x = List.exists @@ List.exists @@ ( = ) x <. snd
+let has_link_of_atoms x = List.exists @@ List.mem x <. snd
 
 let free_links_of_atoms atoms =
   (List.concat_map @@ List.filter is_free_link <. List.map snd) atoms
 
-let links_of_atoms atoms = List.concat_map snd atoms
-
 (** リンクを辿って，連結グラフを取得する *)
 let rec traverse_links traversed_graph rest_graph traversing_links =
-  let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest =
+  let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest_graph =
     List.partition (has_links_of_atom traversing_links) rest_graph
   in
-  if traversable_graph = [] then (traversed_graph, rest)
+  if traversable_graph = [] then (traversed_graph, rest_graph)
   else
-    let new_links = links_of_atoms traversable_graph in
+    let new_links = List.concat_map snd traversable_graph in
     let new_links = ListExtra.set_minus new_links traversing_links in
-    traverse_links (traversable_graph @ traversed_graph) rest new_links
+    traverse_links (traversable_graph @ traversed_graph) rest_graph new_links
 
 (** graph context をマッチングさせる *)
 let match_ctxs ctxs_lhs target_graph =
