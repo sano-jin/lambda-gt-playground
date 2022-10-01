@@ -73,7 +73,7 @@ For the syntax and semantics, please see
 
   evaluates `exp`, prints the value, and results in the value.
 
-## Develop
+## Development
 
 ![dependency graph](/docs/dependency.svg)
 

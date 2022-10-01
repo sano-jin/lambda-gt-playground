@@ -1,5 +1,8 @@
 # A reference interpreter of Lambda GT language
 
+[![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
+[![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
+
 ![examples of graphs](/docs/graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
@@ -40,17 +43,6 @@ dune build
 
 which will result in `{_Y >< _X}`.
 
-For the syntax and semantics, please see
-[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
-
-- We have enabled logging.
-
-  ```ocaml
-  {Log} exp
-  ```
-
-  evaluates `exp`, prints the value, and results in the value.
-
 See [/example](/example) for more examples.
 
 ## Syntax
@@ -70,7 +62,18 @@ Atom Name      v ::= Constr                                 // constructor name
                   |  <\ x [_X1, ..., _Xn]. e>               // lambda abstraction
 ```
 
-## Develop
+For the syntax and semantics, please see
+[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
+
+- We have enabled logging.
+
+  ```ocaml
+  {Log} exp
+  ```
+
+  evaluates `exp`, prints the value, and results in the value.
+
+## Development
 
 ![dependency graph](/docs/dependency.svg)
 
@@ -78,7 +81,7 @@ Please give me issues or pull requests if you find any bugs or solutions for the
 
 We aim to build the simplest implementation.
 Thus, we may not accept a request for an enhancement.
-However, we appreciate it because it will be useful in the design and implementation
+However, we appreciate it because it will be helpful in the design and implementation
 of the _real_ language based on this POC.
 
 | File                | LOC |
@@ -178,3 +181,7 @@ Please feel free to contact me (ask me any questions about this).
 
 - [twitter@sano65747676](https://twitter.com/sano65747676)
 - [homepage](https://www.ueda.info.waseda.ac.jp/~sano/)
+
+## License
+
+MIT
