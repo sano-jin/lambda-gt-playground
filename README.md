@@ -7,21 +7,15 @@ such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees
 Normally, these structures are handled with destructive assignments to heaps,
 as opposed to a purely functional programming style.
 
-We proposed a new purely functional language, λGT,
+We propose a new purely functional language, λGT,
 that handles graphs as immutable, first-class data structures with
 a pattern matching mechanism based on Graph Transformation.
-
-Since graphs can be more complex than trees and require non-trivial formalism,
-the implementation of the language is also more complicated than ordinary functional languages.
-λGT is even more advanced than the ordinary graph transformation systems.
 
 We implemented a reference interpreter, a reference implementation of the language.
 We believe this is usable for further investigation, including in the design of real languages based on λGT.
 The interpreter is written in only 500 lines of OCaml code.
 
-We have also implemented a visualizing tool
-that runs on a browser, which is available at
-<https://sano-jin.github.io/lambda-gt-online/>.
+We also have [a visualizing tool that runs on a browser](https://sano-jin.github.io/lambda-gt-online/).
 
 ## Getting Started
 
