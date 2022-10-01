@@ -2,7 +2,6 @@ open Util
 open Util.OptionExtra
 open Syntax
 open Preprocess
-open Match_ctxs
 
 (** lambda abstraction atom を評価した時に，クロージャにする *)
 let make_closure theta = function
@@ -37,6 +36,6 @@ let fuse_fusions graph =
     let+ fusion, (g1, g2) =
       ListExtra.rev_break_opt get_local_fusion_opt graph
     in
-    subst_link_of_atoms [ fusion ] (List.rev_append g1 g2)
+    Postprocess.subst_link_of_atoms [ fusion ] (List.rev_append g1 g2)
   in
   whileM fuse_fusion graph

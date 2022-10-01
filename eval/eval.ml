@@ -5,6 +5,7 @@ include Match_atoms
 include Match_ctxs
 include Match
 include Pushout
+include Postprocess
 
 let ctx_of (x, args) = (x, List.map (fun x -> FreeLink x) args)
 
@@ -15,8 +16,8 @@ let rec eval theta = function
       let v2 = eval theta e2 in
       match v1 with
       | [ (Constr "Log", _) ] ->
-              print_endline @@ "> " ^ string_of_graph_with_nu v2;
-              v2
+          print_endline @@ "> " ^ string_of_graph_with_nu v2;
+          v2
       | [ (Lam (ctx, e, theta), _) ] ->
           let ctx = ctx_of ctx in
           let theta = (ctx, v2) :: theta in
