@@ -57,12 +57,29 @@ See [/example](/example) for more examples.
 
 ![dependency graph](/docs/dependency.svg)
 
-Please give me issues or pull-requests if you find any bugs or the solutions for them.
+Please give me issues or pull requests if you find any bugs or solutions for them.
 
 We aim to build the simplest implementation.
 Thus, we may not accept a request for an enhancement.
 However, we appreciate it because it will be useful in the design and implementation
 of the _real_ language based on this POC.
+
+| File                | LOC |
+| :------------------ | --: |
+| parser/parser.mly   |  67 |
+| parser/lexer.mll    |  51 |
+| eval/eval.ml        |  47 |
+| eval/syntax.ml      |  42 |
+| eval/match_ctxs.ml  |  37 |
+| eval/match_atoms.ml |  36 |
+| eval/preprocess.ml  |  33 |
+| eval/pushout.ml     |  33 |
+| eval/postprocess.ml |  24 |
+| parser/syntax.ml    |  16 |
+| parser/parse.ml     |  10 |
+| eval/match.ml       |   9 |
+| bin/main.ml         |   3 |
+| SUM:                | 408 |
 
 ### [/bin](/bin)
 
