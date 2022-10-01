@@ -1,6 +1,6 @@
 # A reference interpreter of Lambda GT language
 
-![examples of graphs](./docs/graphs-image.svg)
+![examples of graphs](/docs/graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
@@ -51,7 +51,7 @@ For the syntax and semantics, please see
 
   evaluates `exp`, prints the value, and results in the value.
 
-See [/example](example) for more examples.
+See [/example](/example) for more examples.
 
 ## Citation
 

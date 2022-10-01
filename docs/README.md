@@ -57,6 +57,47 @@ See [/example](/example) for more examples.
 
 ![dependency graph](/docs/dependency.svg)
 
+Please give me issues or pull-requests if you find any bugs or the solutions for them.
+
+We aim to build the simplest implementation.
+Thus, we may not accept a request for an enhancement.
+However, we appreciate it because it will be useful in the design and implementation
+of the _real_ language based on this POC.
+
+### [/bin](/bin)
+
+Entry point
+
+| File               | Description                          |
+| ------------------ | ------------------------------------ |
+| [main.ml](main.ml) | Read a file and execute the program. |
+
+### [/eval](/eval)
+
+Evaluator
+
+| File                             | Description                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [syntax.ml](syntax.ml)           | Syntax of atoms as an list.                                                                    |
+| [preprocess.ml](preprocess.ml)   | Transform an AST graph to a list of atoms. Alpha convert link names.                           |
+| [eval.ml](eval.ml)               | The evaluator.                                                                                 |
+| [match.ml](match.ml)             | Matches atoms and graph contexts and returns the obtained graph substitutions.                 |
+| [match_atoms.ml](match_atoms.ml) | Matches atoms and returns the link mappings and the rest graph.                                |
+| [postprocess.ml](postprocess.ml) | Transform the link names in the rest graphs and supply fusions according to the link mappings. |
+| [match_ctxs.ml](match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
+| [pushout.ml](pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
+
+### [/parse](/parse)
+
+_Lexical/Syntax analyzer_
+
+| File                     | Description                   |
+| ------------------------ | ----------------------------- |
+| [syntax.ml](syntax.ml)   | AST definition                |
+| [lexer.mll](lexer.mll)   | Defines a token for lexing    |
+| [parser.mly](parser.mly) | Defines a grammar for parsing |
+| [parse.ml](parse.ml)     | Parser                        |
+
 ## Citation
 
 1. ([pdf](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf),
