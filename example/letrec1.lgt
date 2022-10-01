@@ -3,7 +3,7 @@
 %   | otherwise -> Error
 
 let rec f[_X] nodes[_Y, _X] = 
-  case {nodes[_Y, _X]} of
+  case { Log } {nodes[_Y, _X]} of
     {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])} -> {f [_X]} { nodes [_Y, _X] } 
     | otherwise -> { Empty }
 in
