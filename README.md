@@ -124,16 +124,16 @@ Evaluator
 | [match_ctxs.ml](/eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
 | [pushout.ml](/eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
 
-### [/parse](/parse)
+### [/parser](/parser)
 
 _Lexical/Syntax analyzer_
 
-| File                            | Description                   |
-| ------------------------------- | ----------------------------- |
-| [syntax.ml](/parse/syntax.ml)   | AST definition                |
-| [lexer.mll](/parse/lexer.mll)   | Defines a token for lexing    |
-| [parser.mly](/parse/parser.mly) | Defines a grammar for parsing |
-| [parse.ml](/parse/parse.ml)     | Parser                        |
+| File                             | Description                   |
+| -------------------------------- | ----------------------------- |
+| [syntax.ml](/parser/syntax.ml)   | AST definition                |
+| [lexer.mll](/parser/lexer.mll)   | Defines a token for lexing    |
+| [parser.mly](/parser/parser.mly) | Defines a grammar for parsing |
+| [parse.ml](/parser/parse.ml)     | Parser                        |
 
 ## Citation
 
