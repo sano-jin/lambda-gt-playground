@@ -1,5 +1,8 @@
 # A reference interpreter of Lambda GT language
 
+[![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
+[![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
+
 ![examples of graphs](/docs/graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
@@ -40,19 +43,6 @@ dune build
 
 which will result in `{_Y >< _X}`.
 
-For the syntax and semantics, please see
-[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
-
-- We have enabled logging.
-
-  ```ocaml
-  {Log} exp
-  ```
-
-  evaluates `exp`, prints the value, and results in the value.
-
-See [/example](/example) for more examples.
-
 ## Syntax
 
 ```
@@ -69,6 +59,19 @@ Graph Template T ::= v (_X1, ..., _Xn)                      // atom
 Atom Name      v ::= Constr                                 // constructor name
                   |  <\ x [_X1, ..., _Xn]. e>               // lambda abstraction
 ```
+
+For the syntax and semantics, please see
+[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
+
+- We have enabled logging.
+
+  ```ocaml
+  {Log} exp
+  ```
+
+  evaluates `exp`, prints the value, and results in the value.
+
+See [/example](/example) for more examples.
 
 ## Develop
 
@@ -178,3 +181,7 @@ Please feel free to contact me (ask me any questions about this).
 
 - [twitter@sano65747676](https://twitter.com/sano65747676)
 - [homepage](https://www.ueda.info.waseda.ac.jp/~sano/)
+
+## License
+
+MIT
