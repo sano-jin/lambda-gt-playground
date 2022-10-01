@@ -1,6 +1,6 @@
 open Util
 
-(** find_atoms をした後の link_env の後処理をする *)
+(** グラフのマッチングを行い．graph substitions を返す *)
 let match_ (atoms_lhs, ctxs_lhs) target_graph =
   match
     Match_atoms.find_atoms
