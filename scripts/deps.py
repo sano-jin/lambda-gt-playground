@@ -1,4 +1,4 @@
-# python3 scripts/deps.py bin eval parser | dot -Tsvg > output.svg
+# python3 scripts/deps.py bin eval parser | dot -Tsvg > dependency.svg
 
 import subprocess
 import re
