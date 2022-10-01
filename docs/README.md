@@ -53,6 +53,23 @@ For the syntax and semantics, please see
 
 See [/example](/example) for more examples.
 
+## Syntax
+
+```
+Expression     e ::= { T }                                  // graph
+                  |  e1 e2                                  // application
+                  |  case e1 of e2 -> e3 | otherwise -> e4  // case expression
+
+Graph Template T ::= v (_X1, ..., _Xn)                      // atom
+                  |  _X >< _Y                               // fusion
+                  |  x [_X1, ..., _Xn]                      // graph context
+                  |  (T, T)                                 // molecule
+                  |  nu _X. T                               // link creation
+
+Atom Name      v ::= Constr                                 // constructor name
+                  |  <\ x [_X1, ..., _Xn]. e>               // lambda abstraction
+```
+
 ## Develop
 
 ![dependency graph](/docs/dependency.svg)

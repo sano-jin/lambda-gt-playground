@@ -29,11 +29,13 @@ let string_of_atom_name = function
   | Constr name -> name
   | Lam _ | RecLam _ -> "<fun>"
 
-let string_of_atom (atom_name, args) =
-  string_of_atom_name atom_name
-  ^ " ("
-  ^ String.concat ", " (List.map string_of_link args)
-  ^ ")"
+let string_of_atom = function
+  | Constr "><", [ x; y ] -> string_of_link x ^ " >< " ^ string_of_link y
+  | atom_name, args ->
+      string_of_atom_name atom_name
+      ^ " ("
+      ^ String.concat ", " (List.map string_of_link args)
+      ^ ")"
 
 let fusion_of x y = (Constr "><", [ x; y ])
 let is_free_link = function LocalLink _ -> false | FreeLink _ -> true
@@ -42,8 +44,7 @@ let local_links_of_graph =
   List.concat_map (List.filter (not <. is_free_link)) <. List.map snd
 
 let string_of_graph atoms =
-  let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
-  "{" ^ graph_str ^ "}"
+  "{" ^ String.concat ", " (List.map string_of_atom atoms) ^ "}"
 
 let string_of_graph_with_nu atoms =
   let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
