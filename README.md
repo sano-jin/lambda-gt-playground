@@ -38,7 +38,7 @@ dune build
 ./run example/dlist.lgt
 ```
 
-which will result in `{>< (_Y, _X)}`.
+which will result in `{_Y >< _X}`.
 
 For the syntax and semantics, please see
 [the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
