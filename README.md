@@ -43,6 +43,8 @@ dune build
 
 which will result in `{_Y >< _X}`.
 
+See [/example](/example) for more examples.
+
 ## Syntax
 
 ```
@@ -71,8 +73,6 @@ For the syntax and semantics, please see
 
   evaluates `exp`, prints the value, and results in the value.
 
-See [/example](/example) for more examples.
-
 ## Develop
 
 ![dependency graph](/docs/dependency.svg)
@@ -81,7 +81,7 @@ Please give me issues or pull requests if you find any bugs or solutions for the
 
 We aim to build the simplest implementation.
 Thus, we may not accept a request for an enhancement.
-However, we appreciate it because it will be useful in the design and implementation
+However, we appreciate it because it will be helpful in the design and implementation
 of the _real_ language based on this POC.
 
 | File                | LOC |
