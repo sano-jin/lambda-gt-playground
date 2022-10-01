@@ -60,17 +60,14 @@ let match_ctxs ctxs_lhs target_graph =
         (* ターゲットのグラフのマッチングを試していないアトムのリストを引数にとる *)
         let free_links = snd ctx in
         (* リンクを辿って，連結グラフを取得する *)
-        let rec traverse_links traversed_graph rest_graph traversed_links
-            traversing_links =
+        let rec traverse_links traversed_graph rest_graph traversing_links =
           let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest =
             List.partition (has_links_of_atom traversing_links) rest_graph
           in
           if traversable_graph = [] then
             if
-              (* ListExtra.set_eq free_links (links_of_atoms traversed_graph)
-                 && *)
-              (* これ以上辿れない局所リンクは自由リンクとしてマッチングできる．従って，これは set_minus をすれば良い（厳密に
-                 graph context の自由リンクと同じである必要はない）．*)
+              (* target graph の自由自由リンクは必ず template
+                 の自由リンクでマッチする必要があるので含まれているかどうか確認する． *)
               ListExtra.set_minus
                 (free_links_of_atoms traversed_graph)
                 free_links
@@ -79,25 +76,16 @@ let match_ctxs ctxs_lhs target_graph =
             else None
           else
             let new_links = links_of_atoms traversable_graph in
-            let traversed_links = traversing_links @ traversed_links in
-            let new_links = ListExtra.set_minus new_links traversed_links in
-            traverse_links
-              (traversable_graph @ traversed_graph)
-              rest traversed_links new_links
+            let new_links = ListExtra.set_minus new_links traversing_links in
+            traverse_links (traversable_graph @ traversed_graph) rest new_links
         in
 
-        let rec match_ctx tested_target_atoms = function
-          | [] -> None (* 全て失敗 *)
-          | target_atom :: rest_target_atoms ->
-              (let* matched_graph, rest_target_graph =
-                 traverse_links [] target_graph [] (snd ctx)
-               in
-               match_ctxs
-                 ((ctx, matched_graph) :: theta)
-                 rest_target_graph rest_lhs_ctxs)
-              <|> fun _ ->
-              match_ctx (target_atom :: tested_target_atoms) rest_target_atoms
-        in
-        match_ctx [] target_graph
+        (let* matched_graph, rest_target_graph =
+           traverse_links [] target_graph free_links
+         in
+         match_ctxs
+           ((ctx, matched_graph) :: theta)
+           rest_target_graph rest_lhs_ctxs)
+        <|> fun _ -> match_ctxs theta target_graph rest_lhs_ctxs
   in
   match_ctxs [] target_graph ctxs_lhs
