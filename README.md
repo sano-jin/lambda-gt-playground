@@ -1,6 +1,5 @@
 # A reference interpreter of Lambda GT language
 
-[![Repository](https://img.shields.io/badge/github-%40lambda%20gt%20alpha-yellow?style=flat-square)][repo]
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
 
