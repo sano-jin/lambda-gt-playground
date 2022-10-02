@@ -1,9 +1,10 @@
 # A reference interpreter of Lambda GT language
 
+[![Repository](https://img.shields.io/badge/guthub-%40lambda%20gt%20alpha-yellow?style=flat-square)][repo]
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
 
-![examples of graphs](/docs/graphs-image.svg)
+![examples of graphs](docs/graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
@@ -75,7 +76,7 @@ For the syntax and semantics, please see
 
 ## Development
 
-![dependency graph](/docs/dependency.svg)
+![dependency graph](docs/dependency.svg)
 
 Please give me issues or pull requests if you find any bugs or solutions for them.
 
@@ -185,3 +186,5 @@ Please feel free to contact me (ask me any questions about this).
 ## License
 
 MIT
+
+[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/master/
