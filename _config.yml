@@ -23,12 +23,11 @@ email: sano@ueda.info.waseda.ac.jp
 description: >- # this means to ignore newlines until "baseurl:"
   Master's student at Department of Computer Science and Communications Engineering, 
   Waseda University, Japan.
-  # baseurl: "/~sano" # the subpath of your site, e.g. /blog
-  # url: "" # the base hostname & protocol for your site, e.g. http://example.com
+
+# baseurl: "/~sano" # the subpath of your site, e.g. /blog
+# url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: sano65747676
 github_username: sano-jin
-destination: public_html
-include: [.htaccess]
 
 # Build settings
 # theme: bulma-clean-theme
