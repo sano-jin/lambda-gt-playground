@@ -1,4 +1,4 @@
-# opam, 最新の OCaml のインストール方法
+# How to install opam
 
 下記ステップを試してうまくいかなかったら教えてください．
 

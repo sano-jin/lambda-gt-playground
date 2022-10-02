@@ -1,6 +1,4 @@
 ---
-title: Jin SANO
-subtitle: Web Portfolio
 layout: home
 ---
 
