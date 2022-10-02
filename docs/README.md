@@ -1,9 +1,16 @@
+---
+title: Jin SANO
+subtitle: Web Portfolio
+layout: home
+---
+
 # A reference interpreter of Lambda GT language
 
+[![Repository](https://img.shields.io/badge/github-%40lambda%20gt%20alpha-yellow?style=flat-square)][repo]
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
 
-![examples of graphs](/docs/graphs-image.svg)
+![examples of graphs](graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
@@ -43,7 +50,7 @@ dune build
 
 which will result in `{_Y >< _X}`.
 
-See [/example](/example) for more examples.
+See [/example](example) for more examples.
 
 ## Syntax
 
@@ -75,7 +82,7 @@ For the syntax and semantics, please see
 
 ## Development
 
-![dependency graph](/docs/dependency.svg)
+![dependency graph](dependency.svg)
 
 Please give me issues or pull requests if you find any bugs or solutions for them.
 
@@ -101,39 +108,39 @@ of the _real_ language based on this POC.
 | bin/main.ml         |   3 |
 | SUM:                | 408 |
 
-### [/bin](/bin)
+### [/bin](bin)
 
 Entry point
 
-| File                    | Description                          |
-| ----------------------- | ------------------------------------ |
-| [main.ml](/bin/main.ml) | Read a file and execute the program. |
+| File                   | Description                          |
+| ---------------------- | ------------------------------------ |
+| [main.ml](bin/main.ml) | Read a file and execute the program. |
 
-### [/eval](/eval)
+### [/eval](eval)
 
 Evaluator
 
-| File                                   | Description                                                                                    |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [syntax.ml](/eval/syntax.ml)           | Syntax of atoms as an list.                                                                    |
-| [preprocess.ml](/eval/preprocess.ml)   | Transform an AST graph to a list of atoms. Alpha convert link names.                           |
-| [eval.ml](/eval/eval.ml)               | The evaluator.                                                                                 |
-| [match.ml](/eval/match.ml)             | Matches atoms and graph contexts and returns the obtained graph substitutions.                 |
-| [match_atoms.ml](/eval/match_atoms.ml) | Matches atoms and returns the link mappings and the rest graph.                                |
-| [postprocess.ml](/eval/postprocess.ml) | Transform the link names in the rest graphs and supply fusions according to the link mappings. |
-| [match_ctxs.ml](/eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
-| [pushout.ml](/eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
+| File                                  | Description                                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [syntax.ml](eval/syntax.ml)           | Syntax of atoms as an list.                                                                    |
+| [preprocess.ml](eval/preprocess.ml)   | Transform an AST graph to a list of atoms. Alpha convert link names.                           |
+| [eval.ml](eval/eval.ml)               | The evaluator.                                                                                 |
+| [match.ml](eval/match.ml)             | Matches atoms and graph contexts and returns the obtained graph substitutions.                 |
+| [match_atoms.ml](eval/match_atoms.ml) | Matches atoms and returns the link mappings and the rest graph.                                |
+| [postprocess.ml](eval/postprocess.ml) | Transform the link names in the rest graphs and supply fusions according to the link mappings. |
+| [match_ctxs.ml](eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
+| [pushout.ml](eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
 
-### [/parser](/parser)
+### [/parser](parser)
 
 _Lexical/Syntax analyzer_
 
-| File                             | Description                   |
-| -------------------------------- | ----------------------------- |
-| [syntax.ml](/parser/syntax.ml)   | AST definition                |
-| [lexer.mll](/parser/lexer.mll)   | Defines a token for lexing    |
-| [parser.mly](/parser/parser.mly) | Defines a grammar for parsing |
-| [parse.ml](/parser/parse.ml)     | Parser                        |
+| File                            | Description                   |
+| ------------------------------- | ----------------------------- |
+| [syntax.ml](parser/syntax.ml)   | AST definition                |
+| [lexer.mll](parser/lexer.mll)   | Defines a token for lexing    |
+| [parser.mly](parser/parser.mly) | Defines a grammar for parsing |
+| [parse.ml](parser/parse.ml)     | Parser                        |
 
 ## Citation
 
@@ -185,3 +192,5 @@ Please feel free to contact me (ask me any questions about this).
 ## License
 
 MIT
+
+[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/master/
