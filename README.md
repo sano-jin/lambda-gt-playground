@@ -114,27 +114,27 @@ Entry point
 
 Evaluator
 
-| File                                   | Description                                                                                    |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [syntax.ml](eval/syntax.ml)            | Syntax of atoms as an list.                                                                    |
-| [preprocess.ml](/eval/preprocess.ml)   | Transform an AST graph to a list of atoms. Alpha convert link names.                           |
-| [eval.ml](/eval/eval.ml)               | The evaluator.                                                                                 |
-| [match.ml](/eval/match.ml)             | Matches atoms and graph contexts and returns the obtained graph substitutions.                 |
-| [match_atoms.ml](/eval/match_atoms.ml) | Matches atoms and returns the link mappings and the rest graph.                                |
-| [postprocess.ml](/eval/postprocess.ml) | Transform the link names in the rest graphs and supply fusions according to the link mappings. |
-| [match_ctxs.ml](/eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
-| [pushout.ml](/eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
+| File                                  | Description                                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [syntax.ml](eval/syntax.ml)           | Syntax of atoms as an list.                                                                    |
+| [preprocess.ml](eval/preprocess.ml)   | Transform an AST graph to a list of atoms. Alpha convert link names.                           |
+| [eval.ml](eval/eval.ml)               | The evaluator.                                                                                 |
+| [match.ml](eval/match.ml)             | Matches atoms and graph contexts and returns the obtained graph substitutions.                 |
+| [match_atoms.ml](eval/match_atoms.ml) | Matches atoms and returns the link mappings and the rest graph.                                |
+| [postprocess.ml](eval/postprocess.ml) | Transform the link names in the rest graphs and supply fusions according to the link mappings. |
+| [match_ctxs.ml](eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
+| [pushout.ml](eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
 
 ### [/parser](parser)
 
 _Lexical/Syntax analyzer_
 
-| File                             | Description                   |
-| -------------------------------- | ----------------------------- |
-| [syntax.ml](/parser/syntax.ml)   | AST definition                |
-| [lexer.mll](/parser/lexer.mll)   | Defines a token for lexing    |
-| [parser.mly](/parser/parser.mly) | Defines a grammar for parsing |
-| [parse.ml](/parser/parse.ml)     | Parser                        |
+| File                            | Description                   |
+| ------------------------------- | ----------------------------- |
+| [syntax.ml](parser/syntax.ml)   | AST definition                |
+| [lexer.mll](parser/lexer.mll)   | Defines a token for lexing    |
+| [parser.mly](parser/parser.mly) | Defines a grammar for parsing |
+| [parse.ml](parser/parse.ml)     | Parser                        |
 
 ## Citation
 
