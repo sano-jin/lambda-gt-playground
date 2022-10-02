@@ -1,8 +1,7 @@
 ---
 layout: home
+title: A reference interpreter of Lambda GT language
 ---
-
-# A reference interpreter of Lambda GT language
 
 [![Repository](https://img.shields.io/badge/github-%40lambda%20gt%20alpha-yellow?style=flat-square)][repo]
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
