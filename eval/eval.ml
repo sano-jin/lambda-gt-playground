@@ -25,7 +25,7 @@ let rec eval theta = function
       | [ ((RecLam (ctx1, ctx2, e, theta), _) as rec_lam) ] ->
           let ctx1 = ctx_of ctx1 in
           let ctx2 = ctx_of ctx2 in
-          let theta = (ctx1, [ rec_lam ]) :: (ctx2, v2) :: theta in
+          let theta = (ctx2, v2) :: (ctx1, [ rec_lam ]) :: theta in
           eval theta e
       | _ -> failwith @@ "function expected but got " ^ string_of_graph v1)
   | Case (e1, template, e2, e3) -> (
