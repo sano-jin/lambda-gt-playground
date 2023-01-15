@@ -9,6 +9,11 @@ let string_of_link = function
   | FreeLink link -> link
   | LocalLink i -> "_L" ^ string_of_int i
 
+module StringSet = Set.Make (String)
+
+type free_links = StringSet.t list
+(** free links are represented with a quotient set of link names *)
+
 type atom_name =
   | Constr of string  (** constructor name *)
   | Lam of Parse.ctx * exp * theta  (** lambda abstraction *)
