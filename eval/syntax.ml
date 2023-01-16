@@ -9,10 +9,11 @@ let string_of_link = function
   | FreeLink link -> link
   | LocalLink i -> "_L" ^ string_of_int i
 
-module StringSet = Set.Make (String)
+module FFs = QuoSet.Make (String)
+(** Free fusions. *)
 
-type free_links = StringSet.t list
-(** free links are represented with a quotient set of link names *)
+type free_links = FFs.t
+(** Free links are represented with a quotient set of link names. *)
 
 type atom_name =
   | Constr of string  (** constructor name *)
@@ -22,12 +23,13 @@ type atom_name =
 and atom = atom_name * link list
 and ctx = string * link list
 
+(* and graph = atom list * free_links *)
 and graph = atom list
 (** graph as data*)
 
 and theta = (ctx * graph) list
 
-type e_graph = atom list * ctx list
+type graph_template = atom list * ctx list
 (** graph on the left/right-hand side of rules *)
 
 let string_of_atom_name = function
@@ -45,15 +47,15 @@ let string_of_atom = function
 let fusion_of x y = (Constr "><", [ x; y ])
 let is_free_link = function LocalLink _ -> false | FreeLink _ -> true
 
-let local_links_of_graph =
-  List.concat_map (List.filter (not <. is_free_link)) <. List.map snd
+let local_links_of_graph atoms =
+  List.concat_map (List.filter (not <. is_free_link)) @@ List.map snd atoms
 
 let string_of_graph atoms =
   "{" ^ String.concat ", " (List.map string_of_atom atoms) ^ "}"
 
-let string_of_graph_with_nu atoms =
+let string_of_graph_with_nu (atoms as graph) =
   let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
-  let local_links = List.sort_uniq compare @@ local_links_of_graph atoms in
+  let local_links = List.sort_uniq compare @@ local_links_of_graph graph in
   let local_links_str =
     let helper local_link = "nu " ^ string_of_link local_link ^ ". " in
     String.concat "" @@ List.map helper local_links
