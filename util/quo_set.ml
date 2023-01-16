@@ -71,7 +71,7 @@ module Make (Ord : OrderedType) = struct
   (** Fuse x with y in a given quotient set. *)
   let fuse x y = merge @@ of_lists [ [ x; y ] ]
 
-  (** Pretty print a quotient set *)
+  (** Pretty print a quotient set. *)
   let to_string string_of_elem =
     let string_of_set string_of_elem elem =
       "{" ^ String.concat ", " (List.map string_of_elem elem) ^ "}"
