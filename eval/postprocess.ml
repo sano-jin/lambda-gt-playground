@@ -4,9 +4,11 @@ open Syntax
 (** atom のマッチング終了後，graph context のマッチングの前に，[link_env] を用いて，残りの target graph
     のリンク名を変換し，fusion を補う．*)
 
+(** Link name substitution. *)
 let subst_link_of_link link_env x =
   Option.value (List.assoc_opt x link_env) ~default:x
 
+(** Link name substitutions in a list of atoms (a graph). *)
 let subst_link_of_atoms = List.map <. second <. List.map <. subst_link_of_link
 
 (** target graph において同じリンク名となるリンクに対応している，テンプレートのリンクをまとめる， *)

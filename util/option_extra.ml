@@ -5,6 +5,7 @@ open Combinator
 (** *)
 let ( >>= ) = Option.bind
 
+let ( =<< ) x y = Option.bind y x
 let ( let* ) = Option.bind
 let ( <$> ) = Option.map
 let ( let+ ) x f = Option.map f x

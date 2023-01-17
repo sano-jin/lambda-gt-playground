@@ -18,7 +18,7 @@ let test_find_atoms graph lhs =
   prerr_endline @@ string_of_graph graph;
   prerr_endline @@ string_of_graph lhs;
   prerr_endline
-    (match Eval.find_atoms Option.some lhs graph with
+    (match Eval.match_atoms Option.some lhs graph with
     | None -> "match failed"
     | Some (link_env, graph) ->
         "match succeded with link_env = "

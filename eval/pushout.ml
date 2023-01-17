@@ -8,11 +8,12 @@ let make_closure theta = function
   | Lam (ctx, e, _), links -> (Lam (ctx, e, theta), links)
   | atom -> atom
 
-(** matching 後の代入 *)
+(** Check that the given two atoms or graph contexts have the same functors. *)
 let check_functor (v1, args1) (v2, args2) =
   (v1, List.length args1) = (v2, List.length args2)
 
-(** matching 後の代入 *)
+(** [synthesis theta template_graph] substitutes with [theta] to
+    [template_graph]. *)
 let synthesis theta template_graph =
   let i, (atoms, ctxs) = alpha 0 [] template_graph in
   let atoms = List.map (make_closure theta) atoms in
@@ -26,11 +27,15 @@ let synthesis theta template_graph =
   let _, graphs = List.fold_left_map subst_graph i ctxs in
   atoms @ List.concat graphs
 
+(** Get fusing links from an atom. At least one of the links should be a local
+    link. *)
 let get_local_fusion_opt = function
   | Constr "><", ([ (LocalLink _ as x); y ] | [ y; (LocalLink _ as x) ]) ->
       Some (x, y)
   | _ -> None
 
+(** [fuse_fusions graph] absorbs all the fusions in the [graph] except for that
+    connects free links. *)
 let fuse_fusions graph =
   let fuse_fusion graph =
     let+ fusion, (g1, g2) =

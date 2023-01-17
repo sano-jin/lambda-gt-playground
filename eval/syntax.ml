@@ -16,16 +16,17 @@ type free_links = FFs.t
 (** Free links are represented with a quotient set of link names. *)
 
 type atom_name =
-  | Constr of string  (** constructor name *)
-  | Lam of Parse.ctx * exp * theta  (** lambda abstraction *)
-  | RecLam of Parse.ctx * Parse.ctx * exp * theta  (** lambda abstraction *)
+  | Constr of string  (** Constructor Name. *)
+  | Lam of Parse.ctx * exp * theta  (** Lambda Abstraction. *)
+  | RecLam of Parse.ctx * Parse.ctx * exp * theta
+      (** Lambda Abstraction with a name for a recursive definition. *)
 
 and atom = atom_name * link list
 and ctx = string * link list
 
 (* and graph = atom list * free_links *)
 and graph = atom list
-(** graph as data*)
+(** graph as data. *)
 
 and theta = (ctx * graph) list
 

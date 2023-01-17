@@ -54,6 +54,21 @@ module Make (Ord : OrderedType) = struct
     let sets = List.map EC.of_list ls in
     List.fold_right insert sets empty
 
+  (** Choose a representative element in the given equivalence set. *)
+  let choose = EC.choose
+
+  (** Return a representative element in the equivalence set that has the given
+      element. [repr elem ec]. *)
+  let repr = EC.choose <.. List.find <. EC.mem
+
+  (** Restrict the support set of the given quotient set with the given support
+      set. [restrict support quo_set]. *)
+  let restrict =
+    List.filter (not <. EC.is_empty) <.. List.map <. EC.filter <. flip List.mem
+
+  (** Extend the support set of the quitient set. [extend support quo_set]. *)
+  let extend = flip @@ List.fold_right (insert <. EC.singleton)
+
   (** Generate a quotient set (reflective transitive closure). *)
   let generate =
     let rec helper rq = function
@@ -70,6 +85,23 @@ module Make (Ord : OrderedType) = struct
 
   (** Fuse x with y in a given quotient set. *)
   let fuse x y = merge @@ of_lists [ [ x; y ] ]
+
+  (** Canonical surjection. *)
+  let surjection = List.find <. EC.mem
+
+  (** Simplify the quotient set.
+
+      @deprecated 2022/1/17 *)
+  let simplify q = List.filter (fun ec -> EC.cardinal ec > 1) q
+
+  (** Test if the quotient set [q1] is finer than the quotient set [q2]. *)
+  let is_finer q1 q2 =
+    let helper ec1 =
+      let elem1 = EC.choose ec1 in
+      let ec2 = List.find (EC.mem elem1) q2 in
+      EC.subset ec1 ec2
+    in
+    List.for_all helper q1
 
   (** Pretty print a quotient set. *)
   let to_string string_of_elem =
