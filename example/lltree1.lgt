@@ -1,5 +1,5 @@
 % lltree1.lgt
-% Map leaves of an leaf-linked tree.
+% Map leaves of a leaf-linked tree.
 
 let f[_X] = {<\x[_X]. {nu _X1. nu _X2. (Succ (_X1, _X), x [_X1])}>(_X)} in
 

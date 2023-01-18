@@ -1,5 +1,5 @@
 % lltree2.lgt
-% Failure: map leaves of an leaf-linked tree but unsuccessful.
+% Failure: map leaves of a leaf-linked tree but unsuccessful.
 
 let f[_X] = {<\x[_X]. {nu _X1. nu _X2. (Succ (_X1, _X), x [_X1])}>(_X)} in
 

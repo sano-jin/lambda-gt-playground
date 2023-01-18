@@ -72,9 +72,10 @@ let dump_atoms atoms =
 let string_of_graph (atoms as graph) =
   let graph_str = String.concat ", " @@ List.map string_of_atom atoms in
   let local_links = List.sort_uniq compare @@ local_links_of_atoms graph in
-  let local_links_str =
-    "nu " ^ String.concat " " (List.map string_of_link local_links) ^ ". "
-  in
-  if local_links <> [] && List.length atoms > 1 then
-    "{" ^ local_links_str ^ "(" ^ graph_str ^ ")}"
-  else "{" ^ local_links_str ^ graph_str ^ "}"
+  if local_links = [] then "{" ^ graph_str ^ "}"
+  else
+    let local_links_str =
+      "nu " ^ String.concat " " (List.map string_of_link local_links) ^ ". "
+    in
+    if List.length atoms > 1 then "{" ^ local_links_str ^ "(" ^ graph_str ^ ")}"
+    else "{" ^ local_links_str ^ graph_str ^ "}"
