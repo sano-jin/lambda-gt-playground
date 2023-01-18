@@ -142,8 +142,8 @@ let combine_opt list1 list2 =
   helper (list1, list2)
 
 (** pretty print list with the given pretty printer of the elements *)
-let string_of_list string_of_elem list =
-  "[" ^ String.concat "; " (List.map string_of_elem list) ^ "]"
+let string_of_list string_of_elem ls =
+  "[" ^ String.concat "; " (List.map string_of_elem ls) ^ "]"
 
 (** Set operations. * Note this is not as efficient as the operations that the
     [Set] module provides *)

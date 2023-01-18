@@ -102,6 +102,8 @@ module Make (Ord : OrderedType) = struct
     in
     List.sort compare <. List.concat_map (helper <. EC.elements)
 
+  (** [string_of_graph string_of_elem graph] pretty prints [graph] using
+      [string_of_elem]. *)
   let string_of_graph string_of_elem graph =
     let string_of_pair (e1, e2) =
       "(" ^ string_of_elem e1 ^ ", " ^ string_of_elem e2 ^ ")"
