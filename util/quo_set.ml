@@ -44,10 +44,10 @@ module Make (Ord : OrderedType) = struct
   let list_of_ec = EC.elements
 
   (** Convert a quotient set to a list of lists. *)
-  let to_lists = List.map EC.elements
+  let lists_of = List.map EC.elements
 
   (** Returns the support set *)
-  let support = List.concat <. to_lists
+  let support = List.concat <. lists_of
 
   (** Convert to a quotient set from a list of lists. *)
   let of_lists ls =
@@ -94,6 +94,20 @@ module Make (Ord : OrderedType) = struct
       @deprecated 2022/1/17 *)
   let simplify q = List.filter (fun ec -> EC.cardinal ec > 1) q
 
+  (** [graph q] returns a graph (relation). E.g.,
+      [graph (of_lists \[\[1; 2\]; \[3; 4; 5\]\]) = \[(1, 2); (2, 1); (3, 4); (4, 5); (5, 3)\]]. *)
+  let graph =
+    let helper ls =
+      List.concat_map (fun e1 -> List.map (fun e2 -> (e1, e2)) ls) ls
+    in
+    List.sort compare <. List.concat_map (helper <. EC.elements)
+
+  let string_of_graph string_of_elem graph =
+    let string_of_pair (e1, e2) =
+      "(" ^ string_of_elem e1 ^ ", " ^ string_of_elem e2 ^ ")"
+    in
+    "{" ^ String.concat ", " (List.map string_of_pair graph) ^ "}"
+
   (** Test if the quotient set [q1] is finer than the quotient set [q2]. *)
   let is_finer q1 q2 =
     let helper ec1 =
@@ -108,5 +122,5 @@ module Make (Ord : OrderedType) = struct
     let string_of_set string_of_elem elem =
       "{" ^ String.concat ", " (List.map string_of_elem elem) ^ "}"
     in
-    string_of_set (string_of_set string_of_elem) <. to_lists
+    string_of_set (string_of_set string_of_elem) <. lists_of
 end

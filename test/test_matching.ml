@@ -7,11 +7,11 @@ let string_of_link_env =
   let helper (x, y) = string_of_link (LocalLink x) ^ "->" ^ string_of_link y in
   ListExtra.string_of_list helper
 
-let test_find_atoms graph lhs =
-  prerr_endline @@ "testing whether '" ^ graph ^ "' can be matched with (" ^ lhs
-  ^ ":- ...)";
-  let graph = Parse.parse_graph graph in
-  let lhs = Parse.parse_graph lhs in
+let test_find_atoms host_graph template_graph =
+  prerr_endline @@ "testing whether a host graph '" ^ host_graph
+  ^ "' can be matched with a graph template " ^ template_graph ^ ".";
+  let graph = Parse.parse_graph host_graph in
+  let lhs = Parse.parse_graph template_graph in
   let _, (graph, _) = alpha100 graph in
   let graph = alpha_min graph in
   let _, (lhs, _) = alpha100 lhs in

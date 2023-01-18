@@ -1,28 +1,31 @@
 (* test util *)
 
+let config =
+  [
+    ("parse", true);
+    ("preprocess", false);
+    ("matching", false);
+    ("match_atoms", false);
+    ("synthesis", false);
+    ("eval", false);
+    ("util", true);
+  ]
+
+let run_test name test =
+  match List.assoc_opt name config with
+  | None -> failwith @@ "Cannot find '" ^ name ^ "' in the configuration"
+  | Some true ->
+      prerr_endline @@ String.make 80 '-';
+      prerr_endline @@ "testing '" ^ name ^ "'.";
+      test ();
+      prerr_newline ()
+  | Some false -> ()
+
 let () =
-  prerr_endline @@ "testing parser";
-  Test_parse.test ();
-  prerr_newline ();
-
-  prerr_endline @@ "testing preprocessor";
-  Test_preprocess.test ();
-  prerr_newline ();
-
-  prerr_endline @@ "testing find_atoms";
-  Test_matching.test ();
-  prerr_newline ();
-
-  prerr_endline @@ "testing match_atoms";
-  Test_match_atoms.test ();
-  prerr_newline ();
-
-  prerr_endline @@ "testing match_and_synthesis";
-  Test_synthesis.test ();
-  prerr_newline ();
-
-  prerr_endline @@ "testing eval";
-  Test_eval.test ();
-  prerr_newline ();
-
-  Test_util.test ()
+  run_test "parse" Test_parse.test;
+  run_test "preprocess" Test_preprocess.test;
+  run_test "matching" Test_matching.test;
+  run_test "match_atoms" Test_match_atoms.test;
+  run_test "synthesis" Test_synthesis.test;
+  run_test "eval" Test_eval.test;
+  run_test "util" Test_util.test

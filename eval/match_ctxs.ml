@@ -8,9 +8,6 @@ let has_link_of_atom (_, args) x = List.mem x args
 let has_links_of_atom xs atom = List.exists (has_link_of_atom atom) xs
 let has_link_of_atoms x = List.exists @@ List.mem x <. snd
 
-let free_links_of_atoms atoms =
-  (List.concat_map @@ List.filter is_free_link <. List.map snd) atoms
-
 (** リンクを辿って，連結グラフを取得する *)
 let rec traverse_links traversed_graph rest_graph traversing_links =
   let traversable_graph (* graph context の持つ自由リンクを持つアトムの集合 *), rest_graph =

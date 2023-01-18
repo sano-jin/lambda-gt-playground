@@ -1,8 +1,11 @@
+(** Pretty print expressoins. *)
+
 open Eval
 open Parse
 open Util
 
-let string_of_ctx (x, args) = x ^ " [" ^ String.concat ", " args ^ "]"
+let string_of_ctx (x, args) =
+  if args = [] then x else x ^ "[" ^ String.concat ", " args ^ "]"
 
 let rec string_of_exp = function
   | Graph graph -> "{" ^ string_of_p_graph graph ^ "}"
@@ -19,16 +22,21 @@ let rec string_of_exp = function
 
 and string_of_atom_name = function
   | PConstr name -> name
-  | PLam (ctx, e) -> "<\\ " ^ string_of_ctx ctx ^ " . " ^ string_of_exp e ^ ">"
+  | PLam (ctx, e) -> "<\\" ^ string_of_ctx ctx ^ ". " ^ string_of_exp e ^ ">"
 
 and string_of_p_graph = function
   | Zero -> "0"
+  | Atom (v, []) -> string_of_atom_name v
   | Atom (v, args) ->
       string_of_atom_name v ^ " (" ^ String.concat ", " args ^ ")"
   | Ctx (x, args) -> string_of_ctx (x, args)
   | Mol (g1, g2) ->
       "(" ^ string_of_p_graph g1 ^ ", " ^ string_of_p_graph g2 ^ ")"
-  | Nu (x, g) -> "nu " ^ x ^ ". " ^ string_of_p_graph g
+  | Nu (x, g) -> "nu " ^ x ^ string_of_nus g
+
+and string_of_nus = function
+  | Nu (x, g) -> " " ^ x ^ string_of_nus g
+  | g -> ". " ^ string_of_p_graph g
 
 let string_of_rule (lhs, rhs) =
   string_of_graph lhs ^ " ---> " ^ string_of_graph rhs

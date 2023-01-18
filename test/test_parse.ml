@@ -1,10 +1,12 @@
 let test str =
-  prerr_endline @@ "testing ... " ^ str;
+  prerr_endline @@ "parsing ... ";
+  prerr_endline @@ "    " ^ str;
   let graph = Parse.parse_graph str in
   prerr_endline @@ "    " ^ Pretty.string_of_p_graph graph
 
 let test_exp str =
-  prerr_endline @@ "testing ... " ^ str;
+  prerr_endline @@ "parsing ... ";
+  prerr_endline @@ "    " ^ str;
   let exp = Parse.parse_exp str in
   prerr_endline @@ "    " ^ Pretty.string_of_exp exp
 
@@ -21,13 +23,19 @@ let test () =
 
   test "nu _Z1. nu _Z2. (x [_Z1, _X], y [_Z2, _Z1], Cons(_Y, _Z2))";
 
+  test "nu _Z1 _Z2. (x [_Z1, _X], y [_Z2, _Z1], Cons(_Y, _Z2))";
+
+  test
+    "nu _L0 _L1 _L2 _L3 _L4. (M (_L), Node (_L0, _L1, _X), Leaf (_L2, _L, _L3, \
+     _L0), Zero (_L2), Leaf (_L4, _L3, _R, _L1), Zero (_L4))";
+
   test_exp "{nu _Z. (x [_Z, _X], y [_Y, _Z])}";
 
   test_exp "{f} {nu _Z. (x [_Z, _X], y [_Y, _Z])}";
 
   test_exp
-    "case {nu _Z. (x [_Z, _X], y [_Y, _Z])} of {nu _Z. (x [_Z, _X], y [_Y, \n\
-    \  _Z])} -> {A ()} | otherwise -> {B ()}";
+    "case {nu _Z. (x [_Z, _X], y [_Y, _Z])} of {nu _Z. (x [_Z, _X], y [_Y, \
+     _Z])} -> {A ()} | otherwise -> {B ()}";
 
   test_exp "{<\\x.{x}>}";
 

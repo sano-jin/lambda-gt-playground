@@ -1,6 +1,7 @@
 (* test util *)
 open Util
 module StrQuoSet = QuoSet.Make (String)
+module IQSet = QuoSet.Make (Int)
 
 let s1 = [ "X"; "Y" ]
 let s2 = [ "Y"; "Z" ]
@@ -26,4 +27,26 @@ let test () =
   @@ StrQuoSet.is_finer q3 q6;
 
   let q4 = StrQuoSet.of_lists [ s1; s1; s1; s1; s1 ] in
-  print_endline @@ "q4 = " ^ StrQuoSet.to_string id q4
+  print_endline @@ "q4 = " ^ StrQuoSet.to_string id q4;
+
+  let graph = IQSet.graph (IQSet.of_lists [ [ 1; 2 ]; [ 3; 4; 5 ] ]) in
+  print_endline @@ "graph = " ^ IQSet.string_of_graph string_of_int graph;
+  print_endline @@ "graph: "
+  ^ string_of_bool
+      (graph
+      = List.sort compare
+          [
+            (1, 1);
+            (1, 2);
+            (2, 1);
+            (2, 2);
+            (3, 3);
+            (3, 4);
+            (3, 5);
+            (4, 3);
+            (4, 4);
+            (4, 5);
+            (5, 3);
+            (5, 4);
+            (5, 5);
+          ])
