@@ -1,7 +1,7 @@
 # A reference interpreter of Lambda GT language
 
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
-[![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
+[![Twitter](https://img.shields.io/badge/twitter-%40sano_jn-blue?style=flat-square)](https://twitter.com/sano_jn)
 
 ![examples of graphs](docs/graphs-image.svg)
 
