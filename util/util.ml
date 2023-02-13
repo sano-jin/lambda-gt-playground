@@ -17,6 +17,9 @@ module ResultExtra = Result_extra
 module DebugPrint = Debug_print
 (** load functions for debug printing *)
 
+module QuoSet = Quo_set
+(** load functions for debug printing *)
+
 (** その他の共用関数 *)
 
 (** 入出力のための関数 *)

@@ -1,4 +1,4 @@
-# A reference interpreter of Lambda GT language
+# A Reference Interpreter of the Lambda GT Language
 
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano_jn-blue?style=flat-square)](https://twitter.com/sano_jn)
@@ -48,18 +48,18 @@ See [/example](example) for more examples.
 ## Syntax
 
 ```
-Expression     e ::= { T }                                  // graph
-                  |  e1 e2                                  // application
-                  |  case e1 of e2 -> e3 | otherwise -> e4  // case expression
+Expression     e ::= { T }                                  // Graph
+                  |  e1 e2                                  // Application
+                  |  case e1 of e2 -> e3 | otherwise -> e4  // Case Expression
 
-Graph Template T ::= v (_X1, ..., _Xn)                      // atom
-                  |  _X >< _Y                               // fusion
-                  |  x [_X1, ..., _Xn]                      // graph context
-                  |  (T, T)                                 // molecule
-                  |  nu _X. T                               // link creation
+Graph Template T ::= v (_X1, ..., _Xn)                      // Atom
+                  |  _X >< _Y                               // Fusion
+                  |  x[_X1, ..., _Xn]                      // Graph Context
+                  |  (T, T)                                 // Molecule
+                  |  nu _X. T                               // Link Creation
 
-Atom Name      v ::= Constr                                 // constructor name
-                  |  <\ x [_X1, ..., _Xn]. e>               // lambda abstraction
+Atom Name      v ::= Constr                                 // Constructor Name
+                  |  <\x[_X1, ..., _Xn]. e>                 // Lambda Abstraction
 ```
 
 For the syntax and semantics, please see
@@ -84,34 +84,27 @@ Thus, we may not accept a request for an enhancement.
 However, we appreciate it because it will be helpful in the design and implementation
 of the _real_ language based on this POC.
 
-| File                | LOC |
-| :------------------ | --: |
-| parser/parser.mly   |  67 |
-| parser/lexer.mll    |  51 |
-| eval/eval.ml        |  47 |
-| eval/syntax.ml      |  42 |
-| eval/match_ctxs.ml  |  37 |
-| eval/match_atoms.ml |  36 |
-| eval/preprocess.ml  |  33 |
-| eval/pushout.ml     |  33 |
-| eval/postprocess.ml |  24 |
-| parser/syntax.ml    |  16 |
-| parser/parse.ml     |  10 |
-| eval/match.ml       |   9 |
-| bin/main.ml         |   3 |
-| SUM:                | 408 |
+### Testing
 
-### [/bin](bin)
+```bash
+dune runtest
+```
 
-Entry point
+See [test/test.ml](test/test.ml) for more information.
+
+- Configure tests with the file.
+
+### Directory Structures
+
+[/bin](bin):
+entry point
 
 | File                   | Description                          |
 | ---------------------- | ------------------------------------ |
 | [main.ml](bin/main.ml) | Read a file and execute the program. |
 
-### [/eval](eval)
-
-Evaluator
+[/eval](eval):
+evaluator
 
 | File                                  | Description                                                                                    |
 | ------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -124,9 +117,8 @@ Evaluator
 | [match_ctxs.ml](eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
 | [pushout.ml](eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
 
-### [/parser](parser)
-
-_Lexical/Syntax analyzer_
+[/parser](parser):
+lexical/syntactical analyzer
 
 | File                            | Description                   |
 | ------------------------------- | ----------------------------- |

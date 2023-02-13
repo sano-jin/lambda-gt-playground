@@ -2,8 +2,13 @@ open Util
 open Util.OptionExtra
 open Syntax
 
-(* link_env は，ルールの左辺の局所リンクから，マッチング対象のグラフのリンクへの射． [check_link link_env
-   (target_link, lhs_link)] *)
+(** [check_link link_env (host_link, template_link)] checks that whether the
+    link in the host graph, [host_link], can match the link in the template
+    graph, [template_link].
+
+    @param link_env
+      A mapping from the local links in the graph template to the links in the
+      host graph. *)
 let check_link link_env = function
   | FreeLink x, FreeLink y -> if x = y then Some link_env else None
   | LocalLink _, FreeLink _ ->
@@ -15,32 +20,37 @@ let check_link link_env = function
           if x = z then Some link_env (* if matched with the environment *)
           else None)
 
-let match_links_of_args link_env args1 args2 =
-  let* args1_2 = ListExtra.combine_opt args1 args2 in
-  OptionExtra.foldM check_link link_env args1_2
+(** [match_atom link_env (v1, args1) (v2, args2)] matches an atom [(v1, args1)]
+    in the host graph and an atom [(v2, args2)] in the graph tempate with the
+    [link_env]. Returns the new [link_env] if it succeeds to match. *)
+let match_atom link_env (v1, args1) (v2, args2) =
+  if v1 <> v2 then None
+  else
+    ListExtra.combine_opt args1 args2 >>= OptionExtra.foldM check_link link_env
 
-let match_links_of_atom link_env (v1, args1) (v2, args2) =
-  if v1 <> v2 then None else match_links_of_args link_env args1 args2
+(** [match_atoms f host_graph template_atoms] matches all the atoms in
+    [template_atoms] to the [host_graph] and apply the obtained [link_env] and
+    the rest host graph to [f].
 
-(** 全てのアトムをマッチさせる．ただし，必要に応じて fusion を補う atoms_lhs はまだマッチングしていない LHS のアトムのリスト．
-    atoms_rest はマッチング対象のグラフにおいて，まだマッチングを試していないアトムのリスト *)
-let find_atoms f target_graph atoms_lhs =
-  (* find_atoms link_env graph atoms_rest atoms_lhs *)
-  let rec find_atoms link_env target_graph = function
-    | [] -> f (link_env, target_graph)
-    | atom :: rest_lhs_atoms ->
+    @param f
+      A procedure done after the matching of the atoms (i.e., graph context
+      matchings). *)
+let match_atoms f host_graph template_atoms =
+  let rec find_atoms link_env host_graph = function
+    | [] -> f (link_env, host_graph)
+    | template_atom :: rest_template_atoms ->
         (* ターゲットのグラフのマッチングを試していないアトムのリストを引数にとる *)
-        let rec find_atom tested_target_atoms = function
+        let rec find_atom tested_host_atoms = function
           | [] -> None (* 全て失敗 *)
-          | target_atom :: rest_target_atoms ->
-              (let* link_env = match_links_of_atom link_env target_atom atom in
-               let rest_target_graph =
-                 List.rev_append tested_target_atoms rest_target_atoms
+          | host_atom :: rest_host_atoms ->
+              (let* link_env = match_atom link_env host_atom template_atom in
+               let rest_host_graph =
+                 List.rev_append tested_host_atoms rest_host_atoms
                in
-               find_atoms link_env rest_target_graph rest_lhs_atoms)
+               find_atoms link_env rest_host_graph rest_template_atoms)
               <|> fun _ ->
-              find_atom (target_atom :: tested_target_atoms) rest_target_atoms
+              find_atom (host_atom :: tested_host_atoms) rest_host_atoms
         in
-        find_atom [] target_graph
+        find_atom [] host_graph
   in
-  find_atoms [] target_graph atoms_lhs
+  find_atoms [] host_graph template_atoms

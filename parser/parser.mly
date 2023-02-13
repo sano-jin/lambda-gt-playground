@@ -87,7 +87,8 @@ graph:
 
   | graph COMMA graph { Mol ($1, $3) }
 
-  | NU LINK DOT graph { Nu ($2, $4) }
+  | NU LINK+ DOT graph
+    { List.fold_right (fun x graph -> Nu (x, graph)) $2 $4 }
 
   | LPAREN graph RPAREN { $2 }
 

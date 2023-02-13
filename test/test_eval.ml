@@ -4,7 +4,7 @@ let test_eval exp =
   print_endline @@ "testing '" ^ exp ^ "'";
   let exp = Parse.parse_exp exp in
   let graph = Eval.eval exp in
-  print_endline @@ "reduced to graph = " ^ string_of_graph_with_nu graph;
+  print_endline @@ "reduced to graph = " ^ string_of_graph graph;
   prerr_newline ()
 
 let test () =

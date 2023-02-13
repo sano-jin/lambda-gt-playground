@@ -1,13 +1,9 @@
----
-layout: home
-title: A reference interpreter of Lambda GT language
----
+# A reference interpreter of Lambda GT language
 
-[![Repository](https://img.shields.io/badge/github-%40lambda%20gt%20alpha-yellow?style=flat-square)][repo]
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano65747676-blue?style=flat-square)](https://twitter.com/sano65747676)
 
-![examples of graphs](graphs-image.svg)
+![examples of graphs](docs/graphs-image.svg)
 
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
@@ -52,18 +48,18 @@ See [/example](example) for more examples.
 ## Syntax
 
 ```
-Expression     e ::= { T }                                  // graph
-                  |  e1 e2                                  // application
-                  |  case e1 of e2 -> e3 | otherwise -> e4  // case expression
+Expression     e ::= { T }                                  // Graph
+                  |  e1 e2                                  // Application
+                  |  case e1 of e2 -> e3 | otherwise -> e4  // Case Expression
 
-Graph Template T ::= v (_X1, ..., _Xn)                      // atom
-                  |  _X >< _Y                               // fusion
-                  |  x [_X1, ..., _Xn]                      // graph context
-                  |  (T, T)                                 // molecule
-                  |  nu _X. T                               // link creation
+Graph Template T ::= v (_X1, ..., _Xn)                      // Atom
+                  |  _X >< _Y                               // Fusion
+                  |  x [_X1, ..., _Xn]                      // Graph Context
+                  |  (T, T)                                 // Molecule
+                  |  nu _X. T                               // Link Creation
 
-Atom Name      v ::= Constr                                 // constructor name
-                  |  <\ x [_X1, ..., _Xn]. e>               // lambda abstraction
+Atom Name      v ::= Constr                                 // Constructor Name
+                  |  <\x[_X1, ..., _Xn]. e>                 // Lambda Abstraction
 ```
 
 For the syntax and semantics, please see
@@ -79,7 +75,7 @@ For the syntax and semantics, please see
 
 ## Development
 
-![dependency graph](dependency.svg)
+![dependency graph](docs/dependency.svg)
 
 Please give me issues or pull requests if you find any bugs or solutions for them.
 
@@ -105,17 +101,15 @@ of the _real_ language based on this POC.
 | bin/main.ml         |   3 |
 | SUM:                | 408 |
 
-### [/bin](bin)
-
-Entry point
+[/bin](bin):
+entry point
 
 | File                   | Description                          |
 | ---------------------- | ------------------------------------ |
 | [main.ml](bin/main.ml) | Read a file and execute the program. |
 
-### [/eval](eval)
-
-Evaluator
+[/eval](eval):
+evaluator
 
 | File                                  | Description                                                                                    |
 | ------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -128,9 +122,8 @@ Evaluator
 | [match_ctxs.ml](eval/match.ml)        | Matches graph contexts and returns the obtained graph substitutions.                           |
 | [pushout.ml](eval/pushout.ml)         | Substitute graph contexts with the given graph substitution (rewriting after matching).        |
 
-### [/parser](parser)
-
-_Lexical/Syntax analyzer_
+[/parser](parser):
+lexical/syntactical analyzer
 
 | File                            | Description                   |
 | ------------------------------- | ----------------------------- |
