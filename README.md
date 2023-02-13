@@ -171,7 +171,7 @@ lexical/syntactical analyzer
 
 Please feel free to contact me (ask me any questions about this).
 
-- [twitter@sano65747676](https://twitter.com/sano65747676)
+- [twitter@sano_jn](https://twitter.com/sano_jn)
 - [homepage](https://www.ueda.info.waseda.ac.jp/~sano/)
 
 ## License
