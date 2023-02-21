@@ -45,15 +45,12 @@
 %token EOF
 
 (** Operator associativity *)
-%nonassoc  LPAREN
-%nonassoc  LCBRACKET
 %nonassoc  DOT
-%nonassoc  LET IN
-%nonassoc  CASE
-%left      ARROW
 %left      COMMA
 %left      PLUS MINUS
 %left      TIMES
+%nonassoc  LET IN CASE ARROW
+%nonassoc  LPAREN LCBRACKET
 
 
 

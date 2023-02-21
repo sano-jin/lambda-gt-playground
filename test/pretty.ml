@@ -14,7 +14,7 @@ let rec string_of_exp = function
   | Case (e1, template, e2, e3) ->
       "(case " ^ string_of_exp e1 ^ " of {" ^ string_of_p_graph template
       ^ "} -> " ^ string_of_exp e2 ^ " | otherwise -> " ^ string_of_exp e3 ^ ")"
-  | App (e1, e2) -> "(" ^ string_of_exp e1 ^ ", " ^ string_of_exp e2 ^ ")"
+  | App (e1, e2) -> "(" ^ string_of_exp e1 ^ " " ^ string_of_exp e2 ^ ")"
   | LetRec (ctx1, ctx2, e1, e2) ->
       "(let rec " ^ string_of_ctx ctx1 ^ " " ^ string_of_ctx ctx2 ^ " = "
       ^ string_of_exp e1 ^ " in " ^ string_of_exp e2 ^ ")"
