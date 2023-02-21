@@ -8,6 +8,8 @@ let string_of_ctx (x, args) =
   if args = [] then x else x ^ "[" ^ String.concat ", " args ^ "]"
 
 let rec string_of_exp = function
+  | BinOp (_, op, e1, e2) ->
+      "(" ^ string_of_exp e1 ^ " " ^ op ^ " " ^ string_of_exp e2 ^ ")"
   | Graph graph -> "{" ^ string_of_p_graph graph ^ "}"
   | Case (e1, template, e2, e3) ->
       "(case " ^ string_of_exp e1 ^ " of {" ^ string_of_p_graph template

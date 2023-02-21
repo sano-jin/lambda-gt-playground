@@ -16,7 +16,7 @@ and graph =
 
 (** expression *)
 and exp =
-  | BinOp of (int -> int -> int) * exp * exp  (** Binary operator *)
+  | BinOp of (int -> int -> int) * string * exp * exp  (** Binary operator *)
   | Graph of graph  (** Graph *)
   | Case of exp * graph * exp * exp  (** Case expression *)
   | App of exp * exp  (** Apply *)

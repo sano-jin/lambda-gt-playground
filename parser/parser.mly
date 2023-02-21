@@ -45,8 +45,15 @@
 %token EOF
 
 (** Operator associativity *)
+%nonassoc  LPAREN
+%nonassoc  LCBRACKET
 %nonassoc  DOT
+%nonassoc  LET IN
+%nonassoc  CASE
+%left      ARROW
 %left      COMMA
+%left      PLUS MINUS
+%left      TIMES
 
 
 
@@ -118,9 +125,10 @@ exp_single:
 
 exp:
   | exp exp_single { App ($1, $2) }
-  | exp PLUS exp  { BinOp (( + ), $1, $3) }
-  | exp MINUS exp { BinOp (( - ), $1, $3) }
-  | exp TIMES exp { BinOp (( * ), $1, $3) }
+  | exp_single     { $1 }
+  | exp PLUS exp   { BinOp (( + ), "+", $1, $3) }
+  | exp MINUS exp  { BinOp (( - ), "-", $1, $3) }
+  | exp TIMES exp  { BinOp (( * ), "*", $1, $3) }
 
 
 (** the whole program *)
