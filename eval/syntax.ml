@@ -9,14 +9,9 @@ let string_of_link = function
   | FreeLink link -> link
   | LocalLink i -> "_L" ^ string_of_int i
 
-module FFs = QuoSet.Make (String)
-(** Free fusions. *)
-
-type free_links = FFs.t
-(** Free links are represented with a quotient set of link names. *)
-
 type atom_name =
   | Constr of string  (** Constructor Name. *)
+  | Int of int  (** integer value. *)
   | Lam of Parse.ctx * exp * theta  (** Lambda Abstraction. *)
   | RecLam of Parse.ctx * Parse.ctx * exp * theta
       (** Lambda Abstraction with a name for a recursive definition. *)
@@ -38,6 +33,7 @@ type graph_template = atom list * ctx list
 
 let string_of_atom_name = function
   | Constr name -> name
+  | Int i -> string_of_int i
   | Lam _ | RecLam _ -> "<fun>"
 
 let string_of_atom = function

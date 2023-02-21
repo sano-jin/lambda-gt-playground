@@ -4,6 +4,7 @@ type ctx = string * string list
 
 type atom_name =
   | PConstr of string  (** constructor name *)
+  | PInt of int  (** integer literal *)
   | PLam of ctx * exp  (** lambda abstraction *)
 
 (** graph template *)

@@ -12,6 +12,9 @@
 (** link name *)
 %token <string> LINK   (** _X, _Y, _ABC, ...  *)
 
+(** integer literal *)
+%token <int> INT   (** 1, 2, 3, ...  *)
+
 (** operators *)
 %token DOT            (**  '.' *)
 %token COMMA          (**  ',' *)
@@ -72,6 +75,8 @@ let args_inner := ~ = separated_list(COMMA, LINK); <>
 atom_name:
   | CONSTR { PConstr ($1) }
   | LT LAMBDA ctx DOT exp GT { PLam ($3, $5) }
+  | INT { PInt ($1) }
+  | MINUS INT { PInt (- $2) }
 
 
 atom:

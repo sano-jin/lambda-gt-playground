@@ -15,6 +15,7 @@ let rec alpha i link_env = function
       let v =
         match v with
         | PConstr constr -> Constr constr
+        | PInt i -> Int i
         | PLam (ctx, e) -> Lam (ctx, e, [])
       in
       let links = List.map (get_link link_env) args in
