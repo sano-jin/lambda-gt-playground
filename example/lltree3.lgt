@@ -1,5 +1,5 @@
 % lltree3.lgt
-% Map leaves of a leaf-linked tree with an abbreviation (`nu X1, ..., Xn. T`). 
+% Map a function to the leaves of a leaf-linked tree denoted with an abbreviation (`nu X1, ..., Xn. T`). 
 
 let f[_X] = {<\x[_X]. {nu _X1 _X2. (Succ (_X1, _X), x [_X1])}>(_X)} in
 
@@ -27,17 +27,15 @@ let map[_X] =
   in {helper [_X]} {x[_L, _R, _X], M (_L)}
   >(_X)}>(_X)} in
 
-{map[_X]}
-{f [_X]}
-{
-nu _X1 _X2 _X3 _X4 _X5. (
+{map[_X]} 
+{f[_X]}
+{nu _X1 _X2 _X3 _X4 _X5. (
   Node (_X1, _X2, _X), 
   Leaf (_X4 ,_L, _X3, _X1),
   Zero (_X4),
   Leaf (_X5, _X3, _R, _X2),
   Zero (_X5)
-)
-}
+)}
     
 
 % --->

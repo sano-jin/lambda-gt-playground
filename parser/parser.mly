@@ -27,6 +27,9 @@
 %token REC            (**  "rec" *)
 %token IN             (**  "in" *)
 %token EQ             (**  "=" *)
+%token PLUS           (**  "+" *)
+%token MINUS          (**  "-" *)
+%token TIMES          (**  "*" *)
 
 (** Parentheses *)
 %token LPAREN         (**  '(' *)
@@ -35,8 +38,8 @@
 %token RBRACKET       (**  ']' *)
 %token LCBRACKET      (**  '{' *)
 %token RCBRACKET      (**  '}' *)
-%token LT             (**  '(' *)
-%token GT             (**  ')' *)
+%token LT             (**  '<' *)
+%token GT             (**  '>' *)
 
 (** End of file *)
 %token EOF
@@ -115,8 +118,9 @@ exp_single:
 
 exp:
   | exp exp_single { App ($1, $2) }
-  | exp_single { $1 }
-
+  | exp PLUS exp  { BinOp (( + ), $1, $3) }
+  | exp MINUS exp { BinOp (( - ), $1, $3) }
+  | exp TIMES exp { BinOp (( * ), $1, $3) }
 
 
 (** the whole program *)

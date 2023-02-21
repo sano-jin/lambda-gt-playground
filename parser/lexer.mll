@@ -28,6 +28,9 @@ rule token = parse
   | "rec"       { REC }
   | "in"        { IN }
   | "="         { EQ }
+  | "+"         { PLUS }
+  | "-"         { MINUS }
+  | "*"         { TIMES }
 
   (** Parentheses *)
   | '('			{ LPAREN }
