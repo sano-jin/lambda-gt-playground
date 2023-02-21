@@ -8,11 +8,13 @@ let string_of_ctx (x, args) =
   if args = [] then x else x ^ "[" ^ String.concat ", " args ^ "]"
 
 let rec string_of_exp = function
+  | BinOp (_, op, e1, e2) ->
+      "(" ^ string_of_exp e1 ^ " " ^ op ^ " " ^ string_of_exp e2 ^ ")"
   | Graph graph -> "{" ^ string_of_p_graph graph ^ "}"
   | Case (e1, template, e2, e3) ->
       "(case " ^ string_of_exp e1 ^ " of {" ^ string_of_p_graph template
       ^ "} -> " ^ string_of_exp e2 ^ " | otherwise -> " ^ string_of_exp e3 ^ ")"
-  | App (e1, e2) -> "(" ^ string_of_exp e1 ^ ", " ^ string_of_exp e2 ^ ")"
+  | App (e1, e2) -> "(" ^ string_of_exp e1 ^ " " ^ string_of_exp e2 ^ ")"
   | LetRec (ctx1, ctx2, e1, e2) ->
       "(let rec " ^ string_of_ctx ctx1 ^ " " ^ string_of_ctx ctx2 ^ " = "
       ^ string_of_exp e1 ^ " in " ^ string_of_exp e2 ^ ")"
@@ -22,6 +24,7 @@ let rec string_of_exp = function
 
 and string_of_atom_name = function
   | PConstr name -> name
+  | PInt i -> string_of_int i
   | PLam (ctx, e) -> "<\\" ^ string_of_ctx ctx ^ ". " ^ string_of_exp e ^ ">"
 
 and string_of_p_graph = function

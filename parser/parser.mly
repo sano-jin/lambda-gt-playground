@@ -12,6 +12,9 @@
 (** link name *)
 %token <string> LINK   (** _X, _Y, _ABC, ...  *)
 
+(** integer literal *)
+%token <int> INT   (** 1, 2, 3, ...  *)
+
 (** operators *)
 %token DOT            (**  '.' *)
 %token COMMA          (**  ',' *)
@@ -27,6 +30,9 @@
 %token REC            (**  "rec" *)
 %token IN             (**  "in" *)
 %token EQ             (**  "=" *)
+%token PLUS           (**  "+" *)
+%token MINUS          (**  "-" *)
+%token TIMES          (**  "*" *)
 
 (** Parentheses *)
 %token LPAREN         (**  '(' *)
@@ -35,8 +41,8 @@
 %token RBRACKET       (**  ']' *)
 %token LCBRACKET      (**  '{' *)
 %token RCBRACKET      (**  '}' *)
-%token LT             (**  '(' *)
-%token GT             (**  ')' *)
+%token LT             (**  '<' *)
+%token GT             (**  '>' *)
 
 (** End of file *)
 %token EOF
@@ -44,6 +50,10 @@
 (** Operator associativity *)
 %nonassoc  DOT
 %left      COMMA
+%left      PLUS MINUS
+%left      TIMES
+%nonassoc  LET IN CASE ARROW
+%nonassoc  LPAREN LCBRACKET
 
 
 
@@ -65,6 +75,8 @@ let args_inner := ~ = separated_list(COMMA, LINK); <>
 atom_name:
   | CONSTR { PConstr ($1) }
   | LT LAMBDA ctx DOT exp GT { PLam ($3, $5) }
+  | INT { PInt ($1) }
+  | MINUS INT { PInt (- $2) }
 
 
 atom:
@@ -115,8 +127,10 @@ exp_single:
 
 exp:
   | exp exp_single { App ($1, $2) }
-  | exp_single { $1 }
-
+  | exp_single     { $1 }
+  | exp PLUS exp   { BinOp (( + ), "+", $1, $3) }
+  | exp MINUS exp  { BinOp (( - ), "-", $1, $3) }
+  | exp TIMES exp  { BinOp (( * ), "*", $1, $3) }
 
 
 (** the whole program *)

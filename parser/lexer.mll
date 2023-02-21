@@ -28,6 +28,9 @@ rule token = parse
   | "rec"       { REC }
   | "in"        { IN }
   | "="         { EQ }
+  | "+"         { PLUS }
+  | "-"         { MINUS }
+  | "*"         { TIMES }
 
   (** Parentheses *)
   | '('			{ LPAREN }
@@ -39,6 +42,10 @@ rule token = parse
   | '<'			{ LT }
   | '>'			{ GT }
 			
+  (** integer literal *)
+  | ['1'-'9'] digit*
+    { INT (int_of_string @@ Lexing.lexeme lexbuf) }
+
   (** constructor name *)
   | upper alnum*
     { CONSTR (Lexing.lexeme lexbuf) }

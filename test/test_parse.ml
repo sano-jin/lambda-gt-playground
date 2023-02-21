@@ -13,6 +13,12 @@ let test_exp str =
 let test () =
   test "Cons";
 
+  test "1";
+
+  test "1 ()";
+
+  test "1 (_X)";
+
   test "Cons (_Z, _X)";
 
   test "x [_Z, _X]";
@@ -38,6 +44,12 @@ let test () =
      _Z])} -> {A ()} | otherwise -> {B ()}";
 
   test_exp "{<\\x.{x}>}";
+
+  test_exp "{1}";
+
+  test_exp "{1(_X)}";
+
+  test_exp "{1(_X)} + {2(_X)}";
 
   test_exp @@ "{<\\y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}";
 
