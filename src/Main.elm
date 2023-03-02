@@ -8,6 +8,8 @@ functionality.
 
 -}
 
+-- import PortGraph.ViewSettings as ViewSettings
+
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
 import Bootstrap.Card as Card
@@ -28,7 +30,6 @@ import Color
 import Dict
 import Editor.Editor as Editor
 import Examples
-import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (Html, div, text)
 import Html.Attributes as HAttrs exposing (style)
 import Html.Events as HEvents

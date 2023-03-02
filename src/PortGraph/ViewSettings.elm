@@ -1,4 +1,4 @@
-module PortGraph.VisGraph exposing (..)
+module PortGraph.ViewSettings exposing (..)
 
 {-| This example demonstrates a force directed graph with zoom and drag
 functionality.
@@ -51,6 +51,7 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph.ForceExtra as Force
 import PortGraph.PortGraph as PortGraph exposing (Functor, PortId)
+import PortGraph.VisGraph as VisGraph
 import Process
 import Task
 import Time
@@ -116,17 +117,17 @@ type Model
     | Ready ReadyState
 
 
-stateOfModel : Model -> Maybe ReadyState
+stateOfModel : VisGraph.Model -> Maybe VisGraph.ReadyState
 stateOfModel model =
     case model of
-        Init g ->
+        VisGraph.Init g ->
             Nothing
 
-        Ready state ->
+        VisGraph.Ready state ->
             Just state
 
 
-stateTo : a -> (ReadyState -> a) -> Model -> a
+stateTo : a -> (VisGraph.ReadyState -> a) -> VisGraph.Model -> a
 stateTo default f model =
     Maybe.withDefault default <| Maybe.map f <| stateOfModel model
 
@@ -146,11 +147,11 @@ type alias ReadyState =
     -- `showGraph` is initialized with `False` and set to `True` with the first
     -- `Tick`.
     , showGraph : Bool
+    , size : ( Float, Float )
     , distance : Float
     , portDistance : Float
     , portCtrlPDistance : Float
     , strength : Float
-    , size : ( Float, Float )
     , accordionSettings : Accordion.State
     }
 
@@ -308,77 +309,15 @@ a mouse interaction in progress, and that we only subscribe to
 `Browser.Events.onAnimationFrame` while the simulation is in progress.
 
 -}
-subscriptions : Model -> Sub Msg
+subscriptions : VisGraph.Model -> Sub VisGraph.Msg
 subscriptions model =
-    let
-        dragSubscriptions : Sub Msg
-        dragSubscriptions =
-            Sub.batch
-                [ Events.onMouseMove
-                    (Decode.map (.clientPos >> DragAt) Mouse.eventDecoder)
-                , Events.onMouseUp
-                    (Decode.map (.clientPos >> DragEnd) Mouse.eventDecoder)
-                , Events.onAnimationFrame Tick
-                ]
-
-        readySubscriptions : ReadyState -> Sub Msg
-        readySubscriptions { drag, simulation, zoom } =
-            Sub.batch
-                [ Zoom.subscriptions zoom ZoomMsg
-                , case drag of
-                    Nothing ->
-                        if Force.isCompleted simulation then
-                            Sub.none
-
-                        else
-                            Events.onAnimationFrame Tick
-
-                    Just _ ->
-                        dragSubscriptions
-                ]
-    in
-    Sub.batch
-        [ case model of
-            Init _ ->
-                Sub.none
-
-            Ready state ->
-                readySubscriptions state
-        , Events.onResize Resize
-        , Accordion.subscriptions
-            (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
-            AccordionSettingsMsg
-
-        -- , messageReceiver <| Recv << Decode.decodeString decodeMessage
-        ]
+    Accordion.subscriptions
+        (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
+        VisGraph.AccordionSettingsMsg
 
 
 
 -- Update
-
-
-updateGraph : PortGraph.Graph Int -> Model -> Model
-updateGraph portGraph model =
-    case model of
-        Init g ->
-            Init (initialiseGraph portGraph)
-
-        Ready state ->
-            let
-                graph =
-                    initialiseGraph portGraph
-            in
-            Ready
-                { state
-                    | graph = graph
-                    , showGraph = False
-                    , simulation =
-                        initSimulation
-                            initialDistance
-                            initialPortDistance
-                            graph
-                            state.size
-                }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -716,28 +655,22 @@ shiftPosition zoom ( elementX, elementY ) ( clientX, clientY ) =
 
 
 -- View
--- view : Model -> Html Msg
--- view model =
---     div [ HAttrs.style "height" "100%" ]
---         [ viewGraph model
---         , viewSettings model
---         ]
 
 
-viewSettings : Model -> Html Msg
+viewSettings : VisGraph.Model -> Html VisGraph.Msg
 viewSettings model =
     let
         graph =
             case model of
-                Init g ->
+                VisGraph.Init g ->
                     g
 
-                Ready state ->
+                VisGraph.Ready state ->
                     state.graph
 
         viewSpringSettings =
             case model of
-                Ready state ->
+                VisGraph.Ready state ->
                     Grid.container []
                         [ viewSlider "Link Distance" initialDistance SlideDistance state.distance
                         , viewSlider "Port Distance" initialPortDistance SlidePortDistance state.portDistance
@@ -748,7 +681,7 @@ viewSettings model =
                 _ ->
                     div [] []
     in
-    Accordion.config AccordionSettingsMsg
+    Accordion.config VisGraph.AccordionSettingsMsg
         |> Accordion.withAnimation
         |> Accordion.cards
             [ Accordion.card
@@ -787,7 +720,7 @@ viewSettings model =
 
 {-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
 -}
-viewSlider : String -> Float -> (Float -> Msg) -> Float -> Html Msg
+viewSlider : String -> Float -> (Float -> VisGraph.Msg) -> Float -> Html VisGraph.Msg
 viewSlider label initialValue msg parameter =
     Grid.row [ Row.betweenMd ]
         [ Grid.col [ Col.xs4 ] [ text label ]
@@ -814,7 +747,7 @@ viewSlider label initialValue msg parameter =
 
 {-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
 -}
-viewPortAngleFunctorSlider : String -> Functor -> Int -> Float -> Html Msg
+viewPortAngleFunctorSlider : String -> Functor -> Int -> Float -> Html VisGraph.Msg
 viewPortAngleFunctorSlider portLabel functor portId portAngle =
     Grid.row [ Row.betweenMd ]
         [ Grid.col [ Col.xs2 ] [ text portLabel ]
@@ -828,7 +761,7 @@ viewPortAngleFunctorSlider portLabel functor portId portAngle =
                 , Attrs.max "360"
                 , HAttrs.step "30"
                 , HAttrs.value <| String.fromFloat portAngle
-                , HEvents.onInput (SlidePortAngleFunctor functor portId << Maybe.withDefault 0 << String.toFloat)
+                , HEvents.onInput (VisGraph.SlidePortAngleFunctor functor portId << Maybe.withDefault 0 << String.toFloat)
                 ]
                 []
             ]

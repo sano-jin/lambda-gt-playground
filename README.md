@@ -54,6 +54,7 @@ Interpreter
 
 Visualiser
 
+- VisGraph と bootstrap を用いた slider の実装の分離．
 - 画面の整理．
 - グラフを更新した際に，
   visualisation のためのパラメータが初期化されてしまっているので，
