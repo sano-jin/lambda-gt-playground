@@ -1,4 +1,4 @@
-module Util exposing (..)
+module PortGraph.Util exposing (..)
 
 -- import Dict exposing (Dict)
 

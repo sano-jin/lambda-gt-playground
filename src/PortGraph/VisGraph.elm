@@ -1,4 +1,4 @@
-module VisGraph exposing (..)
+module PortGraph.VisGraph exposing (..)
 
 {-| This example demonstrates a force directed graph with zoom and drag
 functionality.
@@ -41,7 +41,6 @@ import Browser.Dom as Dom
 import Browser.Events as Events
 import Color
 import Dict
-import ForceExtra as Force
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (Html, div)
 import Html.Attributes as HAttrs exposing (style)
@@ -50,7 +49,9 @@ import Html.Events.Extra.Mouse as Mouse
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
-import PortGraph exposing (Functor, PortId)
+import PortGraph.ForceExtra as Force
+import PortGraph.PortGraph as PortGraph exposing (Functor, PortId)
+import Process
 import Task
 import Time
 import Tuple as T2
@@ -195,10 +196,18 @@ initialiseGraph inputGraph =
 {-| We initialize the graph here, but we don't start the simulation yet, because
 we first need the position and dimensions of the svg element to calculate the
 correct node positions and the center force.
+
+We get the element after 100ms sleep.
+This is because that the browser need a second for positioning the element
+especially we use flex containers.
+
 -}
 init : GraphEdges -> ( Model, Cmd Msg )
 init graphEdges =
-    ( Init graphEdges, getElementPosition )
+    ( Init graphEdges
+    , Task.attempt ReceiveElementPosition
+        (Process.sleep 100 |> Task.andThen (\_ -> Dom.getElement elementId))
+    )
 
 
 {-| The graph data we defined at the end of the module has the type
@@ -337,7 +346,7 @@ subscriptions model =
                 readySubscriptions state
         , Events.onResize Resize
         , Accordion.subscriptions
-            (stateTo Accordion.initialState .accordionSettings model)
+            (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
             AccordionSettingsMsg
 
         -- , messageReceiver <| Recv << Decode.decodeString decodeMessage
@@ -532,7 +541,7 @@ update msg model =
                 , portCtrlPDistance = initialPortCtrlPDistance
                 , strength = initialStrength
                 , size = ( element.width, element.height )
-                , accordionSettings = Accordion.initialState
+                , accordionSettings = Accordion.initialStateCardOpen "card1"
                 }
             , Cmd.none
             )
@@ -711,6 +720,14 @@ shiftPosition zoom ( elementX, elementY ) ( clientX, clientY ) =
 
 view : Model -> Html Msg
 view model =
+    div [ HAttrs.style "height" "100%" ]
+        [ viewGraph model
+        , viewSettings model
+        ]
+
+
+viewSettings : Model -> Html Msg
+viewSettings model =
     let
         graph =
             case model of
@@ -723,7 +740,7 @@ view model =
         viewSpringSettings =
             case model of
                 Ready state ->
-                    Grid.container [ style "padding" "30px" ]
+                    Grid.container []
                         [ viewSlider "Link Distance" initialDistance SlideDistance state.distance
                         , viewSlider "Port Distance" initialPortDistance SlidePortDistance state.portDistance
                         , viewSlider "Strength" initialStrength SlideStrength state.strength
@@ -732,48 +749,42 @@ view model =
 
                 _ ->
                     div [] []
-
-        viewAccordion =
-            Accordion.config AccordionSettingsMsg
-                |> Accordion.withAnimation
-                |> Accordion.cards
-                    [ Accordion.card
-                        { id = "card1"
-                        , options = []
-                        , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Port Angles" ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ viewPortAngleFunctorSliders <| T.third graph ] ]
-                            ]
-                        }
-                    , Accordion.card
-                        { id = "card2"
-                        , options = []
-                        , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Spring Settings" ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ viewSpringSettings ] ]
-                            ]
-                        }
-                    , Accordion.card
-                        { id = "card3"
-                        , options = []
-                        , header =
-                            Accordion.header [] <| Accordion.toggle [] [ text "Port Angles (Separately)" ]
-                        , blocks =
-                            [ Accordion.block []
-                                [ Block.text [] [ viewPortAngleSliders <| T.third graph ] ]
-                            ]
-                        }
-                    ]
-                |> Accordion.view (stateTo Accordion.initialState .accordionSettings model)
     in
-    div []
-        [ viewGraph model
-        , viewAccordion
-        ]
+    Accordion.config AccordionSettingsMsg
+        |> Accordion.withAnimation
+        |> Accordion.cards
+            [ Accordion.card
+                { id = "card1"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Spring Settings" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewSpringSettings ] ]
+                    ]
+                }
+            , Accordion.card
+                { id = "card2"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewPortAngleFunctorSliders <| T.third graph ] ]
+                    ]
+                }
+            , Accordion.card
+                { id = "card3"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles (Separately)" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewPortAngleSliders <| T.third graph ] ]
+                    ]
+                }
+            ]
+        |> Accordion.view (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
 
 
 {-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
@@ -836,13 +847,13 @@ viewPortAngleFunctorSliders graph =
 
         helper atom =
             Grid.row [ Row.betweenXl ]
-                [ Grid.col [ Col.xs2 ] [ text <| PortGraph.functorToString <| PortGraph.functorOfAtom atom ]
-                , Grid.col [ Col.xs10 ] <|
+                [ Grid.col [ Col.xs3 ] [ text <| PortGraph.functorToString <| PortGraph.functorOfAtom atom ]
+                , Grid.col [ Col.xs9 ] <|
                     List.map (\p -> viewPortAngleFunctorSlider p.label (PortGraph.functorOfAtom atom) p.id p.angle) <|
                         Dict.values atom.ports
                 ]
     in
-    Grid.container [ style "padding" "30px" ] <|
+    Grid.container [] <|
         List.map helper <|
             List.map T2.first <|
                 PortGraph.groupAtomsWithFunctor graph
@@ -888,7 +899,7 @@ viewPortAngleSliders { atoms } =
                         Dict.values atom.ports
                 ]
     in
-    Grid.container [ style "padding" "30px" ] <|
+    Grid.container [] <|
         List.map helper <|
             Dict.values atoms
 
@@ -916,7 +927,7 @@ viewGraph model =
     in
     div
         [ style "width" "100%"
-        , style "height" "400px"
+        , style "height" "100%"
         , style "margin" "0 auto"
         , style "background-color" "rgba(240, 250, 255, 0.9)"
 

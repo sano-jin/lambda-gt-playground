@@ -134,7 +134,6 @@ Labelled port hypergraphs を綺麗に描画しようとしています．
 
 ### Todo
 
-- `Context` と言う単語を省く．
 - 画面の整理．
 - データ構造の整理．
   - 動的な更新ができるようにする．
@@ -143,6 +142,13 @@ Labelled port hypergraphs を綺麗に描画しようとしています．
 - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
 - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
 - 命名の整理（Atom, Hyperlink, node, edge, link?）．
+
+### Implementation Details
+
+ForceExtra/ ディレクトリ以下のコードは，
+elm-visualization の Force/ ディレクトリ以下のコードをそのまま使っているだけ．
+
+ForceExtra.elm のみ変更を加えている．
 
 #### Graph に対する操作．
 
@@ -163,6 +169,10 @@ PortGraph では，とりあえずは普通の Dict を用いている．
 - [Force directed graph with zoom](https://github.com/gampleman/elm-visualization/blob/master/examples/ForceDirectedGraphWithZoom.elm)
 
 [svg tutorial](http://defghi1977.html.xdomain.jp/tech/svgMemo/svgMemo_03.htm)
+
+[MSNL Playgrund](https://mishina-haruto.github.io/MSNL/#)
+
+[Full the height](https://www.educative.io/answers/how-to-make-the-div-fill-the-height-of-the-remaining-screen-space)
 
 ## Done
 

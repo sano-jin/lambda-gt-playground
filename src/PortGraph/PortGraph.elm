@@ -1,4 +1,4 @@
-module PortGraph exposing (..)
+module PortGraph.PortGraph exposing (..)
 
 {-| This example demonstrates a force directed graph with zoom and drag
 functionality.
@@ -24,15 +24,16 @@ functionality.
 
 TODO:
 
-      - 命名の整理（Atom, Hyperlink, node, edge, link?）．
-      - Documentation.
-      - データ構造の整理．
-          - 動的な更新ができるようにする．
-          - port angle をできるだけ保ちたい．
-          - まずはあまり差分を小さくすることについて考えなくても良いかも知れない．
-      - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
-      - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
-      - port-graph-visualisation を playground から分離する．
+  - angle をなくして，任意の field を取れるように拡張する．
+  - 命名の整理（Atom, Hyperlink, node, edge, link?）．
+  - Documentation.
+  - データ構造の整理．
+      - 動的な更新ができるようにする．
+      - port angle をできるだけ保ちたい．
+      - まずはあまり差分を小さくすることについて考えなくても良いかも知れない．
+  - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
+  - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
+  - port-graph-visualisation を playground から分離する．
 
 -}
 
@@ -45,7 +46,7 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import List.Extra as ListX
 import Maybe.Extra as MaybeX
-import Util
+import PortGraph.Util as Util
 
 
 {-| An angle of a port.

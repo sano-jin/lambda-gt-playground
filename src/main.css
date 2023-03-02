@@ -32,6 +32,21 @@ img {
   fill: blue;
 }
 
+#myarea {
+  font-family: "JetBrains Mono", monospace;
+  background: "#303030";
+  color: "#f0f0f0";
+  /*
+  font-size: 16px;
+  */
+}
+
+/** `Button.checkboxButton` だけでは，checkbox が残ってしまうので．
+ */
+label.btn > input[type="checkbox"] {
+  display: none;
+}
+
 /*
 svg {
   width: 100%;

@@ -1,4 +1,4 @@
-module ForceExtra exposing
+module PortGraph.ForceExtra exposing
     ( Entity, entity, simulation, State, isCompleted, reheat, iterations, computeSimulation, tick
     , Force, center, links, customLinks, manyBody, manyBodyStrength, customManyBody, collision, customCollision
     , towardsX, towardsY, customRadial
@@ -14,6 +14,14 @@ which is then added to the particle’s position.
 [![force directed graph illustration](https://elm-visualization.netlify.com/ForceDirectedGraph/preview@2x.png)](https://elm-visualization.netlify.com/ForceDirectedGraph/)
 
 In the domain of information visualization, physical simulations are useful for studying networks and hierarchies!
+
+
+## Additional Information
+
+ForceExtra/ ディレクトリ以下のコードは，
+elm-visualization の Force/ ディレクトリ以下のコードをそのまま使っているだけ．
+
+ForceExtra.elm のみ変更を加えている．
 
 
 ## Simulation
@@ -35,7 +43,7 @@ import Dict exposing (Dict)
 import ForceExtra.Collision as Collision
 import ForceExtra.ManyBody as ManyBody
 import IntDict exposing (IntDict)
-import PortGraph exposing (ConnectedTo(..), Graph, PortDict, extractNodeId)
+import PortGraph.PortGraph as PortGraph exposing (ConnectedTo(..), Graph, PortDict, extractNodeId)
 
 
 

@@ -1,4 +1,4 @@
-module PortGraphExample exposing (..)
+module PortGraph.PortGraphExample exposing (..)
 
 {-| The example of the `PortGraph`.
 
@@ -8,7 +8,7 @@ module PortGraphExample exposing (..)
 -}
 
 import Dict
-import PortGraph exposing (..)
+import PortGraph.PortGraph exposing (..)
 
 
 
