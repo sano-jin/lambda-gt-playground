@@ -6,6 +6,26 @@ functionality.
 @delay 5
 @category Advanced
 
+TODO:
+
+  - Documentation.
+  - Eliminate Bootstrap code.
+    The bootstrap code is for the frontend view and is not for rendering graphs.
+  - グラフを更新した際に，
+    visualisation のためのパラメータが初期化されてしまっているので，
+    うまく引き継げるようにする．
+      - Port Angles は，ファンクタごとの preset を更新して持っておく．
+          - JSON で入出力できるようにする．
+          - 個別の port angles を引き継ぐのは難しそうなので，後回し．
+      - Spring settings はうまく引き継ぎたい．
+  - データ構造の整理．
+      - 動的な更新ができるようにする．
+      - port angle をできるだけ保ちたい．
+      - まずはあまり差分を小さくすることについて考えなくても良いかも知れない．
+  - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
+  - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
+  - port-graph-visualisation を playground から分離する．
+
 -}
 
 import Bootstrap.Accordion as Accordion

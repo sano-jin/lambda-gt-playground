@@ -1,5 +1,41 @@
 module PortGraph exposing (..)
 
+{-| This example demonstrates a force directed graph with zoom and drag
+functionality.
+
+@delay 5
+@category Advanced
+
+
+# Description:
+
+グラフのノードは以下の 2 種類ある．
+
+  - アトム: Port を持つ頂点
+      - それぞれの port からは hyper でない edge が出て，
+        port または unnamed hyperlink に接続される．
+  - Hyperlink: Port を持たない頂点．普通のグラフ理論の頂点．
+      - 任意本の edge が出て，
+        port または hyperlink に接続される．
+
+同じポートや hyperlink から多重辺が出ることは想定していない．
+あくまでポートや hyperlink から出る辺は一本で，他のポートに直接繋がるか，
+ハイパーリンクに接続されるかのどちらか．
+
+TODO:
+
+      - 命名の整理（Atom, Hyperlink, node, edge, link?）．
+      - Documentation.
+      - データ構造の整理．
+          - 動的な更新ができるようにする．
+          - port angle をできるだけ保ちたい．
+          - まずはあまり差分を小さくすることについて考えなくても良いかも知れない．
+      - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
+      - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
+      - port-graph-visualisation を playground から分離する．
+
+-}
+
 -- import Dict exposing (Dict)
 
 import Dict exposing (Dict)
@@ -349,118 +385,6 @@ toString f graph =
     String.join ", " <|
         List.map (atomToString f) (Dict.values graph.atoms)
             ++ List.map (hlinkToString f) (Dict.values graph.hlinks)
-
-
-
--- Example
--- [ "X" -- 0
--- , "Cons1" -- 1
--- , "1" -- 2
--- , "Cons2" -- 3
--- , "2" -- 4
--- , "Cons3" -- 5
--- , "3" -- 6
--- , "Nil" -- 7
--- ]
-
-
-cons1 : AtomContext Int
-cons1 =
-    { id = 0
-    , label = "Cons"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 1, 0 ) } )
-            , ( 1, { id = 1, angle = 0, label = "2", to = Port ( 2, 2 ) } )
-            , ( 2, { id = 2, angle = 0, label = "3", to = HL 7 } )
-            ]
-    }
-
-
-val1 : AtomContext Int
-val1 =
-    { id = 1
-    , label = "1"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 0, 0 ) } )
-            ]
-    }
-
-
-cons2 : AtomContext Int
-cons2 =
-    { id = 2
-    , label = "Cons"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 3, 0 ) } )
-            , ( 1, { id = 1, angle = 0, label = "2", to = Port ( 4, 2 ) } )
-            , ( 2, { id = 2, angle = 0, label = "3", to = Port ( 0, 1 ) } )
-            ]
-    }
-
-
-val2 : AtomContext Int
-val2 =
-    { id = 3
-    , label = "2"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 2, 0 ) } )
-            ]
-    }
-
-
-cons3 : AtomContext Int
-cons3 =
-    { id = 4
-    , label = "Cons"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 5, 0 ) } )
-            , ( 1, { id = 1, angle = 0, label = "2", to = Port ( 6, 0 ) } )
-            , ( 2, { id = 2, angle = 0, label = "3", to = Port ( 2, 1 ) } )
-            ]
-    }
-
-
-val3 : AtomContext Int
-val3 =
-    { id = 5
-    , label = "3"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 4, 0 ) } )
-            ]
-    }
-
-
-nil : AtomContext Int
-nil =
-    { id = 6
-    , label = "Nil"
-    , ports =
-        Dict.fromList
-            [ ( 0, { id = 0, angle = 0, label = "1", to = Port ( 4, 1 ) } )
-            ]
-    }
-
-
-front_x : HLink Int
-front_x =
-    { id = 0
-    , label = "X"
-    , to =
-        Dict.fromList [ ( 7, Port ( 0, 2 ) ) ]
-    }
-
-
-listGraph : Graph Int
-listGraph =
-    { atoms = Dict.fromList [ ( 0, cons1 ), ( 1, val1 ), ( 2, cons2 ), ( 3, val2 ), ( 4, cons3 ), ( 5, val3 ), ( 6, nil ) ]
-    , hlinks = Dict.fromList [ ( 7, front_x ) ]
-    }
 
 
 

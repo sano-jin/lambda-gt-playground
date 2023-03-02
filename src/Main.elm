@@ -20,27 +20,17 @@ import Browser.Dom as Dom
 import Browser.Events as Events
 import Color
 import Dict
-import ForceExtra as Force
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes as HAttrs exposing (style)
 import Html.Events as HEvents
-import Html.Events.Extra.Mouse as Mouse
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph exposing (Functor, PortId)
+import PortGraphExample
 import Task
-import Time
-import Tuple as T2
-import Tuple3 as T
-import TypedSvg exposing (circle, defs, g, line, marker, polygon, rect, svg, text_, title)
-import TypedSvg.Attributes as Attrs exposing (class, cursor, fill, fontSize, id, markerEnd, markerHeight, markerWidth, orient, pointerEvents, points, refX, refY, stroke, transform)
-import TypedSvg.Attributes.InPx exposing (cx, cy, dx, dy, height, r, strokeWidth, width, x1, x2, y1, y2)
-import TypedSvg.Core exposing (Attribute, Svg, text)
-import TypedSvg.Types exposing (AlignmentBaseline(..), AnchorAlignment(..), Cursor(..), Length(..), Opacity(..), Paint(..), Transform(..))
 import VisGraph
-import Zoom exposing (OnZoom, Zoom)
 
 
 
@@ -50,11 +40,6 @@ import Zoom exposing (OnZoom, Zoom)
 elementId : String
 elementId =
     "exercise-graph"
-
-
-edgeColor : Paint
-edgeColor =
-    Paint <| Color.rgb255 160 190 250
 
 
 
@@ -135,7 +120,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     let
         ( visGraphModel, visGraphCmd ) =
-            VisGraph.init <| VisGraph.initialiseGraph PortGraph.listGraph
+            VisGraph.init <| VisGraph.initialiseGraph PortGraphExample.listGraph
     in
     ( { messages = []
       , visGraph = visGraphModel
