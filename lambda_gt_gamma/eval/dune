@@ -1,0 +1,4 @@
+(library
+ (public_name lambda_gt_gamma.eval)
+ (name eval)
+ (libraries lambda_gt_gamma.util lambda_gt_gamma.parser))

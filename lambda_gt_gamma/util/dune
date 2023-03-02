@@ -1,0 +1,4 @@
+(library
+ (name util)
+ (public_name lambda_gt_gamma.util)
+ (libraries unix))

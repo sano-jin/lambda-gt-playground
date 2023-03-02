@@ -1,0 +1,4 @@
+(executable
+ (public_name lambda_gt_gamma)
+ (name main)
+ (libraries lambda_gt_gamma.util lambda_gt_gamma.eval))

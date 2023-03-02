@@ -1,0 +1,9 @@
+(menhir
+ (modules parser))
+
+(ocamllex lexer)
+
+(library
+ (name parse)
+ (public_name lambda_gt_gamma.parser)
+ (libraries lambda_gt_gamma.util))
