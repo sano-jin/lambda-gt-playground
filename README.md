@@ -1,6 +1,6 @@
 # Lambda-GT Playground
 
-A online evaluator and a visualiser of the Lambda GT language.
+An online evaluator and a visualiser of the Lambda GT language.
 
 Try this at [TODO](https://example.com).
 
