@@ -68,6 +68,8 @@ type Msg
     = VisGraphMsg VisGraph.Msg
     | SendRun
     | RecvRun (Result Decode.Error Message)
+    | SendProceed
+    | RecvProceed (Result Decode.Error Message)
     | TabMsg Tab.State
     | EditorMsg Editor.Msg
     | NavbarMsg Navbar.State
@@ -84,6 +86,7 @@ type alias Model =
     , navbarState : Navbar.State
     , showVisSettings : Bool
     , viewSettings : ViewSettings.Model {}
+    , hasNext : Bool
     }
 
 
@@ -113,6 +116,7 @@ init _ =
       , navbarState = navbarState
       , showVisSettings = False
       , viewSettings = ViewSettings.initializeModel graph
+      , hasNext = False
       }
     , Cmd.batch
         [ Cmd.map EditorMsg editorCmd
@@ -177,7 +181,7 @@ update msg model =
             , Cmd.none
             )
 
-        RecvRun (Ok { graph, info }) ->
+        RecvRun (Ok { graph, isEnded, info }) ->
             let
                 msgString =
                     info ++ ": " ++ PortGraph.toString String.fromInt graph
@@ -188,6 +192,37 @@ update msg model =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
                         graph
                         model.visGraph
+                , hasNext = not isEnded
+              }
+            , Cmd.none
+            )
+
+        SendProceed ->
+            if model.hasNext then
+                ( { model | messages = List.take 20 <| "Send" :: model.messages }
+                , sendMessage "HOGEEEE"
+                )
+
+            else
+                ( model, Cmd.none )
+
+        RecvProceed (Err err) ->
+            ( { model | messages = List.take 20 <| Decode.errorToString err :: model.messages }
+            , Cmd.none
+            )
+
+        RecvProceed (Ok { graph, isEnded, info }) ->
+            let
+                msgString =
+                    info ++ ": " ++ PortGraph.toString String.fromInt graph
+            in
+            ( { model
+                | messages = List.take 20 <| msgString :: model.messages
+                , visGraph =
+                    VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
+                        graph
+                        model.visGraph
+                , hasNext = not isEnded
               }
             , Cmd.none
             )
@@ -233,6 +268,17 @@ viewNavbar model =
                 , HAttrs.style "padding-top" "0"
                 ]
                 [ Button.button [ Button.primary, Button.onClick <| SendRun ] [ text "Run" ] ]
+            , Navbar.itemLink
+                [ HAttrs.style "padding-bottom" "0"
+                , HAttrs.style "padding-top" "0"
+                ]
+                [ Button.button
+                    [ Button.secondary
+                    , Button.disabled <| not model.hasNext
+                    , Button.onClick <| SendProceed
+                    ]
+                    [ text "Proceed" ]
+                ]
             , Navbar.dropdown
                 { id = "exampleDropdown"
                 , toggle = Navbar.dropdownToggle [] [ text "Examples" ]

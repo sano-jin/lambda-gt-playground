@@ -81,6 +81,7 @@ app.ports.sendMessage.subscribe(function (message) {
 // });
 
 let counter = 0;
+let isEnded = false;
 function myCallback() {
   // Your code here
   // Parameters are purely optional.
@@ -92,9 +93,10 @@ function myCallback() {
 
   const messageJSON = JSON.stringify({
     graph: graph(counter),
-    isEnded: false,
+    isEnded: isEnded,
     info: data,
   });
+  isEnded = !isEnded;
   app.ports.messageReceiver.send(messageJSON);
 }
 
