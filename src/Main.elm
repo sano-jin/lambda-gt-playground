@@ -288,7 +288,7 @@ view model =
                                     |> Card.view
 
                                 -- , Html.map VisGraphMsg <| VisGraph.viewSettings model.visGraph
-                                , Html.map ViewSettingsMsg <| ViewSettings.viewSettings model.viewSettings
+                                , Html.map ViewSettingsMsg <| ViewSettings.view model.viewSettings
                                 ]
                         }
                     , Tab.item
@@ -328,7 +328,7 @@ view model =
                         [ Col.xs6
                         , Col.attrs [ HAttrs.style "padding" "0", HAttrs.style "flex-grow" "1" ]
                         ]
-                        [ Html.map VisGraphMsg <| VisGraph.viewGraph model.visGraph ]
+                        [ Html.map VisGraphMsg <| VisGraph.view model.visGraph ]
                     ]
                 ]
             ]

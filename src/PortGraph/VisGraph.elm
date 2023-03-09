@@ -86,7 +86,6 @@ type Msg
     | Resize Int Int
     | Tick Time.Posix
     | ZoomMsg OnZoom
-    | ConfigGraph (ViewSettings.Config (PortGraph.Port_ Int))
 
 
 
@@ -398,9 +397,6 @@ updateGraph config portGraph model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( ConfigGraph config, _ ) ->
-            ( configGraph config model, Cmd.none )
-
         ( Tick _, Ready state ) ->
             handleTick state
 
@@ -641,17 +637,11 @@ shiftPosition zoom ( elementX, elementY ) ( clientX, clientY ) =
 
 
 
--- View
--- view : Model -> Html Msg
--- view model =
---     div [ HAttrs.style "height" "100%" ]
---         [ viewGraph model
---         , viewSettings model
---         ]
+-- view
 
 
-viewGraph : Model -> Html Msg
-viewGraph model =
+view : Model -> Html Msg
+view model =
     let
         zoomEvents : List (Attribute Msg)
         zoomEvents =

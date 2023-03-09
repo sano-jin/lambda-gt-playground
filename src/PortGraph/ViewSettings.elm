@@ -423,8 +423,8 @@ viewPortAngleSliders nodeFunctors portAngles =
 
 {-| Main View
 -}
-viewSettings : Model p -> Html Msg
-viewSettings model =
+view : Model p -> Html Msg
+view model =
     let
         viewSpringSettings =
             Grid.container []
