@@ -37,3 +37,8 @@ dictMapIf f pred list =
                 x
     in
     Dict.map helper list
+
+
+mergeDicts : List (Dict comparable v) -> Dict comparable v
+mergeDicts dicts =
+    List.foldl Dict.union Dict.empty dicts

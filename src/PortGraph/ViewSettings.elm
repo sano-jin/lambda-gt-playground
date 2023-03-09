@@ -15,26 +15,6 @@ reheat の有無．
 
 update は `{ settings = SettingsModel, reheat = Bool }` を返すことにする？
 
-TODO:
-
-  - Documentation.
-  - Eliminate Bootstrap code.
-    The bootstrap code is for the frontend view and is not for rendering graphs.
-  - グラフを更新した際に，
-    visualisation のためのパラメータが初期化されてしまっているので，
-    うまく引き継げるようにする．
-      - Port Angles は，ファンクタごとの preset を更新して持っておく．
-          - JSON で入出力できるようにする．
-          - 個別の port angles を引き継ぐのは難しそうなので，後回し．
-      - Spring settings はうまく引き継ぎたい．
-  - データ構造の整理．
-      - 動的な更新ができるようにする．
-      - port angle をできるだけ保ちたい．
-      - まずはあまり差分を小さくすることについて考えなくても良いかも知れない．
-  - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
-  - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
-  - port-graph-visualisation を playground から分離する．
-
 -}
 
 import Bootstrap.Accordion as Accordion
@@ -50,6 +30,7 @@ import Browser.Dom as Dom
 import Browser.Events as Events
 import Color
 import Dict exposing (Dict)
+import Dict.Extra as DictX
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Html exposing (Html, div)
 import Html.Attributes as HAttrs exposing (style)
@@ -60,12 +41,12 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph.ForceExtra as Force
 import PortGraph.PortGraph as PortGraph exposing (Functor, PortId, Port_)
-import PortGraph.VisGraph as VisGraph
+import PortGraph.Util as Util
 import Process
 import Task
 import Time
 import Tuple as T2
-import Tuple3 as T
+import Tuple3 as T3
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, rect, svg, text_, title)
 import TypedSvg.Attributes as Attrs exposing (class, cursor, fill, fontSize, id, markerEnd, markerHeight, markerWidth, orient, pointerEvents, points, refX, refY, stroke, transform)
 import TypedSvg.Attributes.InPx exposing (cx, cy, dx, dy, height, r, strokeWidth, width, x1, x2, y1, y2)
@@ -78,8 +59,16 @@ import Zoom exposing (OnZoom, Zoom)
 -- Types
 
 
+type alias PortAngle =
+    Float
+
+
 type alias NodePortId =
     ( PortGraph.NodeId Int, PortId )
+
+
+type alias FunctorPortId =
+    ( PortGraph.Functor, PortId )
 
 
 {-| TODO: Description.
@@ -89,45 +78,40 @@ type Msg
     | SlidePortDistance Float
     | SlidePortCtrlPDistance Float
     | SlideStrength Float
-    | SlidePortAngle NodePortId Float
-    | SlidePortAngleFunctor Functor PortId Float
+    | SlidePortAngle NodePortId PortAngle
+    | SlidePortAngleFunctor FunctorPortId PortAngle
     | AccordionSettingsMsg Accordion.State
+
+
+type alias PortExtra p =
+    { p | angle : PortAngle, label : String }
 
 
 {-| NodeId -> PortId -> PortAngle.
 -}
-type alias PortAngles comparable =
-    Dict comparable (Dict Int Float)
+type alias PortAngles p =
+    Dict NodePortId (PortExtra p)
+
+
+type alias FunctorPortAngles p =
+    Dict Functor (Dict PortId (PortExtra p))
+
+
+type alias NodeFunctors =
+    Dict NodeId Functor
 
 
 {-| Model and (custom) command.
+A direction given to Force.
 reheat の有無．
 
   - Link Distance, Port Angles などを更新した際には，reheat が必要になる．
   - portCtrlPDistance を更新した場合は（現在はこれだけ），reheat は不要．
 
 -}
-type alias Config =
+type alias Config p =
     { reheat : Bool
-    , settings : Settings
-    }
-
-
-{-| Model of the view.
-
-portAngles に関して．
-
-  - FuncterPortAngles: The dictionary to hold the angles of the ports for each functors.
-      - Functor -> PortId -> Angle
-  - NodePortAngles: The dictionary to hold the angles of the ports for each atoms.
-      - NodeId (id of the atoms) -> PortId -> Angle
-  - NodeFunctors: Node -> Functor
-
--}
-type alias Model =
-    { settings : Settings
-    , accordionSettings : Accordion.State
-    , functorPortAngles : PortGraph.InitialPortAngles
+    , settings : Settings p
     }
 
 
@@ -135,21 +119,40 @@ type alias Model =
 
 portAngles に関して．
 
-  - FuncterPortAngles: The dictionary to hold the angles of the ports for each functors.
+  - FunctorPortAngles: The dictionary to hold the angles of the ports for each functors.
       - Functor -> PortId -> Angle
   - NodePortAngles: The dictionary to hold the angles of the ports for each atoms.
       - NodeId (id of the atoms) -> PortId -> Angle
   - NodeFunctors: Node -> Functor
 
 -}
-type alias Settings =
+type alias Settings p =
     { atomSize : Float
     , distance : Float
     , portDistance : Float
     , portCtrlPDistance : Float
     , strength : Float
+    , portAngles : PortAngles p
+    }
+
+
+{-| Model of the view.
+
+portAngles に関して．
+
+  - FunctorPortAngles: The dictionary to hold the angles of the ports for each functors.
+      - Functor -> PortId -> Angle
+  - NodePortAngles: The dictionary to hold the angles of the ports for each atoms.
+      - NodeId (id of the atoms) -> PortId -> Angle
+  - functorPortAngles: Functor -> Maybe Angle
+  - nodeFunctors : NodeId -> Functor
+
+-}
+type alias Model p =
+    { settings : Settings p
     , accordionSettings : Accordion.State
-    , portAngles : PortAngles Int
+    , functorPortAngles : FunctorPortAngles p
+    , nodeFunctors : NodeFunctors
     }
 
 
@@ -159,307 +162,127 @@ type alias Settings =
 
 {-| The initial state of the settings.
 -}
-initialSettings : Settings
+initialSettings : Settings p
 initialSettings =
     { atomSize = 20.0
     , distance = 5.0
     , portDistance = 50.0
     , portCtrlPDistance = 40.0
     , strength = 1.2
-    , accordionSettings = Accordion.initialStateCardOpen "card1"
+    , portAngles = Dict.empty
     }
 
 
+{-| TODO: `functorPortAngles` に登録されていない functor がくると empty を返してしまう．
+-}
+initSettings : NodeFunctors -> FunctorPortAngles p -> Settings p
+initSettings nodeFunctors functorPortAngles =
+    let
+        helper : ( NodeId, Functor ) -> PortAngles p
+        helper ( nodeId, functor ) =
+            DictX.mapKeys (\pid -> ( nodeId, pid )) <|
+                Maybe.withDefault Dict.empty <|
+                    Dict.get functor functorPortAngles
+    in
+    { initialSettings | portAngles = Util.mergeDicts <| List.map helper <| Dict.toList nodeFunctors }
 
--- initialConfig =
---     { settings = initialSettings, reheat = False}
+
+initModel : NodeFunctors -> FunctorPortAngles p -> Model p
+initModel nodeFunctors functorPortAngles =
+    { settings = initSettings nodeFunctors functorPortAngles
+    , accordionSettings = Accordion.initialStateCardOpen "card1"
+    , functorPortAngles = functorPortAngles
+    , nodeFunctors = nodeFunctors
+    }
+
+
+initialConfig =
+    { settings = initialSettings, reheat = False }
+
+
+
 -- Subscriptions
 
 
 {-| We have three groups of subscriptions:
 -}
-subscriptions : Config -> Sub Msg
+subscriptions : Model p -> Sub Msg
 subscriptions model =
-    Accordion.subscriptions model.settings.accordionSettings AccordionSettingsMsg
+    Accordion.subscriptions model.accordionSettings AccordionSettingsMsg
 
 
 
 -- Update
 
 
-update : Msg -> Settings -> Config
+config : Bool -> Model p -> ( Model p, Config p )
+config reheat model =
+    ( model, { settings = model.settings, reheat = reheat } )
+
+
+update : Msg -> Model p -> ( Model p, Config p )
 update msg model =
+    let
+        settings =
+            model.settings
+    in
     case msg of
-        AccordionSettingsMsg show ->
-            Config False { model | accordionSettings = show }
+        AccordionSettingsMsg accordionSettings ->
+            config False { model | accordionSettings = accordionSettings }
 
-        SlidePortAngleFunctor functor portId portAngle ->
+        SlideDistance distance ->
+            config False { model | settings = { settings | distance = distance } }
+
+        SlidePortDistance portDistance ->
+            config False { model | settings = { settings | portDistance = portDistance } }
+
+        SlidePortCtrlPDistance portCtrlPDistance ->
+            config False { model | settings = { settings | portCtrlPDistance = portCtrlPDistance } }
+
+        SlideStrength strength ->
+            config False { model | settings = { settings | strength = strength } }
+
+        SlidePortAngle nodePortId portAngle ->
+            config False
+                { model
+                    | settings =
+                        { settings
+                            | portAngles =
+                                Dict.update nodePortId (Maybe.map (\p -> { p | angle = portAngle })) model.settings.portAngles
+                        }
+                }
+
+        SlidePortAngleFunctor ( functor, portId ) portAngle ->
             let
-                graph =
-                    T.mapThird (\g -> { g | atoms = PortGraph.updatePortAnglesWithFunctor portAngle functor portId g.atoms }) state.graph
+                helper ( nodeId, pid ) p =
+                    if Dict.get nodeId model.nodeFunctors == Just functor && pid == portId then
+                        { p | angle = portAngle }
 
-                portDict =
-                    PortGraph.toPortDict <| T.third graph
-            in
-            ( Ready
-                { state
-                    | graph = graph
-                    , simulation = Force.reheat <| Force.updatePortDict portDict state.simulation
-                }
-            , Cmd.none
-            )
+                    else
+                        p
 
-        ( SlidePortAngleFunctor _ _ _, _ ) ->
-            ( model, Cmd.none )
+                portAngles =
+                    Dict.map helper model.settings.portAngles
 
-        ( SlidePortAngle nodePortId portAngle, Ready state ) ->
-            let
-                graph =
-                    T.mapThird (PortGraph.updatePortAngleOfGraph portAngle nodePortId) state.graph
-
-                portDict =
-                    PortGraph.toPortDict <| T.third graph
-            in
-            ( Ready
-                { state
-                    | graph = graph
-                    , simulation = Force.reheat <| Force.updatePortDict portDict state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortAngle _ _, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortCtrlPDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | portCtrlPDistance = f
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortCtrlPDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | portDistance = f
-                    , simulation = Force.reheat <| Force.updatePortDistance f state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlideDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | distance = f
-                    , simulation = Force.reheat <| Force.updateDistanceStrengthsInState f state.strength state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlideDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlideStrength f, Ready state ) ->
-            ( Ready
-                { state
-                    | strength = f
-                    , simulation = Force.reheat <| Force.updateDistanceStrengthsInState state.strength f state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlideStrength f, _ ) ->
-            ( model, Cmd.none )
-
-
-handleDragAt : ( Float, Float ) -> ReadyState -> ( Model, Cmd Msg )
-handleDragAt xy ({ drag, simulation } as state) =
-    case drag of
-        Just { start, index } ->
-            ( Ready
-                { state
-                    | drag =
-                        Just
-                            { start = start
-                            , current = xy
-                            , index = index
-                            }
-                    , graph = updateNodePosition index xy state
-                    , simulation = Force.reheat simulation
-                }
-            , Cmd.none
-            )
-
-        Nothing ->
-            ( Ready state, Cmd.none )
-
-
-handleTick : ReadyState -> ( Model, Cmd Msg )
-handleTick state =
-    let
-        ( newSimulation, list ) =
-            Force.tick state.simulation <|
-                List.map .label <|
-                    Graph.nodes <|
-                        T.first state.graph
-    in
-    case state.drag of
-        Nothing ->
-            ( Ready
-                { state
-                    | graph = updateGraphWithList state.graph list
-                    , showGraph = True
-                    , simulation = newSimulation
-                }
-            , Cmd.none
-            )
-
-        Just { current, index } ->
-            ( Ready
-                { state
-                    | graph =
-                        T.mapFirst
-                            (Graph.update index
-                                (Maybe.map
-                                    (updateNode
-                                        (shiftPosition state.zoom ( state.element.x, state.element.y ) current)
-                                    )
-                                )
+                functorPortAngles =
+                    Dict.update functor
+                        (Maybe.map
+                            (\ps ->
+                                Dict.update portId (Maybe.map (\p -> { p | angle = portAngle })) ps
                             )
-                            (updateGraphWithList state.graph list)
-                    , showGraph = True
-                    , simulation = newSimulation
-                }
-            , Cmd.none
-            )
-
-
-updateNode :
-    ( Float, Float )
-    -> NodeContext Entity ()
-    -> NodeContext Entity ()
-updateNode ( x, y ) nodeCtx =
-    let
-        nodeValue =
-            nodeCtx.node.label
-    in
-    updateContextWithValue nodeCtx { nodeValue | x = x, y = y }
-
-
-updateNodePosition : NodeId -> ( Float, Float ) -> ReadyState -> GraphEdges
-updateNodePosition index xy state =
-    T.mapFirst
-        (Graph.update
-            index
-            (Maybe.map
-                (updateNode
-                    (shiftPosition
-                        state.zoom
-                        ( state.element.x, state.element.y )
-                        xy
-                    )
-                )
-            )
-        )
-        state.graph
-
-
-updateContextWithValue :
-    NodeContext Entity ()
-    -> Entity
-    -> NodeContext Entity ()
-updateContextWithValue nodeCtx value =
-    let
-        node =
-            nodeCtx.node
-    in
-    { nodeCtx | node = { node | label = value } }
-
-
-updateGraphWithList : GraphEdges -> List Entity -> GraphEdges
-updateGraphWithList ( graph, edges, portDict ) list =
-    let
-        graphUpdater value =
-            Maybe.map (\ctx -> updateContextWithValue ctx value)
-    in
-    ( List.foldr (\node g -> Graph.update node.id (graphUpdater node) g) graph list, edges, portDict )
+                        )
+                        model.functorPortAngles
+            in
+            config False { model | functorPortAngles = functorPortAngles, settings = { settings | portAngles = portAngles } }
 
 
 
 -- View
 
 
-viewSettings : VisGraph.Model -> Html VisGraph.Msg
-viewSettings model =
-    let
-        graph =
-            case model of
-                VisGraph.Init g ->
-                    g
-
-                VisGraph.Ready state ->
-                    state.graph
-
-        viewSpringSettings =
-            case model of
-                VisGraph.Ready state ->
-                    Grid.container []
-                        [ viewSlider "Link Distance" initialDistance SlideDistance state.distance
-                        , viewSlider "Port Distance" initialPortDistance SlidePortDistance state.portDistance
-                        , viewSlider "Strength" initialStrength SlideStrength state.strength
-                        , viewSlider "portCtrlPDistance" initialPortCtrlPDistance SlidePortCtrlPDistance state.portCtrlPDistance
-                        ]
-
-                _ ->
-                    div [] []
-    in
-    Accordion.config VisGraph.AccordionSettingsMsg
-        |> Accordion.withAnimation
-        |> Accordion.cards
-            [ Accordion.card
-                { id = "card1"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Spring Settings" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewSpringSettings ] ]
-                    ]
-                }
-            , Accordion.card
-                { id = "card2"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewPortAngleFunctorSliders <| T.third graph ] ]
-                    ]
-                }
-            , Accordion.card
-                { id = "card3"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles (Separately)" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewPortAngleSliders <| T.third graph ] ]
-                    ]
-                }
-            ]
-        |> Accordion.view (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
-
-
 {-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
 -}
-viewSlider : String -> Float -> (Float -> VisGraph.Msg) -> Float -> Html VisGraph.Msg
+viewSlider : String -> Float -> (Float -> Msg) -> Float -> Html Msg
 viewSlider label initialValue msg parameter =
     Grid.row [ Row.betweenMd ]
         [ Grid.col [ Col.xs4 ] [ text label ]
@@ -486,7 +309,7 @@ viewSlider label initialValue msg parameter =
 
 {-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
 -}
-viewPortAngleFunctorSlider : String -> Functor -> Int -> Float -> Html VisGraph.Msg
+viewPortAngleFunctorSlider : String -> Functor -> Int -> Float -> Html Msg
 viewPortAngleFunctorSlider portLabel functor portId portAngle =
     Grid.row [ Row.betweenMd ]
         [ Grid.col [ Col.xs2 ] [ text portLabel ]
@@ -500,7 +323,7 @@ viewPortAngleFunctorSlider portLabel functor portId portAngle =
                 , Attrs.max "360"
                 , HAttrs.step "30"
                 , HAttrs.value <| String.fromFloat portAngle
-                , HEvents.onInput (VisGraph.SlidePortAngleFunctor functor portId << Maybe.withDefault 0 << String.toFloat)
+                , HEvents.onInput (SlidePortAngleFunctor ( functor, portId ) << Maybe.withDefault 0 << String.toFloat)
                 ]
                 []
             ]
@@ -508,25 +331,20 @@ viewPortAngleFunctorSlider portLabel functor portId portAngle =
         ]
 
 
-viewPortAngleFunctorSliders : PortGraph.Graph Int -> Html Msg
-viewPortAngleFunctorSliders graph =
+viewPortAngleFunctorSliders : FunctorPortAngles p -> Html Msg
+viewPortAngleFunctorSliders functorPortAngles =
     let
-        functors =
-            List.map T2.first <|
-                PortGraph.groupAtomsWithFunctor graph
-
-        helper atom =
+        helper ( functor, portAngles ) =
             Grid.row [ Row.betweenXl ]
-                [ Grid.col [ Col.xs3 ] [ text <| PortGraph.functorToString <| PortGraph.functorOfAtom atom ]
+                [ Grid.col [ Col.xs3 ] [ text <| PortGraph.functorToString functor ]
                 , Grid.col [ Col.xs9 ] <|
-                    List.map (\p -> viewPortAngleFunctorSlider p.label (PortGraph.functorOfAtom atom) p.id p.angle) <|
-                        Dict.values atom.ports
+                    List.map (\( pid, p ) -> viewPortAngleFunctorSlider p.label functor pid p.angle) <|
+                        Dict.toList portAngles
                 ]
     in
     Grid.container [] <|
         List.map helper <|
-            List.map T2.first <|
-                PortGraph.groupAtomsWithFunctor graph
+            Dict.toList functorPortAngles
 
 
 
@@ -557,18 +375,75 @@ viewPortAngleSlider portLabel nodePortId portAngle =
         ]
 
 
-viewPortAngleSliders : PortGraph.Graph Int -> Html Msg
-viewPortAngleSliders { atoms } =
+getAtomName : NodeFunctors -> NodeId -> String
+getAtomName nodeFunctors nodeId =
+    Dict.get nodeId nodeFunctors
+        |> Maybe.map (\funct -> PortGraph.functorToString funct)
+        |> Maybe.withDefault ""
+
+
+viewPortAngleSliders : NodeFunctors -> PortAngles p -> Html Msg
+viewPortAngleSliders nodeFunctors portAngles =
     let
-        helper atom =
+        helper ( ( nodeId, portId ) as nodePortId, portAngle ) =
             Grid.row [ Row.betweenXl ]
-                [ Grid.col [ Col.xs1 ] [ text <| String.fromInt atom.id ]
-                , Grid.col [ Col.xs2 ] [ text <| atom.label ]
+                [ Grid.col [ Col.xs1 ] [ text <| String.fromInt nodeId ]
+                , Grid.col [ Col.xs2 ] [ text <| getAtomName nodeFunctors nodeId ]
                 , Grid.col [ Col.xs9 ] <|
-                    List.map (\p -> viewPortAngleSlider p.label ( atom.id, p.id ) p.angle) <|
-                        Dict.values atom.ports
+                    List.map (\p -> viewPortAngleSlider p.label nodePortId p.angle) <|
+                        Dict.values portAngles
                 ]
     in
     Grid.container [] <|
         List.map helper <|
-            Dict.values atoms
+            Dict.toList portAngles
+
+
+{-| Main View
+-}
+viewSettings : Model p -> Html Msg
+viewSettings model =
+    let
+        viewSpringSettings =
+            Grid.container []
+                [ viewSlider "Link Distance" initialSettings.distance SlideDistance model.settings.distance
+                , viewSlider "Port Distance" initialSettings.portDistance SlidePortDistance model.settings.portDistance
+                , viewSlider "Strength" initialSettings.strength SlideStrength model.settings.strength
+                , viewSlider "portCtrlPDistance" initialSettings.portCtrlPDistance SlidePortCtrlPDistance model.settings.portCtrlPDistance
+                ]
+    in
+    Accordion.config AccordionSettingsMsg
+        |> Accordion.withAnimation
+        |> Accordion.cards
+            [ Accordion.card
+                { id = "card1"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Spring Settings" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewSpringSettings ] ]
+                    ]
+                }
+            , Accordion.card
+                { id = "card2"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewPortAngleFunctorSliders model.functorPortAngles ] ]
+                    ]
+                }
+            , Accordion.card
+                { id = "card3"
+                , options = []
+                , header =
+                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles (Separately)" ]
+                , blocks =
+                    [ Accordion.block []
+                        [ Block.text [] [ viewPortAngleSliders model.nodeFunctors model.settings.portAngles ] ]
+                    ]
+                }
+            ]
+        |> Accordion.view model.accordionSettings

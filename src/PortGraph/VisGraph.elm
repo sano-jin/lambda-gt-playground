@@ -51,6 +51,7 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph.ForceExtra as Force
 import PortGraph.PortGraph as PortGraph exposing (Functor, PortId)
+import PortGraph.ViewSettings as ViewSettings
 import Process
 import Task
 import Time

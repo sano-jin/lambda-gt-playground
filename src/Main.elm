@@ -8,8 +8,6 @@ functionality.
 
 -}
 
--- import PortGraph.ViewSettings as ViewSettings
-
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
 import Bootstrap.Card as Card
@@ -38,6 +36,7 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph.PortGraph as PortGraph exposing (Functor, PortId)
 import PortGraph.PortGraphExample as PortGraphExample
+import PortGraph.ViewSettings as ViewSettings
 import PortGraph.VisGraph as VisGraph
 import Task
 
