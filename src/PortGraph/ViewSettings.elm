@@ -196,6 +196,28 @@ initModel nodeFunctors functorPortAngles =
     }
 
 
+initializeModel : PortGraph.Graph Int -> Model {}
+initializeModel graph =
+    let
+        nodeFunctors : NodeFunctors
+        nodeFunctors =
+            Dict.map (\_ atom -> PortGraph.functorOfAtom atom) graph.atoms
+
+        functorPortAngles : FunctorPortAngles {}
+        functorPortAngles =
+            Dict.fromList <|
+                List.map
+                    (\( atom, _ ) ->
+                        ( PortGraph.functorOfAtom atom
+                        , Dict.map (\_ p -> { label = p.label, angle = p.angle }) atom.ports
+                        )
+                    )
+                <|
+                    PortGraph.groupAtomsWithFunctor graph
+    in
+    initModel nodeFunctors functorPortAngles
+
+
 initialConfig =
     { settings = initialSettings, reheat = False }
 
@@ -231,19 +253,19 @@ update msg model =
             config False { model | accordionSettings = accordionSettings }
 
         SlideDistance distance ->
-            config False { model | settings = { settings | distance = distance } }
+            config True { model | settings = { settings | distance = distance } }
 
         SlidePortDistance portDistance ->
-            config False { model | settings = { settings | portDistance = portDistance } }
+            config True { model | settings = { settings | portDistance = portDistance } }
 
         SlidePortCtrlPDistance portCtrlPDistance ->
             config False { model | settings = { settings | portCtrlPDistance = portCtrlPDistance } }
 
         SlideStrength strength ->
-            config False { model | settings = { settings | strength = strength } }
+            config True { model | settings = { settings | strength = strength } }
 
         SlidePortAngle nodePortId portAngle ->
-            config False
+            config True
                 { model
                     | settings =
                         { settings
@@ -273,7 +295,7 @@ update msg model =
                         )
                         model.functorPortAngles
             in
-            config False { model | functorPortAngles = functorPortAngles, settings = { settings | portAngles = portAngles } }
+            config True { model | functorPortAngles = functorPortAngles, settings = { settings | portAngles = portAngles } }
 
 
 

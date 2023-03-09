@@ -9,8 +9,6 @@ functionality.
 TODO:
 
   - Documentation.
-  - Eliminate Bootstrap code.
-    The bootstrap code is for the frontend view and is not for rendering graphs.
   - グラフを更新した際に，
     visualisation のためのパラメータが初期化されてしまっているので，
     うまく引き継げるようにする．
@@ -28,14 +26,6 @@ TODO:
 
 -}
 
-import Bootstrap.Accordion as Accordion
-import Bootstrap.Button as Button
-import Bootstrap.CDN as CDN
-import Bootstrap.Card.Block as Block
-import Bootstrap.Form.Checkbox as Checkbox
-import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col as Col
-import Bootstrap.Grid.Row as Row
 import Browser
 import Browser.Dom as Dom
 import Browser.Events as Events
@@ -51,12 +41,13 @@ import Json.Decode.Extra as DX
 import Json.Decode.Pipeline as DP
 import PortGraph.ForceExtra as Force
 import PortGraph.PortGraph as PortGraph exposing (Functor, PortId)
+import PortGraph.Util as Util
 import PortGraph.ViewSettings as ViewSettings
 import Process
 import Task
 import Time
 import Tuple as T2
-import Tuple3 as T
+import Tuple3 as T3
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, rect, svg, text_, title)
 import TypedSvg.Attributes as Attrs exposing (class, cursor, fill, fontSize, id, markerEnd, markerHeight, markerWidth, orient, pointerEvents, points, refX, refY, stroke, transform)
 import TypedSvg.Attributes.InPx exposing (cx, cy, dx, dy, height, r, strokeWidth, width, x1, x2, y1, y2)
@@ -95,13 +86,11 @@ type Msg
     | Resize Int Int
     | Tick Time.Posix
     | ZoomMsg OnZoom
-    | SlideDistance Float
-    | SlidePortDistance Float
-    | SlidePortCtrlPDistance Float
-    | SlideStrength Float
-    | SlidePortAngle NodePortId Float
-    | SlidePortAngleFunctor Functor PortId Float
-    | AccordionSettingsMsg Accordion.State
+    | ConfigGraph (ViewSettings.Config (PortGraph.Port_ Int))
+
+
+
+--     | ViewSettingsMsg ViewSettings.Msg
 
 
 type alias GraphEdges =
@@ -152,7 +141,6 @@ type alias ReadyState =
     , portCtrlPDistance : Float
     , strength : Float
     , size : ( Float, Float )
-    , accordionSettings : Accordion.State
     }
 
 
@@ -182,11 +170,8 @@ type alias Entity =
 {-| `initialiseGraph inputGraph` converts `inputGraph` to the graph we use in the visualisation process.
 -}
 initialiseGraph : PortGraph.Graph Int -> GraphEdges
-initialiseGraph inputGraph =
+initialiseGraph portGraph =
     let
-        portGraph =
-            PortGraph.initPortAngles PortGraph.initialPortAngles inputGraph
-
         graph : Graph Entity ()
         graph =
             Graph.mapContexts initNode <| graphData portGraph
@@ -229,8 +214,8 @@ initNode ctx =
 
 {-| Initializes the simulation by setting the forces for the graph.
 -}
-initSimulation : Float -> Float -> GraphEdges -> ( Float, Float ) -> Force.State NodeId
-initSimulation d portDistance ( graph, edges, portDict ) ( width, height ) =
+initSimulation : Float -> Float -> Float -> GraphEdges -> ( Float, Float ) -> Force.State NodeId
+initSimulation d portDistance strength ( graph, edges, portDict ) ( width, height ) =
     let
         link : { c | from : a, to : b } -> ( a, b )
         link { from, to } =
@@ -240,7 +225,7 @@ initSimulation d portDistance ( graph, edges, portDict ) ( width, height ) =
         [ -- Defines the force that pulls connected nodes together. You can use
           -- `Force.customLinks` if you need to adjust the distance and
           -- strength.
-          Force.links d portDistance (PortGraph.toPortDict portDict) <| List.map link <| edges
+          Force.links d portDistance (Just strength) (PortGraph.toPortDict portDict) <| List.map link <| edges
 
         -- Defines the force that pushes the nodes apart. The default strength
         -- is `-30`, but since we are drawing fairly large circles for each
@@ -346,9 +331,6 @@ subscriptions model =
             Ready state ->
                 readySubscriptions state
         , Events.onResize Resize
-        , Accordion.subscriptions
-            (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
-            AccordionSettingsMsg
 
         -- , messageReceiver <| Recv << Decode.decodeString decodeMessage
         ]
@@ -358,123 +340,66 @@ subscriptions model =
 -- Update
 
 
-updateGraph : PortGraph.Graph Int -> Model -> Model
-updateGraph portGraph model =
+configGraph : ViewSettings.Config p -> Model -> Model
+configGraph { reheat, settings } model =
     case model of
-        Init g ->
-            Init (initialiseGraph portGraph)
+        Init graph ->
+            model
 
         Ready state ->
             let
                 graph =
-                    initialiseGraph portGraph
+                    Dict.foldl
+                        (\nodePortId p g -> PortGraph.updatePortAngleOfGraph p.angle nodePortId g)
+                        (T3.third state.graph)
+                        settings.portAngles
+
+                portDict =
+                    PortGraph.toPortDict graph
+
+                simulation =
+                    Force.updatePortDistance settings.portDistance <|
+                        Force.updatePortDict portDict <|
+                            Force.updateDistanceStrengthsInState settings.distance settings.strength state.simulation
+
+                simulationReheated =
+                    if reheat then
+                        Force.reheat simulation
+
+                    else
+                        simulation
             in
             Ready
                 { state
-                    | graph = graph
-                    , showGraph = False
-                    , simulation =
-                        initSimulation
-                            initialDistance
-                            initialPortDistance
-                            graph
-                            state.size
+                    | graph = initialiseGraph graph
+                    , simulation = simulationReheated
+                    , portCtrlPDistance = settings.portCtrlPDistance
                 }
+
+
+updateGraph : ViewSettings.Config p -> PortGraph.Graph Int -> Model -> Model
+updateGraph config portGraph model =
+    let
+        ge : Graph Entity ()
+        ge =
+            Graph.mapContexts initNode <| graphData portGraph
+
+        graph =
+            ( ge, PortGraph.toEdges portGraph, portGraph )
+    in
+    case model of
+        Init g ->
+            Init graph
+
+        Ready state ->
+            configGraph config <| Ready { state | graph = graph }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( AccordionSettingsMsg show, Ready state ) ->
-            ( Ready { state | accordionSettings = show }, Cmd.none )
-
-        ( AccordionSettingsMsg _, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortAngleFunctor functor portId portAngle, Ready state ) ->
-            let
-                graph =
-                    T.mapThird (\g -> { g | atoms = PortGraph.updatePortAnglesWithFunctor portAngle functor portId g.atoms }) state.graph
-
-                portDict =
-                    PortGraph.toPortDict <| T.third graph
-            in
-            ( Ready
-                { state
-                    | graph = graph
-                    , simulation = Force.reheat <| Force.updatePortDict portDict state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortAngleFunctor _ _ _, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortAngle nodePortId portAngle, Ready state ) ->
-            let
-                graph =
-                    T.mapThird (PortGraph.updatePortAngleOfGraph portAngle nodePortId) state.graph
-
-                portDict =
-                    PortGraph.toPortDict <| T.third graph
-            in
-            ( Ready
-                { state
-                    | graph = graph
-                    , simulation = Force.reheat <| Force.updatePortDict portDict state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortAngle _ _, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortCtrlPDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | portCtrlPDistance = f
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortCtrlPDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlidePortDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | portDistance = f
-                    , simulation = Force.reheat <| Force.updatePortDistance f state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlidePortDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlideDistance f, Ready state ) ->
-            ( Ready
-                { state
-                    | distance = f
-                    , simulation = Force.reheat <| Force.updateDistanceStrengthsInState f state.strength state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlideDistance f, _ ) ->
-            ( model, Cmd.none )
-
-        ( SlideStrength f, Ready state ) ->
-            ( Ready
-                { state
-                    | strength = f
-                    , simulation = Force.reheat <| Force.updateDistanceStrengthsInState state.strength f state.simulation
-                }
-            , Cmd.none
-            )
-
-        ( SlideStrength f, _ ) ->
-            ( model, Cmd.none )
+        ( ConfigGraph config, _ ) ->
+            ( configGraph config model, Cmd.none )
 
         ( Tick _, Ready state ) ->
             handleTick state
@@ -534,6 +459,7 @@ update msg model =
                     initSimulation
                         initialDistance
                         initialPortDistance
+                        initialStrength
                         graph
                         ( element.width, element.height )
                 , zoom = initZoom element
@@ -542,7 +468,6 @@ update msg model =
                 , portCtrlPDistance = initialPortCtrlPDistance
                 , strength = initialStrength
                 , size = ( element.width, element.height )
-                , accordionSettings = Accordion.initialStateCardOpen "card1"
                 }
             , Cmd.none
             )
@@ -557,6 +482,7 @@ update msg model =
                     initSimulation
                         state.distance
                         state.portDistance
+                        state.strength
                         state.graph
                         ( element.width, element.height )
                 , zoom = initZoom element
@@ -565,7 +491,6 @@ update msg model =
                 , portCtrlPDistance = state.portCtrlPDistance
                 , strength = state.strength
                 , size = ( element.width, element.height )
-                , accordionSettings = state.accordionSettings
                 }
             , Cmd.none
             )
@@ -614,7 +539,7 @@ handleTick state =
             Force.tick state.simulation <|
                 List.map .label <|
                     Graph.nodes <|
-                        T.first state.graph
+                        T3.first state.graph
     in
     case state.drag of
         Nothing ->
@@ -631,7 +556,7 @@ handleTick state =
             ( Ready
                 { state
                     | graph =
-                        T.mapFirst
+                        T3.mapFirst
                             (Graph.update index
                                 (Maybe.map
                                     (updateNode
@@ -661,7 +586,7 @@ updateNode ( x, y ) nodeCtx =
 
 updateNodePosition : NodeId -> ( Float, Float ) -> ReadyState -> GraphEdges
 updateNodePosition index xy state =
-    T.mapFirst
+    T3.mapFirst
         (Graph.update
             index
             (Maybe.map
@@ -723,184 +648,6 @@ shiftPosition zoom ( elementX, elementY ) ( clientX, clientY ) =
 --         [ viewGraph model
 --         , viewSettings model
 --         ]
-
-
-viewSettings : Model -> Html Msg
-viewSettings model =
-    let
-        graph =
-            case model of
-                Init g ->
-                    g
-
-                Ready state ->
-                    state.graph
-
-        viewSpringSettings =
-            case model of
-                Ready state ->
-                    Grid.container []
-                        [ viewSlider "Link Distance" initialDistance SlideDistance state.distance
-                        , viewSlider "Port Distance" initialPortDistance SlidePortDistance state.portDistance
-                        , viewSlider "Strength" initialStrength SlideStrength state.strength
-                        , viewSlider "portCtrlPDistance" initialPortCtrlPDistance SlidePortCtrlPDistance state.portCtrlPDistance
-                        ]
-
-                _ ->
-                    div [] []
-    in
-    Accordion.config AccordionSettingsMsg
-        |> Accordion.withAnimation
-        |> Accordion.cards
-            [ Accordion.card
-                { id = "card1"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Spring Settings" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewSpringSettings ] ]
-                    ]
-                }
-            , Accordion.card
-                { id = "card2"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewPortAngleFunctorSliders <| T.third graph ] ]
-                    ]
-                }
-            , Accordion.card
-                { id = "card3"
-                , options = []
-                , header =
-                    Accordion.header [] <| Accordion.toggle [] [ text "Port Angles (Separately)" ]
-                , blocks =
-                    [ Accordion.block []
-                        [ Block.text [] [ viewPortAngleSliders <| T.third graph ] ]
-                    ]
-                }
-            ]
-        |> Accordion.view (stateTo (Accordion.initialStateCardOpen "card1") .accordionSettings model)
-
-
-{-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
--}
-viewSlider : String -> Float -> (Float -> Msg) -> Float -> Html Msg
-viewSlider label initialValue msg parameter =
-    Grid.row [ Row.betweenMd ]
-        [ Grid.col [ Col.xs4 ] [ text label ]
-        , Grid.col [ Col.xs4 ]
-            [ Html.input
-                [ HAttrs.type_ "range"
-                , HAttrs.class "input-range"
-                , HAttrs.style "width" "100%"
-                , Attrs.min <| String.fromFloat <| initialValue / 100
-                , Attrs.max <| String.fromFloat <| initialValue * 4
-                , HAttrs.step <| String.fromFloat <| initialValue / 10
-                , HAttrs.value <| String.fromFloat parameter
-                , HEvents.onInput (msg << Maybe.withDefault 0 << String.toFloat)
-                ]
-                []
-            ]
-        , Grid.col [ Col.xs4 ] [ text <| String.fromFloat parameter ]
-        ]
-
-
-
--- viewPortAngleFunctorSliders
-
-
-{-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
--}
-viewPortAngleFunctorSlider : String -> Functor -> Int -> Float -> Html Msg
-viewPortAngleFunctorSlider portLabel functor portId portAngle =
-    Grid.row [ Row.betweenMd ]
-        [ Grid.col [ Col.xs2 ] [ text portLabel ]
-        , Grid.col [ Col.xs6 ]
-            [ Html.input
-                [ HAttrs.type_ "range"
-                , HAttrs.class "input-range"
-                , HAttrs.class "input-range-port-angle"
-                , HAttrs.style "width" "100%"
-                , Attrs.min "0"
-                , Attrs.max "360"
-                , HAttrs.step "30"
-                , HAttrs.value <| String.fromFloat portAngle
-                , HEvents.onInput (SlidePortAngleFunctor functor portId << Maybe.withDefault 0 << String.toFloat)
-                ]
-                []
-            ]
-        , Grid.col [ Col.xs4 ] [ text <| String.fromFloat portAngle ]
-        ]
-
-
-viewPortAngleFunctorSliders : PortGraph.Graph Int -> Html Msg
-viewPortAngleFunctorSliders graph =
-    let
-        functors =
-            List.map T2.first <|
-                PortGraph.groupAtomsWithFunctor graph
-
-        helper atom =
-            Grid.row [ Row.betweenXl ]
-                [ Grid.col [ Col.xs3 ] [ text <| PortGraph.functorToString <| PortGraph.functorOfAtom atom ]
-                , Grid.col [ Col.xs9 ] <|
-                    List.map (\p -> viewPortAngleFunctorSlider p.label (PortGraph.functorOfAtom atom) p.id p.angle) <|
-                        Dict.values atom.ports
-                ]
-    in
-    Grid.container [] <|
-        List.map helper <|
-            List.map T2.first <|
-                PortGraph.groupAtomsWithFunctor graph
-
-
-
--- viewPortAngleSliders
-
-
-{-| `viewSlider msg f` creates a new html element with f that emmit msg on input.
--}
-viewPortAngleSlider : String -> NodePortId -> Float -> Html Msg
-viewPortAngleSlider portLabel nodePortId portAngle =
-    Grid.row [ Row.betweenMd ]
-        [ Grid.col [ Col.xs2 ] [ text portLabel ]
-        , Grid.col [ Col.xs6 ]
-            [ Html.input
-                [ HAttrs.type_ "range"
-                , HAttrs.class "input-range"
-                , HAttrs.class "input-range-port-angle"
-                , HAttrs.style "width" "100%"
-                , Attrs.min "0"
-                , Attrs.max "360"
-                , HAttrs.step "30"
-                , HAttrs.value <| String.fromFloat portAngle
-                , HEvents.onInput (SlidePortAngle nodePortId << Maybe.withDefault 0 << String.toFloat)
-                ]
-                []
-            ]
-        , Grid.col [ Col.xs4 ] [ text <| String.fromFloat portAngle ]
-        ]
-
-
-viewPortAngleSliders : PortGraph.Graph Int -> Html Msg
-viewPortAngleSliders { atoms } =
-    let
-        helper atom =
-            Grid.row [ Row.betweenXl ]
-                [ Grid.col [ Col.xs1 ] [ text <| String.fromInt atom.id ]
-                , Grid.col [ Col.xs2 ] [ text <| atom.label ]
-                , Grid.col [ Col.xs9 ] <|
-                    List.map (\p -> viewPortAngleSlider p.label ( atom.id, p.id ) p.angle) <|
-                        Dict.values atom.ports
-                ]
-    in
-    Grid.container [] <|
-        List.map helper <|
-            Dict.values atoms
 
 
 viewGraph : Model -> Html Msg
@@ -968,12 +715,12 @@ renderGraph model =
         Ready { graph, showGraph, portDistance, portCtrlPDistance } ->
             if showGraph then
                 g []
-                    [ T.second
+                    [ T3.second
                         graph
-                        |> List.map (portLinkElement portCtrlPDistance (T.third graph) <| T.first graph)
+                        |> List.map (portLinkElement portCtrlPDistance (T3.third graph) <| T3.first graph)
                         |> g [ class [ "ports" ] ]
-                    , Graph.nodes (T.first graph)
-                        |> List.map (nodeElement (T.third graph) portDistance)
+                    , Graph.nodes (T3.first graph)
+                        |> List.map (nodeElement (T3.third graph) portDistance)
                         |> g [ class [ "nodes" ] ]
                     ]
 

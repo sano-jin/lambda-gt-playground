@@ -73,6 +73,7 @@ type Msg
     | NavbarMsg Navbar.State
     | ShowVisSettingsMsg Bool
     | LoadCode String
+    | ViewSettingsMsg ViewSettings.Msg
 
 
 type alias Model =
@@ -82,6 +83,7 @@ type alias Model =
     , editor : Editor.Model
     , navbarState : Navbar.State
     , showVisSettings : Bool
+    , viewSettings : ViewSettings.Model {}
     }
 
 
@@ -92,8 +94,11 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init _ =
     let
+        graph =
+            PortGraph.initPortAngles PortGraph.initialPortAngles initialGraph
+
         ( visGraphModel, visGraphCmd ) =
-            VisGraph.init <| VisGraph.initialiseGraph initialGraph
+            VisGraph.init <| VisGraph.initialiseGraph graph
 
         ( editorModel, editorCmd ) =
             Editor.init ()
@@ -107,6 +112,7 @@ init _ =
       , editor = Editor.updateCode Examples.lltree3 editorModel
       , navbarState = navbarState
       , showVisSettings = False
+      , viewSettings = ViewSettings.initializeModel graph
       }
     , Cmd.batch
         [ Cmd.map EditorMsg editorCmd
@@ -131,6 +137,13 @@ updateCode code model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ViewSettingsMsg viewSettingsMsg ->
+            let
+                ( viewSettingsModel, config ) =
+                    ViewSettings.update viewSettingsMsg model.viewSettings
+            in
+            ( { model | viewSettings = viewSettingsModel, visGraph = VisGraph.configGraph config model.visGraph }, Cmd.none )
+
         LoadCode code ->
             ( updateCode code model, Cmd.none )
 
@@ -171,7 +184,10 @@ update msg model =
             in
             ( { model
                 | messages = List.take 20 <| msgString :: model.messages
-                , visGraph = VisGraph.updateGraph graph model.visGraph
+                , visGraph =
+                    VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
+                        graph
+                        model.visGraph
               }
             , Cmd.none
             )
@@ -270,7 +286,9 @@ view model =
                                         , Block.link [ HAttrs.href "#" ] [ text "MyLink" ]
                                         ]
                                     |> Card.view
-                                , Html.map VisGraphMsg <| VisGraph.viewSettings model.visGraph
+
+                                -- , Html.map VisGraphMsg <| VisGraph.viewSettings model.visGraph
+                                , Html.map ViewSettingsMsg <| ViewSettings.viewSettings model.viewSettings
                                 ]
                         }
                     , Tab.item
@@ -339,6 +357,7 @@ subscriptions model =
         , Tab.subscriptions model.tabState TabMsg
         , Sub.map EditorMsg <| Editor.subscriptions model.editor
         , Navbar.subscriptions model.navbarState NavbarMsg
+        , Sub.map ViewSettingsMsg <| ViewSettings.subscriptions model.viewSettings
         ]
 
 

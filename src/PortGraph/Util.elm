@@ -3,6 +3,7 @@ module PortGraph.Util exposing (..)
 -- import Dict exposing (Dict)
 
 import Dict exposing (Dict)
+import Dict.Extra as DictX
 import Either exposing (Either(..))
 import List.Extra as ListX
 
@@ -42,3 +43,10 @@ dictMapIf f pred list =
 mergeDicts : List (Dict comparable v) -> Dict comparable v
 mergeDicts dicts =
     List.foldl Dict.union Dict.empty dicts
+
+
+fuseDict : Dict comparable (Dict comparable v) -> Dict ( comparable, comparable ) v
+fuseDict dict =
+    mergeDicts <|
+        List.map (\( k1, d2 ) -> DictX.mapKeys (\k2 -> ( k1, k2 )) d2) <|
+            Dict.toList dict

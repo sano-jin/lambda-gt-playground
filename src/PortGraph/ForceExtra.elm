@@ -543,8 +543,14 @@ present link, according to the formule: `1 / min (count souce) (count target)` w
 links connected to those nodes.
 
 -}
-links : Float -> Float -> PortDict comparable -> List ( ConnectedTo comparable, ConnectedTo comparable ) -> Force comparable
-links distance portDistance portDict =
+links :
+    Float
+    -> Float
+    -> Maybe Float
+    -> PortDict comparable
+    -> List ( ConnectedTo comparable, ConnectedTo comparable )
+    -> Force comparable
+links distance portDistance maybeStrength portDict =
     List.map
         (\( source, target ) ->
             { source = source
@@ -553,7 +559,7 @@ links distance portDistance portDict =
             , strength = Nothing
             }
         )
-        >> customLinks 1 portDistance portDict
+        >> customLinks 1 portDistance maybeStrength portDict
 
 
 {-| Allows you to specify the link distance and optionally the strength. You must also specify the iterations count (the default in `links` is 1). Increasing the number of iterations greatly increases the rigidity of the constraint and is useful for complex structures such as lattices, but also increases the runtime cost to evaluate the force.
@@ -561,10 +567,11 @@ links distance portDistance portDict =
 customLinks :
     Int
     -> Float
+    -> Maybe Float
     -> PortDict comparable
     -> List { source : ConnectedTo comparable, target : ConnectedTo comparable, distance : Float, strength : Maybe Float }
     -> Force comparable
-customLinks iters portDistance portDict list =
+customLinks iters portDistance maybeStrength portDict list =
     let
         counts =
             List.foldr
