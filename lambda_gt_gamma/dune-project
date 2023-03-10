@@ -29,7 +29,9 @@
   (dune
    (> 1.5))
   (odoc
-   (>= 1.5.3)))
+   (>= 1.5.3))
+  (yojson
+   (>= 2.0.2)))
  (tags
   (topics "to describe" your project)))
 
