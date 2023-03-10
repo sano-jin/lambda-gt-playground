@@ -8,7 +8,123 @@ let links_of_atoms atoms = List.concat_map snd @@ atoms
 let unzip_links =
   List.partition_map @@ function LocalLink l -> Left l | FreeLink f -> Right f
 
-(** 可視化のために，アトムリストを適当に変換する *)
+type connected_to = Port of int * int | HLink of int
+type port_ = { id : int; label : string; to_ : connected_to }
+type atom_ = { id : int; label : string; ports : port_ list }
+type hlink_ = { id : int; label : string; to_ : connected_to list }
+
+(** アトムリストを可視化しやすいデータ構造に変換する *)
+let portgraph_of_atoms (atoms : graph) =
+  (* リンク名からポートの集合への写像を作る． *)
+  let link_map =
+    let helper ((atom_i, _), args) =
+      List.mapi (fun arg_i link -> (link, (atom_i, arg_i))) args
+    in
+    List.concat_map helper atoms
+  in
+  let link_dict = ListExtra.gather link_map in
+
+  (* 端点が二つしか無いリンク (normal link) と，そうでは無いものに分離する．*)
+  let normal_link_dict, hlink_dict =
+    let helper = function
+      | LocalLink x, [ p1; p2 ] -> Either.Left (x, (p1, p2))
+      | mapping -> Either.Right mapping
+    in
+    List.partition_map helper link_dict
+  in
+
+  let hlink_dict_inv =
+    List.concat_map
+      (fun (x, ports) -> List.map (fun port -> (port, x)) ports)
+      hlink_dict
+  in
+
+  (* 端点が二つしかないリンクの端点（ポート）のリスト． *)
+  let _normal_links =
+    List.sort_uniq compare
+    @@ List.concat_map (fun (_, (p1, p2)) -> [ p1; p2 ]) normal_link_dict
+  in
+
+  let _atoms =
+    let helper atom_id port_id =
+      match List.assoc_opt (atom_id, port_id) hlink_dict_inv with
+      | None -> Port (atom_id, port_id)
+      | Some (LocalLink i) -> HLink i
+      | Some (FreeLink _x) -> HLink 0
+    in
+    helper
+  in
+
+  (* normal link を dot の文字列に変換する． *)
+  let normal_links_str =
+    let helper (_, ((i1, _), (i2, _))) =
+      Printf.sprintf "\tAtom_%d -> Atom_%d;" i1 i2
+    in
+    String.concat "\n" @@ List.map helper normal_link_dict
+  in
+
+  let stage = Util.unique () in
+  let links = List.sort_uniq compare @@ links_of_atoms atoms in
+  let locallinks, freelinks = unzip_links @@ links in
+
+  let local_link_setting locallink =
+    if List.mem_assoc (LocalLink locallink) hlink_dict then
+      Some
+        ("\tL_" ^ string_of_int stage ^ "_" ^ string_of_int locallink
+       ^ "[label=\"\", shape=point];")
+    else None
+  in
+  let local_link_settings =
+    String.concat "\n" @@ List.filter_map local_link_setting locallinks
+  in
+
+  let free_link_setting freelink =
+    "\tF_" ^ freelink ^ "[label=\"" ^ freelink ^ "\", shape=plain];"
+  in
+  let free_link_settings =
+    String.concat "\n" @@ List.map free_link_setting freelinks
+  in
+
+  let atom_setting _atom_id (((i, atom_name), _) : Eval.atom) =
+    let v = string_of_atom_name atom_name in
+    "\tAtom_" ^ string_of_int i ^ "[label=\"" ^ v ^ "\"];"
+  in
+  let atom_settings = String.concat "\n" @@ List.mapi atom_setting atoms in
+
+  let string_of_link = function
+    | LocalLink i -> "L_" ^ string_of_int stage ^ "_" ^ string_of_int i
+    | FreeLink f -> "F_" ^ f
+  in
+
+  let atom_links _atom_id ((i, _), args) =
+    let helper link =
+      if List.mem_assoc link link_dict then
+        Some ("\tAtom_" ^ string_of_int i ^ " -> " ^ string_of_link link ^ ";")
+      else None
+    in
+    List.filter_map helper args
+  in
+
+  let atoms_links =
+    String.concat "\n" @@ List.concat @@ List.mapi atom_links atoms
+  in
+
+  let dot =
+    [
+      "digraph G {";
+      "\tgraph [layout = LAYOUT];";
+      "\tedge [arrowhead = none];";
+      atom_settings;
+      local_link_settings;
+      free_link_settings;
+      normal_links_str;
+      atoms_links;
+      "}";
+    ]
+  in
+  String.concat "\n\n" dot
+
+(** 可視化のために，アトムリストを dot に変換する *)
 let dot_of_atoms (atoms : graph) =
   (* リンク名からポートの集合への写像を作る． *)
   let link_map =
