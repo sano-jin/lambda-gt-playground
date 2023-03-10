@@ -196,7 +196,7 @@ update msg model =
                 | messages = List.take 20 <| msgString :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
-                        graph
+                        (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
                         model.visGraph
                 , hasNext = not isEnded
               }
@@ -226,7 +226,7 @@ update msg model =
                 | messages = List.take 20 <| msgString :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
-                        graph
+                        (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
                         model.visGraph
                 , hasNext = not isEnded
               }

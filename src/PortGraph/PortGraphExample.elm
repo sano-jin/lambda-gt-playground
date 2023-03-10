@@ -110,7 +110,7 @@ nil =
 
 front_x : HLink Int
 front_x =
-    { id = 0
+    { id = 7
     , label = "X"
     , to =
         Dict.fromList [ ( 7, Port ( 0, 2 ) ) ]

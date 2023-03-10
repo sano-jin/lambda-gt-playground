@@ -391,7 +391,18 @@ updateGraph config portGraph model =
             Init graph
 
         Ready state ->
-            configGraph config <| Ready { state | graph = graph }
+            configGraph config <|
+                Ready
+                    { state
+                        | graph = graph
+                        , simulation =
+                            initSimulation
+                                initialDistance
+                                initialPortDistance
+                                initialStrength
+                                graph
+                                state.size
+                    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -911,10 +922,10 @@ getElementPosition =
 -}
 graphData : PortGraph.Graph Int -> Graph String ()
 graphData portGraph =
-    Graph.fromNodeLabelsAndEdgePairs
-        ((List.map (\atom -> atom.label) <| PortGraph.toAtoms portGraph)
-            ++ (List.map (\hlink -> hlink.label) <| PortGraph.toHLinks portGraph)
+    Graph.fromNodesAndEdges
+        ((List.map (\atom -> Graph.Node atom.id atom.label) <| PortGraph.toAtoms portGraph)
+            ++ (List.map (\hlink -> Graph.Node hlink.id hlink.label) <| PortGraph.toHLinks portGraph)
         )
     <|
-        List.map (\edge -> ( PortGraph.extractNodeId edge.from, PortGraph.extractNodeId edge.to )) <|
+        List.map (\edge -> Graph.Edge (PortGraph.extractNodeId edge.from) (PortGraph.extractNodeId edge.to) ()) <|
             PortGraph.toEdges portGraph
