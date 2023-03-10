@@ -2,6 +2,7 @@ import "./main.css";
 
 import { Elm } from "./Main.elm";
 import * as serviceWorker from "./serviceWorker";
+// import { LambdaGT } from "./runtime.js";
 
 // Example of graphs.
 const graph = (n) => ({
@@ -67,11 +68,60 @@ const app = Elm.Main.init({
   node: document.getElementById("root"),
 });
 
+/** Global variables.
+ */
+let global_cont = null;
+let global_graph = null;
+
 // When a command goes to the `sendMessage` port, we pass the message
 // along to the WebSocket.
-app.ports.sendMessage.subscribe(function (message) {
+app.ports.sendMessage.subscribe(function (code) {
+  // receive a message from elm frontent
+  console.log("Send", code);
+  try {
+    const result = LambdaGT.rungrad(code);
+    console.log("result", result);
+
+    const [_, k, graph, value] = LambdaGT.extractk(result);
+    console.log(k);
+    global_cont = k[1];
+
+    console.log("graph", graph);
+    // document.getElementById("result").innerText = value;
+    // updateGraph(graph);
+
+    const messageJSON = JSON.stringify(
+      {
+        graph: JSON.parse(graph),
+        isEnded: global_cont == null,
+        info: "hogehoge",
+      },
+      null,
+      "  "
+    );
+
+    console.log(messageJSON);
+
+    app.ports.messageReceiver.send(messageJSON);
+  } catch (e) {
+    alert(e);
+  }
+
+  // myCallback();
+
+  // // Send to elm frontent
+  // app.ports.messageReceiver.send(messageJSON);
+});
+
+// When a command goes to the `sendMessage` port, we pass the message
+// along to the WebSocket.
+app.ports.sendMessageProceed.subscribe(function (message) {
+  // receive a message from elm frontent
   console.log("Send", message);
-  myCallback();
+  // myCallback();
+
+  // // Send to elm frontent
+  // app.ports.messageReceiver.send(messageJSON);
 });
 
 // When a message comes into our WebSocket, we pass the message along
@@ -100,9 +150,56 @@ function myCallback() {
   app.ports.messageReceiver.send(messageJSON);
 }
 
-const intervalID = setInterval(myCallback, 5000);
+const intervalID = setInterval(myCallback, 10000);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+window.addEventListener("DOMContentLoaded", (event) => {
+  document.getElementById("start-button").onclick = function () {
+    const code = editor.value;
+
+    try {
+      const result = LambdaGT.rungrad(code);
+      console.log("result", result);
+
+      const [_, k, graph, value] = LambdaGT.extractk(result);
+      console.log(k);
+      cont = k[1];
+
+      console.log("graph", graph);
+      document.getElementById("result").innerText = value;
+      updateGraph(graph);
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  document.getElementById("go-button").onclick = function () {
+    if (!cont) {
+      alert("cannot proceed more");
+      return;
+    }
+
+    try {
+      const result = cont();
+      console.log("result", result);
+
+      const [_, k, graph, value] = LambdaGT.extractk(result);
+      console.log(k);
+      cont = k[1];
+
+      console.log("graph", graph);
+      document.getElementById("result").innerText = value;
+      updateGraph(graph);
+    } catch (e) {
+      alert(e);
+    }
+  };
+});
+*/

@@ -60,6 +60,12 @@ port sendMessage : String -> Cmd msg
 port messageReceiver : (String -> msg) -> Sub msg
 
 
+port sendMessageProceed : String -> Cmd msg
+
+
+port messageProceedReceiver : (String -> msg) -> Sub msg
+
+
 
 -- Types
 
@@ -173,7 +179,7 @@ update msg model =
 
         SendRun ->
             ( { model | messages = List.take 20 <| "Send" :: model.messages }
-            , sendMessage "HOGEEEE"
+            , sendMessage <| model.editor.code
             )
 
         RecvRun (Err err) ->
@@ -200,7 +206,7 @@ update msg model =
         SendProceed ->
             if model.hasNext then
                 ( { model | messages = List.take 20 <| "Send" :: model.messages }
-                , sendMessage "HOGEEEE"
+                , sendMessageProceed "Proceed"
                 )
 
             else
@@ -400,6 +406,7 @@ subscriptions model =
     Sub.batch
         [ Sub.map VisGraphMsg <| VisGraph.subscriptions model.visGraph
         , messageReceiver <| RecvRun << Decode.decodeString decodeMessage
+        , messageProceedReceiver <| RecvProceed << Decode.decodeString decodeMessage
         , Tab.subscriptions model.tabState TabMsg
         , Sub.map EditorMsg <| Editor.subscriptions model.editor
         , Navbar.subscriptions model.navbarState NavbarMsg
