@@ -97,23 +97,53 @@ let portgraph_of_atoms (atoms : graph) =
   in
   { atoms_; hlinks_ }
 
-let authors : Yojson.Basic.t list =
-  [
-    `Assoc
-      [ ("name", `String "Jason Hickey"); ("affiliation", `String "Google") ];
-    `Assoc
-      [
-        ("name", `String "Anil Madhavapeddy");
-        ("affiliation", `String "Cambridge");
-      ];
-    `Assoc
-      [
-        ("name", `String "Yaron Minsky"); ("affiliation", `String "Jane Street");
-      ];
-  ]
+let json_of_connected_to = function
+  | Port (atom_id, port_id) ->
+      `Assoc [ ("nodeId", `Int atom_id); ("portId", `Int port_id) ]
+  | HLink hlink_id -> `Assoc [ ("nodeId", `Int hlink_id) ]
+
+(* type port_ = { port_id : int; port_label : string; port_to_ : connected_to }
+
+   type atom_ = { atom_id : int; atom_label : string; ports : port_ list } *)
+let json_of_port port_ =
+  `Assoc
+    [
+      ("id", `Int port_.port_id);
+      ("label", `String port_.port_label);
+      ("to", json_of_connected_to port_.port_to_);
+    ]
+
+let json_of_atom atom_ =
+  `Assoc
+    [
+      ("id", `Int atom_.atom_id);
+      ("label", `String atom_.atom_label);
+      ("ports", `List (List.map json_of_port atom_.ports));
+    ]
+
+let json_of_hlink hlink_ =
+  `Assoc
+    [
+      ("id", `Int hlink_.hlink_id);
+      ("label", `String hlink_.hlink_label);
+      ("to", `List (List.map json_of_connected_to hlink_.hlink_to_));
+    ]
+
+let json_of_graph graph_ =
+  `Assoc
+    [
+      ("atoms", `List (List.map json_of_atom graph_.atoms_));
+      ("hlinks", `List (List.map json_of_hlink graph_.hlinks_));
+    ]
+
+(** 可視化のために，アトムリストを JSON の文字列に変換する *)
+let pretty_graph graph =
+  Yojson.Basic.pretty_to_string @@ json_of_graph @@ portgraph_of_atoms graph
 
 (** 可視化のために，アトムリストを dot に変換する *)
 let dot_of_atoms (atoms : graph) =
+  print_endline @@ pretty_graph atoms;
+
   (* リンク名からポートの集合への写像を作る． *)
   let link_map =
     let helper ((atom_i, _), args) =

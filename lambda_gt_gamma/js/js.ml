@@ -8,12 +8,12 @@ let rec k_of_cont = function
   | Either.Right v ->
       K
         ( None,
-          Js.string @@ Vis.dot_of_atoms v,
+          Js.string @@ Vis.pretty_graph v,
           Js.string @@ Eval.string_of_graph v )
   | Either.Left (cont, v) ->
       K
         ( Some (fun () -> k_of_cont @@ Vis.app_cont cont v),
-          Js.string @@ Vis.dot_of_atoms v,
+          Js.string @@ Vis.pretty_graph v,
           Js.string @@ Eval.string_of_graph v )
 
 let extract_k = function K k -> k
