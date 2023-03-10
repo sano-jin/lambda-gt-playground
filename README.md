@@ -51,9 +51,13 @@ Then, access <http://localhost:8080> with your browser.
 Interpreter
 
 - JSON を出力できるようにする．
+- hlink の id が atom のものと重ならないようにする．
 
 Visualiser
 
+- Graph へ変換する際に，ちゃんと node の id を使って変換するようにする．
+  - fromNodeLabelsAndEdgePairs ではなくて，
+    fromNodesAndEdges を使う．
 - VisGraph と bootstrap を用いた slider の実装の分離．
 - 画面の整理．
 - グラフを更新した際に，
