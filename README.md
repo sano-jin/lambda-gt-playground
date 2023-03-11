@@ -2,7 +2,7 @@
 
 An online evaluator and a visualiser of the Lambda GT language.
 
-Try this at [TODO](https://example.com).
+Try this at <https://sano-jin.github.io/lambda-gt-playground/>.
 
 The interpreter is based on
 [sano-jin/lambda-gt-alpha](https://github.com/sano-jin/lambda-gt-alpha).
@@ -58,18 +58,12 @@ cp -r build docs
 
 Interpreter
 
-- JSON を出力できるようにする．
 - hlink の id が atom のものと重ならないようにする．
 
 Visualiser
 
-- Graph へ変換する際に，ちゃんと node の id を使って変換するようにする．
-  - fromNodeLabelsAndEdgePairs ではなくて，
-    fromNodesAndEdges を使う．
-- VisGraph と bootstrap を用いた slider の実装の分離．
-- 画面の整理．
 - グラフを更新した際に，
-  visualisation のためのパラメータが初期化されてしまっているので，
+  visualisation のためのパラメータが一部初期化されてしまっているので，
   うまく引き継げるようにする．
   - Port Angles は，ファンクタごとの preset を更新して持っておく．
     - JSON で入出力できるようにする．
@@ -82,7 +76,6 @@ Visualiser
 - portCtrlPDistance は頂点間の距離に合わせて拡大させても良いかも知れない．
 - Scroll していると，アトムの選択がうまくいかない（ズレる）ので，補正する必要がある．
 - 命名の整理（Atom, Hyperlink, node, edge, link?）．
-- port-graph-visualisation を playground から分離する．
 
 ## Backend <-> Frontend Interop with JSON
 
