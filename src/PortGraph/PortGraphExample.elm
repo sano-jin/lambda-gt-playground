@@ -122,3 +122,8 @@ listGraph =
     { atoms = Dict.fromList [ ( 0, cons1 ), ( 1, val1 ), ( 2, cons2 ), ( 3, val2 ), ( 4, cons3 ), ( 5, val3 ), ( 6, nil ) ]
     , hlinks = Dict.fromList [ ( 7, front_x ) ]
     }
+
+
+emptyGraph : Graph comparable
+emptyGraph =
+    { atoms = Dict.empty, hlinks = Dict.empty }

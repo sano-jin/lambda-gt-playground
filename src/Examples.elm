@@ -172,3 +172,45 @@ in
 % > {nu _L0 _L1 _L2 _L3 _L4 _L5. (Leaf (_L0, _L, _L1, _L2), M (_L1), Zero (_L3), Node (_L2, _L4, _X), Leaf (_L3, _L1, _R, _L4), Succ (_L5, _L0), Zero (_L5))}
 % > {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (Leaf (_L0, _L1, _R, _L2), M (_R), Zero (_L3), Succ (_L3, _L4), Leaf (_L4, _L, _L1, _L5), Node (_L5, _L2, _X), Succ (_L6, _L0), Zero (_L6))}
 % {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (Zero (_L0), Zero (_L1), Succ (_L0, _L2), Succ (_L1, _L3), Leaf (_L3, _L4, _R, _L5), Leaf (_L2, _L, _L4, _L6), Node (_L6, _L5, _X))}"""
+
+
+lltree5 =
+    """% Map a function to the leaves of a leaf-linked tree.
+let succ[_X] x[_X] = {x[_X]} + {1(_X)} in
+let map[_X] f[_X] x[_L, _R, _X] =
+  let rec helper[_X] x2[_L, _R, _X] =
+    case {Log} {x2[_L, _R, _X]} of
+      {nu _L2 _R2 _X2 _X3. (
+        y [_L, _R, _X, _L2, _R2, _X2],
+        Leaf (_X3, _L2, _R2, _X2),
+        z [_X3],
+        M (_L2)
+      )} ->
+        let z2[_X] = {f[_X]} {z[_X]} in
+        {helper[_X]}
+        {nu _L2 _R2 _X2 _X3 _X4. (
+          y [_L, _R, _X, _L2, _R2, _X2],
+          Leaf (_X3, _L2, _R2, _X2),
+          z2 [_X3],
+          M (_R2)
+        )}
+    | otherwise -> case {x2[_L, _R, _X]} of
+      { y[_L, _R, _X], M (_R) } -> { y[_L, _R, _X] }
+    | otherwise -> {Error, x2[_L, _R, _X]}
+  in {helper [_X]} {x[_L, _R, _X], M (_L)}
+in
+{map[_X]}
+{succ[_X]}
+{nu _X1 _X2 _X3 _X4 _X5 _X6 _X7 _X8 _X9. (
+  Node (_X1, _X2, _X),
+  Node (_X3, _X4, _X1),
+  Leaf (_X8 ,_L, _X7, _X3),
+  1 (_X8),
+  Leaf (_X9, _X7, _X10, _X4),
+  2 (_X9),
+  Node (_X5, _X6, _X2),
+  Leaf (_X12 ,_X10, _X11, _X5),
+  3 (_X12),
+  Leaf (_X13, _X11, _R, _X6),
+  4 (_X13)
+)}"""

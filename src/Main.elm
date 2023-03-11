@@ -47,7 +47,7 @@ import Task
 
 initialGraph : PortGraph.Graph Int
 initialGraph =
-    PortGraphExample.listGraph
+    PortGraphExample.emptyGraph
 
 
 
@@ -290,7 +290,9 @@ viewNavbar model =
                 , toggle = Navbar.dropdownToggle [] [ text "Examples" ]
                 , items =
                     [ Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.lltree3 ]
-                        [ text "Map a function to the leaves of a leaf-linked tree." ]
+                        [ text "Map a function to the leaves of a leaf-linked tree (2 leaves)." ]
+                    , Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.lltree5 ]
+                        [ text "Map a function to the leaves of a leaf-linked tree (4 leaves)." ]
                     , Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.dlist ]
                         [ text "Pop the last element of a difference list (length 1)." ]
                     , Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.dlist2 ]
