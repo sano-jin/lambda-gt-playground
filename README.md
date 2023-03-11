@@ -46,6 +46,14 @@ elm-app start
 
 Then, access <http://localhost:8080> with your browser.
 
+### Deploy
+
+```bash
+PUBLIC_URL=./ elm-app build
+rm -rf docs
+cp -r build docs
+```
+
 ### Todo
 
 Interpreter

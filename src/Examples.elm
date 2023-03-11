@@ -19,7 +19,7 @@ dlist =
 %   | nodes [Cons (h, _Y), _X] -> nodes [_Y, _X]
 %   | otherwise -> Error
 
-case {nu _Z1. (Cons (_Z1, _Y, _X), Val (_Z1))} of
+case {nu _Z1. (Cons (_Z1, _Y, _X), 1 (_Z1))} of
   {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])} -> { nodes [_Y, _X] } 
   | otherwise -> { Error }
 
@@ -32,15 +32,15 @@ dlist2 =
 % Append two difference lists.
 
 % (\\x[Y, X] y[Y, X].x[y[Y], X]) () 
-%   Cons (Val1, Y, X)
-%   Cons (Val2, Y, X)
+%   Cons (1, Y, X)
+%   Cons (1, Y, X)
 
 {<\\ x[_Y, _X]. {<\\ y[_Y, _X]. {nu _Z. (x[_Z, _X], y[_Y, _Z])}>}>}
-  {Cons (_X1, _Y, _X), Val1 (_X1)}
-  {Cons (_X1, _Y, _X), Val2 (_X1)}
+  {Cons (_X1, _Y, _X), 1 (_X1)}
+  {Cons (_X1, _Y, _X), 2 (_X1)}
 
 % --->
-% {nu _L0. nu _L1. nu _L2. (Cons (_L1, _L0, _X), Val1 (_L1), Cons (_L2, _Y, _L0), Val2 (_L2))}"""
+% {nu _L0. nu _L1. nu _L2. (Cons (_L1, _L0, _X), 1 (_L1), Cons (_L2, _Y, _L0), 2 (_L2))}"""
 
 
 dlist3 =
@@ -48,35 +48,52 @@ dlist3 =
 % Rotate a difference list (push an element to front from back).
 
 % case (Cons (Val1, _Y, _X) of 
-%   | nodes [Cons (h, _Y), _X] -> Cons (Val2, nodes [_Y], _X)
+%   | nodes [Cons (h, _Y), _X] -> Cons (h, nodes [_Y], _X)
 %   | otherwise -> Error
 
-case {nu _Z1. (Cons (_Z1, _Y, _X), Val1 (_Z1))} of 
+case {nu _L0. nu _L1. nu _L2. (Cons (_L1, _L0, _X), 1 (_L1), Cons (_L2, _Y, _L0), 2 (_L2))} of 
   {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])}
-      -> { nu _U1. nu _U2. (Cons (_U1, _U2, _X), Val2 (_U1), nodes [_Y, _U2]) }
+      -> { nu _U1. nu _U2. (Cons (_U1, _U2, _X), h [_U1], nodes [_Y, _U2]) }
   | otherwise -> { Error }
 
 % --->
-% {nu _L0. (Cons (_L0, _Y, _X), Val2 (_L0))}"""
+% {nu _L0. nu _L1. nu _L2. (Cons (_L1, _L0, _X), 2 (_L1), Cons (_L2, _Y, _L0), 1 (_L2))}"""
+
+
+dlist3b =
+    """% dlist3.lgt
+% Rotate a difference list (push an element to front from back, length 1).
+
+% case (Cons (Val1, _Y, _X) of 
+%   | nodes [Cons (h, _Y), _X] -> Cons (h, nodes [_Y], _X)
+%   | otherwise -> Error
+
+case {nu _L0. (Cons (_L0, _Y, _X), 1 (_L0))} of 
+  {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])}
+      -> { nu _U1. nu _U2. (Cons (_U1, _U2, _X), h [_U1], nodes [_Y, _U2]) }
+  | otherwise -> { Error }
+
+% --->
+% {nu _L0. (Cons (_L0, _Y, _X), 1 (_L0))}"""
 
 
 dlist4 =
     """% dlist4.lgt
 % Pop the last element of a difference list (length 2).
 
-% case Cons (Val, _Y, _X) of
+% case Cons (1, _Y, _X) of
 %   | nodes [Cons (h, _Y), _X] -> nodes [_Y, _X]
 %   | otherwise -> Error
 
 let nodes[_Y, _X] = 
-  {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), Val1 (_Z1), Cons (_Z3, _Y, _Z2), Val2 (_Z3))}
+  {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), 1 (_Z1), Cons (_Z3, _Y, _Z2), 2 (_Z3))}
 in
   case {nodes[_Y, _X]} of
     {nu _W1. nu _W2. (nodes [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])} -> { nodes [_Y, _X] } 
     | otherwise -> { Empty }
 
 % --->
-% {nu _L0. (Val1 (_L0), Cons (_L0, _Y, _X))}"""
+% {nu _L0. (1 (_L0), Cons (_L0, _Y, _X))}"""
 
 
 dlist5 =
@@ -93,13 +110,13 @@ in
   {nu _Z1. nu _Z2. nu _Z3. nu _Z4. nu _Z5. 
    nu _Z6. nu _Z7. nu _Z8. nu _Z9. nu _Z10.
    nu _Z11. nu _Z12. nu _Z13. (
-    Cons (_Z1,   _Z2, _X),  Val1 (_Z1), 
-    Cons (_Z3,   _Z4, _Z2), Val2 (_Z3),
-    Cons (_Z5,   _Z6, _Z4), Val3 (_Z5),
-    Cons (_Z7,   _Z8, _Z6), Val4 (_Z7),
-    Cons (_Z9,  _Z10, _Z8), Val5 (_Z9),
-    Cons (_Z11, _Z12, _Z10), Val6 (_Z11),
-    Cons (_Z13, _Y, _Z12), Val7 (_Z13)
+    Cons (_Z1,   _Z2, _X),   1 (_Z1), 
+    Cons (_Z3,   _Z4, _Z2),  2 (_Z3),
+    Cons (_Z5,   _Z6, _Z4),  3 (_Z5),
+    Cons (_Z7,   _Z8, _Z6),  4 (_Z7),
+    Cons (_Z9,  _Z10, _Z8),  5 (_Z9),
+    Cons (_Z11, _Z12, _Z10), 6 (_Z11),
+    Cons (_Z13, _Y, _Z12),   7 (_Z13)
   )}"""
 
 
@@ -117,11 +134,11 @@ let rec f[_X] nodes[_Y, _X] =
     | otherwise -> { Empty }
 in
   {f[_X]} 
-    {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), Val1 (_Z1), Cons (_Z3, _Y, _Z2), Val2 (_Z3))}
+    {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), 1 (_Z1), Cons (_Z3, _Y, _Z2), 2 (_Z3))}
 
 % --->
-% > {nu _L0. nu _L1. nu _L2. (Cons (_L0, _L1, _X), Val1 (_L0), Cons (_L2, _Y, _L1), Val2 (_L2))}
-% > {nu _L0. (Val1 (_L0), Cons (_L0, _Y, _X))}
+% > {nu _L0. nu _L1. nu _L2. (Cons (_L0, _L1, _X), 1 (_L0), Cons (_L2, _Y, _L1), 2 (_L2))}
+% > {nu _L0. (1 (_L0), Cons (_L0, _Y, _X))}
 % > {_Y >< _X}
 % {Empty ()}"""
 
