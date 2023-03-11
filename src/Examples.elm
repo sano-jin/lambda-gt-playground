@@ -218,13 +218,15 @@ let map[_X] f[_X] x[_L, _R, _X] =
 in
 {map[_X]}
 {succ[_X]}
-{nu _X1 _X2 _X3 _X4 _X5 _X6 _X7 _X8 _X9. (
+{nu _X1 _X2 _X3 _X4 _X5 _X6 _X7 _X8 _X9 _X10 _X11 _X12 _X13. (
   Node (_X1, _X2, _X),
+
   Node (_X3, _X4, _X1),
   Leaf (_X8 ,_L, _X7, _X3),
   1 (_X8),
   Leaf (_X9, _X7, _X10, _X4),
   2 (_X9),
+  
   Node (_X5, _X6, _X2),
   Leaf (_X12 ,_X10, _X11, _X5),
   3 (_X12),
