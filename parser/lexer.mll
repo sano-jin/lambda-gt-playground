@@ -40,7 +40,9 @@ rule token = parse
   | '{'			{ LCBRACKET }
   | '}'			{ RCBRACKET }
   | '<'			{ LT }
+  (*
   | '>'			{ GT }
+   *)
 			
   (** integer literal *)
   | ['1'-'9'] digit*

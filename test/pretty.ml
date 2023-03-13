@@ -11,6 +11,8 @@ let string_of_ctx (x, args) =
   if args = [] then x else x ^ "[" ^ String.concat ", " args ^ "]"
 
 let rec string_of_exp = function
+  | RelOp (_, op, e1, e2) ->
+      "(" ^ string_of_exp e1 ^ " " ^ op ^ " " ^ string_of_exp e2 ^ ")"
   | BinOp (_, op, e1, e2) ->
       "(" ^ string_of_exp e1 ^ " " ^ op ^ " " ^ string_of_exp e2 ^ ")"
   | Graph graph -> "{" ^ string_of_p_graph graph ^ "}"

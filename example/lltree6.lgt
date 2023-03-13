@@ -1,7 +1,7 @@
 % lltree1.lgt
 % Map leaves of a leaf-linked tree.
 
-let f[_X] = {(\x[_X]. {nu _X1. nu _X2. (Succ (_X1, _X), x [_X1])})(_X)} in
+let f[_X] = {(\x[_X]. {x [_X]} + {1 (_X)})(_X)} in
 
 let map[_X] = 
   {(\f[_X].{(\x[_L, _R, _X].
@@ -33,9 +33,9 @@ let map[_X] =
 nu _X1. nu _X2. nu _X3. nu _X4. nu _X5. (
   Node (_X1, _X2, _X), 
   Leaf (_X4 ,_L, _X3, _X1),
-  Zero (_X4),
+  1 (_X4),
   Leaf (_X5, _X3, _R, _X2),
-  Zero (_X5)
+  2 (_X5)
 )
 }
 
