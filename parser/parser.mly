@@ -121,10 +121,10 @@ exp_single:
       { Case ($2, $5, $8, $12) }
 
   | LET REC ctx ctx ctx* EQ exp IN exp
-      { LetRec ($3, $4, List.fold_right make_lambda $5 $7, $9) }
+      { LetRec ($3, $4, List.fold_right (make_lambda $3) $5 $7, $9) }
 
   | LET ctx ctx* EQ exp IN exp
-      { Let ($2, List.fold_right make_lambda $3 $5, $7) }
+      { Let ($2, List.fold_right (make_lambda $2) $3 $5, $7) }
  
   | LPAREN exp RPAREN { $2 }
 

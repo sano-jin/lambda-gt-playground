@@ -25,4 +25,4 @@ and exp =
   | LetRec of ctx * ctx * exp * exp  (** let rec f x = e1 in e2 *)
   | Let of ctx * exp * exp  (** let x = e1 in e2 *)
 
-let make_lambda ctx exp = Graph (Atom (PLam (ctx, exp), [ "_X" ]))
+let make_lambda (_, xs) ctx exp = Graph (Atom (PLam (ctx, exp), xs))
