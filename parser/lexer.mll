@@ -45,7 +45,7 @@ rule token = parse
    *)
 			
   (** integer literal *)
-  | ['1'-'9'] digit*
+  | ['1'-'9'] digit* | '0'
     { INT (int_of_string @@ Lexing.lexeme lexbuf) }
 
   (** constructor name *)
