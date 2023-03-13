@@ -116,11 +116,11 @@ exp_single:
   | CASE exp OF LCBRACKET graph RCBRACKET ARROW exp VBAR OTHERWISE ARROW exp
       { Case ($2, $5, $8, $12) }
 
-  | LET REC ctx ctx EQ exp IN exp
-      { LetRec ($3, $4, $6, $8) }
+  | LET REC ctx ctx ctx* EQ exp IN exp
+      { LetRec ($3, $4, List.fold_right make_lambda $5 $7, $9) }
 
-  | LET ctx EQ exp IN exp
-      { Let ($2, $4, $6) }
+  | LET ctx ctx* EQ exp IN exp
+      { Let ($2, List.fold_right make_lambda $3 $5, $7) }
  
   | LPAREN exp RPAREN { $2 }
 
