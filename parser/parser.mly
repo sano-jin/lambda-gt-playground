@@ -135,8 +135,8 @@ exp:
   | exp PLUS exp   { BinOp (( + ), "+", $1, $3) }
   | exp MINUS exp  { BinOp (( - ), "-", $1, $3) }
   | exp TIMES exp  { BinOp (( * ), "*", $1, $3) }
-  | exp LT exp  { RelOp (( < ), "<", $1, $3) }
-  | exp EQ exp  { RelOp (( = ), "=", $1, $3) }
+  | exp LT exp     { RelOp (( < ), "<", $1, $3) }
+  | exp EQ exp     { RelOp (( = ), "=", $1, $3) }
 
 
 (** the whole program *)
