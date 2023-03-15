@@ -12,11 +12,19 @@ let ctx_of (x, args) = (x, List.map (fun x -> FreeLink x) args)
 
 let rec eval theta = function
   | Graph graph -> fuse_fusions @@ synthesis theta graph
+  | RelOp (f, op, e1, e2) -> (
+      match (eval theta e1, eval theta e2) with
+      | [ ((_, Int i1), xs1) ], [ ((_, Int i2), _) ] ->
+          [ ((unique (), Constr (if f i1 i2 then "True" else "False")), xs1) ]
+      | v1, v2 ->
+          failwith @@ "integers are expected for " ^ op ^ " but were "
+          ^ string_of_graph v1 ^ " and " ^ string_of_graph v2)
   | BinOp (f, op, e1, e2) -> (
       let v1 = eval theta e1 in
       let v2 = eval theta e2 in
       match (v1, v2) with
-      | [ ((_, Int i1), xs1) ], [ ((_, Int i2), _) ] -> [ ((unique (), Int (f i1 i2)), xs1) ]
+      | [ ((_, Int i1), xs1) ], [ ((_, Int i2), _) ] ->
+          [ ((unique (), Int (f i1 i2)), xs1) ]
       | _ ->
           failwith @@ "integers are expected for " ^ op ^ " but were "
           ^ string_of_graph v1 ^ " and " ^ string_of_graph v2)
