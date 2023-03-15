@@ -48,6 +48,14 @@ Then, access <http://localhost:8080> with your browser.
 
 ### Deploy
 
+Run
+
+```bash
+./deploy.sh
+```
+
+or
+
 ```bash
 PUBLIC_URL=./ elm-app build
 rm -rf docs

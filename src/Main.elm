@@ -305,6 +305,8 @@ viewNavbar model =
                         [ text "Pop the last element of a difference list (length 2)." ]
                     , Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.letrec1 ]
                         [ text "Pop all the elements from back of a difference list." ]
+                    , Navbar.dropdownItem [ HEvents.onClick <| LoadCode Examples.dataflow2 ]
+                        [ text "Embedding a dataflow language." ]
                     ]
                 }
             , Navbar.itemLink
