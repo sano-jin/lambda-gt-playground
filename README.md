@@ -68,7 +68,7 @@ Graph Template T ::= v (_X1, ..., _Xn)                      // Atom
                   |  nu _X. T                               // Link Creation
 
 Atom Name      v ::= Constr                                 // Constructor Name
-                  |  <\x[_X1, ..., _Xn]. e>                 // Lambda Abstraction
+                  |  (\x[_X1, ..., _Xn]. e)                 // Lambda Abstraction
 ```
 
 For the semantics, please see
