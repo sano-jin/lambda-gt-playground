@@ -7,4 +7,4 @@ in
   {nu _Z1. nu _Z2. (x[_Z1, _X], Cons (_Z1, _Y, _Z2), Val (_Z))}
 
 % --->
-% {nu _L0. nu _L1. nu _L2. (Cons (_L0, _Y, _L1), Val (_Z), Cons (_L2, _L0, _X), Val (_L2))}
+%{nu _L0 _L1 _L2. (Cons (_L0, _Y, _L1), Val (_Z), Cons (_L2, _L0, _X), Val (_L2))}

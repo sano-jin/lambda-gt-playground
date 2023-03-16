@@ -12,4 +12,4 @@ nu _X1. nu _X2. nu _X3. nu _X4. nu _X5. (
 }
 
 % --->
-% {nu _L0. nu _L1. nu _L2. nu _L3. nu _L4. (Node (_L0, _L1, _X), Leaf (_L3, _L, _L2, _L0), Zero (_L3), Leaf (_L4, _L2, _R, _L1), Zero (_L4))}
+%{nu _L0 _L1 _L2 _L3 _L4. (Node (_L0, _L1, _X), Leaf (_L3, _L, _L2, _L0), Zero (_L3), Leaf (_L4, _L2, _R, _L1), Zero (_L4))}

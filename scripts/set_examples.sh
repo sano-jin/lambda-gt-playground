@@ -2,7 +2,17 @@
 set -eux
 
 rewrite() {
-    echo -e "% $1\n% $2\n\n$(cat $1)\n\n% --->\n% $(../run $1)" >$1
+    code1=$(sed '/^%/d' "example/$1")
+    # echo "$code1"
+    code=$(sed -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}' <<<"$code1")
+    # echo "$code"
+    set +e
+    log=$(./run "example/$1" 2>&1)
+    set -e
+    # log2=${log//^/%}
+    log2=$(sed 's/^/%/' <<<"$log")
+    echo "$log2"
+    echo -e "% $1\n% $2\n\n$code\n\n% --->\n$log2" >"example/$1"
 }
 
 rewrite a.lgt 'A graph with an nullary atom `A`.'
@@ -18,3 +28,7 @@ rewrite letrec1.lgt 'Pop all the elements from back of a difference list.'
 rewrite lltree.lgt 'A leaf linked tree.'
 rewrite lltree1.lgt 'Map leaves of an leaf-linked tree.'
 rewrite lltree2.lgt 'Failure: map leaves of an leaf-linked tree but unsuccessful.'
+rewrite lltree3.lgt 'map a function on the leaves of an leaf-linked tree.'
+rewrite lltree4.lgt 'map a function on the leaves of an leaf-linked tree.'
+rewrite lltree5.lgt 'map a function on the leaves of an leaf-linked tree.'
+rewrite lltree6.lgt 'map a function on the leaves of an leaf-linked tree.'

@@ -1,10 +1,10 @@
 % lltree2.lgt
-% Failure: map leaves of a leaf-linked tree but unsuccessful.
+% Failure: map leaves of an leaf-linked tree but unsuccessful.
 
 let f[_X] = {<\x[_X]. {nu _X1. nu _X2. (Succ (_X1, _X), x [_X1])}>(_X)} in
 
 let map[_X] =
-  {<\f[_X].{<\x[_L, _R, _X].
+  {<[_X].{<\x[_L, _R, _X].
   let rec helper[_X] x2[_L, _R, _X, _M] =
     case {Log} {x2[_L, _R, _X, _M]} of
       {nu _L2. nu _R2. nu _X2. nu _X3. (
@@ -40,5 +40,4 @@ nu _X1. nu _X2. nu _X3. nu _X4. nu _X5. (
     
 
 % --->
-% > {nu _L0. nu _L1. nu _L2. nu _L3. nu _L4. (_M >< _L, Node (_L0, _L1, _X), Leaf (_L2, _L, _L3, _L0), Zero (_L2), Leaf (_L4, _L3, _R, _L1), Zero (_L4))}
-% {nu _L0. nu _L1. nu _L2. nu _L3. nu _L4. (Error (), _M >< _L, Node (_L0, _L1, _X), Leaf (_L2, _L, _L3, _L0), Zero (_L2), Leaf (_L4, _L3, _R, _L1), Zero (_L4))}
+%Fatal error: exception Failure("At offset 90: syntax error.")
