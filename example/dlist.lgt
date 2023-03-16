@@ -6,4 +6,4 @@ case {nu _Z1. (Cons (_Z1, _Y, _X), Val (_Z1))} of
   | otherwise -> { Error }
 
 % --->
-%{_Y >< _X}
+% {_Y >< _X}

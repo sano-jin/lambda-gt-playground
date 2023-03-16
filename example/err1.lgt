@@ -4,4 +4,4 @@
 { A ( }
 
 % --->
-%Fatal error: exception Failure("At offset 74: syntax error.")
+% Fatal error: exception Failure("At offset 58: syntax error.")
