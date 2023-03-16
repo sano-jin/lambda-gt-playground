@@ -74,13 +74,8 @@ Atom Name      v ::= Constr                                 // Constructor Name
 For the semantics, please see
 <https://doi.org/10.2197/ipsjjip.31.112>.
 
-- We have enabled logging.
-
-  ```ocaml
-  {Log} exp
-  ```
-
-  evaluates `exp`, prints the value, and results in the value.
+We have enabled logging.
+`{Log} exp` evaluates `exp`, prints the value, and returns the value; i.e., an identity function.
 
 ## Development
 
@@ -91,7 +86,7 @@ Please give me issues or pull requests if you find any bugs or solutions for the
 We aim to build the simplest implementation.
 Thus, we may not accept a request for an enhancement.
 However, we appreciate it because it will be helpful in the design and implementation
-of the _real_ language based on this POC.
+of the full-fledged language based on this PoC.
 
 ### Testing
 
