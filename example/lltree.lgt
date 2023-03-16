@@ -1,5 +1,5 @@
-% lltree.lgt
-% A leaf linked tree.
+%  lltree.lgt
+%  A leaf linked tree.
 
 {
 nu _X1. nu _X2. nu _X3. nu _X4. nu _X5. (
@@ -11,5 +11,5 @@ nu _X1. nu _X2. nu _X3. nu _X4. nu _X5. (
 )
 }
 
-% --->
-% {nu _L0 _L1 _L2 _L3 _L4. (Node (_L0, _L1, _X), Leaf (_L3, _L, _L2, _L0), 1 (_L3), Leaf (_L4, _L2, _R, _L1), 2 (_L4))}
+%  --->
+%  {nu _L0 _L1 _L2 _L3 _L4. (Node (_L0, _L1, _X), Leaf (_L3, _L, _L2, _L0), 1 (_L3), Leaf (_L4, _L2, _R, _L1), 2 (_L4))}

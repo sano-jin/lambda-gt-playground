@@ -1,5 +1,5 @@
-% lltree1.lgt
-% Map a function on the leaves of an leaf-linked tree (without abbreviations and int(eger)s).
+%  lltree1.lgt
+%  Map a function on the leaves of an leaf-linked tree (without abbreviations and int(eger)s).
 
 let f[_X] = {(\ x[_X]. {nu _X1. nu _X2. (Succ (_X1, _X), x [_X1])})(_X)} in
 
@@ -37,8 +37,8 @@ let map[_X] =
   2 (_X5)
 )}
 
-% --->
-% > {nu _L0 _L1 _L2 _L3 _L4. (M (_L), Node (_L0, _L1, _X), Leaf (_L2, _L, _L3, _L0), 1 (_L2), Leaf (_L4, _L3, _R, _L1), 2 (_L4))}
-% > {nu _L0 _L1 _L2 _L3 _L4 _L5. (Leaf (_L0, _L, _L1, _L2), M (_L1), 2 (_L3), Node (_L2, _L4, _X), Leaf (_L3, _L1, _R, _L4), Succ (_L5, _L0), 1 (_L5))}
-% > {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (Leaf (_L0, _L1, _R, _L2), M (_R), 1 (_L3), Succ (_L3, _L4), Leaf (_L4, _L, _L1, _L5), Node (_L5, _L2, _X), Succ (_L6, _L0), 2 (_L6))}
-% {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (1 (_L0), 2 (_L1), Succ (_L0, _L2), Succ (_L1, _L3), Leaf (_L3, _L4, _R, _L5), Leaf (_L2, _L, _L4, _L6), Node (_L6, _L5, _X))}
+%  --->
+%  > {nu _L0 _L1 _L2 _L3 _L4. (M (_L), Node (_L0, _L1, _X), Leaf (_L2, _L, _L3, _L0), 1 (_L2), Leaf (_L4, _L3, _R, _L1), 2 (_L4))}
+%  > {nu _L0 _L1 _L2 _L3 _L4 _L5. (Leaf (_L0, _L, _L1, _L2), M (_L1), 2 (_L3), Node (_L2, _L4, _X), Leaf (_L3, _L1, _R, _L4), Succ (_L5, _L0), 1 (_L5))}
+%  > {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (Leaf (_L0, _L1, _R, _L2), M (_R), 1 (_L3), Succ (_L3, _L4), Leaf (_L4, _L, _L1, _L5), Node (_L5, _L2, _X), Succ (_L6, _L0), 2 (_L6))}
+%  {nu _L0 _L1 _L2 _L3 _L4 _L5 _L6. (1 (_L0), 2 (_L1), Succ (_L0, _L2), Succ (_L1, _L3), Leaf (_L3, _L4, _R, _L5), Leaf (_L2, _L, _L4, _L6), Node (_L6, _L5, _X))}

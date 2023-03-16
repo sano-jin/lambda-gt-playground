@@ -2,7 +2,7 @@
 set -eux
 
 rewrite() {
-    code1=$(sed '/^%/d' "example/$1")
+    code1=$(sed '/^%  /d' "example/$1")
     # echo "$code1"
     code=$(sed -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}' <<<"$code1")
     # echo "$code"
@@ -10,9 +10,9 @@ rewrite() {
     log=$(./run "example/$1" 2>&1)
     set -e
     # log2=${log//^/%}
-    log2=$(sed 's/^/% /' <<<"$log")
+    log2=$(sed 's/^/%  /' <<<"$log")
     echo "$log2"
-    echo -e "% $1\n% $2\n\n$code\n\n% --->\n$log2" >"example/$1"
+    echo -e "%  $1\n%  $2\n\n$code\n\n%  --->\n$log2" >"example/$1"
 }
 
 rewrite a.lgt 'A graph with an nullary atom `A`.'
