@@ -12,5 +12,5 @@ let parse_exp str =
   try Parser.exp_eof Lexer.token linebuf
   with Parser.Error ->
     failwith
-    @@ Printf.sprintf "At offset %d: syntax error.\n%!"
+    @@ Printf.sprintf "At offset %d: syntax error.%!"
          (Lexing.lexeme_start linebuf)
