@@ -193,46 +193,38 @@ in
 
 lltree5 =
     """% Map a function to the leaves of a leaf-linked tree.
+
 let succ[_X] x[_X] = {x[_X]} + {1(_X)} in
+
 let map[_X] f[_X] x[_L, _R, _X] =
   let rec helper[_X] x2[_L, _R, _X] =
     case {Log} {x2[_L, _R, _X]} of
       {nu _L2 _R2 _X2 _X3. (
         y [_L, _R, _X, _L2, _R2, _X2],
-        Leaf (_X3, _L2, _R2, _X2),
-        z [_X3],
-        M (_L2)
-      )} ->
-        let z2[_X] = {f[_X]} {z[_X]} in
+        M (_L2)), Leaf (_X3, _L2, _R2, _X2), z [_X3]}
+      -> let z2[_X] = {f[_X]} {z[_X]} in
         {helper[_X]}
         {nu _L2 _R2 _X2 _X3 _X4. (
           y [_L, _R, _X, _L2, _R2, _X2],
-          Leaf (_X3, _L2, _R2, _X2),
-          z2 [_X3],
-          M (_R2)
-        )}
+          Leaf (_X3, _L2, _R2, _X2), z2 [_X3], M (_R2))}
     | otherwise -> case {x2[_L, _R, _X]} of
       { y[_L, _R, _X], M (_R) } -> { y[_L, _R, _X] }
     | otherwise -> {Error, x2[_L, _R, _X]}
   in {helper [_X]} {x[_L, _R, _X], M (_L)}
 in
-{map[_X]}
-{succ[_X]}
-{nu _X1 _X2 _X3 _X4 _X5 _X6 _X7 _X8 _X9 _X10 _X11 _X12 _X13. (
-  Node (_X1, _X2, _X),
 
-  Node (_X3, _X4, _X1),
-  Leaf (_X8 ,_L, _X7, _X3),
-  1 (_X8),
-  Leaf (_X9, _X7, _X10, _X4),
-  2 (_X9),
-  
-  Node (_X5, _X6, _X2),
-  Leaf (_X12 ,_X10, _X11, _X5),
-  3 (_X12),
-  Leaf (_X13, _X11, _R, _X6),
-  4 (_X13)
-)}"""
+{map[_X]} {succ[_X]} ({Log} {
+  nu _X1 _X2 _X10. (Node (_X1, _X2, _X),
+    nu _X3 _X4 _X7. (Node (_X3, _X4, _X1),
+      nu _X8. (Leaf (_X8 ,_L, _X7, _X3), 1 (_X8)),
+      nu _X9. (Leaf (_X9, _X7, _X10, _X4), 2 (_X9))
+   ),
+   nu _X5 _X6 _X11. (Node (_X5, _X6, _X2),
+      nu _X12. (Leaf (_X12 ,_X10, _X11, _X5), 3 (_X12)),
+      nu _X13. (Leaf (_X13, _X11, _R, _X6), 4 (_X13))
+))})
+
+"""
 
 
 dataflow2 =
@@ -278,13 +270,11 @@ let rec proceed[_Z] g[_In,_Out] =
   | otherwise -> case {g[_In,_Out]} of
     {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
        M(_V,_X),v[_V],rest[_X,_Y1,_Y2,_In,_Out])} ->
-      case {pred[_Z]} {v[_Z]} of
-        {True(_Z)} -> 
-          {proceed[_Z]} {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
-                           M(_V,_Y1),v[_V],rest[_X,_Y1,_Y2,_In,_Out])}
-      | otherwise -> 
-          {proceed[_Z]} {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
-                           M(_V,_Y2),v[_V],rest[_X,_Y1,_Y2,_In,_Out])} 
+     {proceed[_Z]} (case {pred[_Z]} {v[_Z]} of
+        {True(_Z)} -> {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
+                         M(_V,_Y1),v[_V],rest[_X,_Y1,_Y2,_In,_Out])}
+      | otherwise  -> {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
+                         M(_V,_Y2),v[_V],rest[_X,_Y1,_Y2,_In,_Out])})
   | otherwise -> case {g[_In,_Out]} of
     {nu _V.(M(_V,_Out),v[_V],rest[_In,_Out])} -> {v[_Z]}
   | otherwise -> {Error4} in
