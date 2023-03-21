@@ -93,6 +93,7 @@ type alias Model =
     , showVisSettings : Bool
     , viewSettings : ViewSettings.Model {}
     , hasNext : Bool
+    , graphTerm : String
     }
 
 
@@ -123,6 +124,7 @@ init _ =
       , showVisSettings = False
       , viewSettings = ViewSettings.initializeModel graph
       , hasNext = False
+      , graphTerm = ""
       }
     , Cmd.batch
         [ Cmd.map EditorMsg editorCmd
@@ -199,6 +201,7 @@ update msg model =
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
                         model.visGraph
                 , hasNext = not isEnded
+                , graphTerm = info
               }
             , Cmd.none
             )
@@ -229,6 +232,7 @@ update msg model =
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
                         model.visGraph
                 , hasNext = not isEnded
+                , graphTerm = info
               }
             , Cmd.none
             )
@@ -328,8 +332,6 @@ view model =
         viewDetails =
             Tab.config TabMsg
                 |> Tab.withAnimation
-                -- remember to wire up subscriptions when using this option
-                -- |> Tab.right
                 |> Tab.items
                     [ Tab.item
                         { id = "tabItem1"
@@ -384,9 +386,23 @@ view model =
                         ]
                     , Grid.col
                         [ Col.xs6
-                        , Col.attrs [ HAttrs.style "padding" "0", HAttrs.style "flex-grow" "1" ]
+                        , Col.attrs
+                            [ HAttrs.style "padding" "0"
+                            , HAttrs.style "position" "relative"
+                            , HAttrs.style "flex-grow" "1"
+                            ]
                         ]
-                        [ Html.map VisGraphMsg <| VisGraph.view model.visGraph ]
+                        [ Html.map VisGraphMsg <| VisGraph.view model.visGraph
+                        , div
+                            [ style "position" "fixed"
+                            , style "bottom" "50px"
+                            , style "right" "20px"
+                            , style "width" "45vw"
+                            , style "color" "#689"
+                            , HAttrs.class "my-toast"
+                            ]
+                            [ text <| model.graphTerm ]
+                        ]
                     ]
                 ]
             ]

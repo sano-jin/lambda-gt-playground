@@ -70,6 +70,8 @@ Interpreter
 
 Visualiser
 
+- Port angle の設定がうまくできていない．
+  - Accordion を開いたタイミングで初期化されてしまっている？
 - グラフを更新した際に，
   visualisation のためのパラメータが一部初期化されてしまっているので，
   うまく引き継げるようにする．

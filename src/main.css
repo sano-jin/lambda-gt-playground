@@ -41,6 +41,10 @@ img {
   */
 }
 
+.my-toast {
+  font-family: "JetBrains Mono", monospace;
+}
+
 /** `Button.checkboxButton` だけでは，checkbox が残ってしまうので．
  */
 label.btn > input[type="checkbox"] {

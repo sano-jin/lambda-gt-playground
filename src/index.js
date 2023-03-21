@@ -2,7 +2,6 @@ import "./main.css";
 
 import { Elm } from "./Main.elm";
 import * as serviceWorker from "./serviceWorker";
-// import * as LambdaGT from "./runtime.js";
 
 const app = Elm.Main.init({
   node: document.getElementById("root"),
@@ -20,25 +19,13 @@ app.ports.sendMessage.subscribe(function (code) {
   console.log("Send", code);
   try {
     const result = LambdaGT.rungrad(code);
-    console.log("result", result);
-    console.log("LambdaGT.extractk", LambdaGT.extractk);
-    console.log("LambdaGT.extractk(result)", LambdaGT.extractk(result));
-
     const [_, k, graph, value] = LambdaGT.extractk(result);
-    console.log(k);
     global_cont = k[1];
-
-    console.log("graph", graph);
-    const messageJSON = JSON.stringify(
-      {
-        graph: JSON.parse(graph),
-        isEnded: global_cont == null,
-        info: "hogehoge",
-      },
-      null,
-      " "
-    );
-    console.log(messageJSON);
+    const messageJSON = JSON.stringify({
+      graph: JSON.parse(graph),
+      isEnded: global_cont == null,
+      info: value,
+    });
     app.ports.messageReceiver.send(messageJSON);
   } catch (e) {
     alert(e);
@@ -47,29 +34,14 @@ app.ports.sendMessage.subscribe(function (code) {
 
 const proceed = () => {
   try {
-    console.log("global_cont", global_cont);
     const result = global_cont();
-    console.log("result", result);
-    console.log("LambdaGT.extractk(result)", LambdaGT.extractk(result));
-
-    const res = LambdaGT.extractk(result);
-    console.log("res", res);
     const [_, k, graph, value] = result[1];
-
-    console.log(k);
     global_cont = k[1];
-
-    console.log("graph", graph);
-    const messageJSON = JSON.stringify(
-      {
-        graph: JSON.parse(graph),
-        isEnded: global_cont == null,
-        info: "hogehoge",
-      },
-      null,
-      " "
-    );
-    console.log(messageJSON);
+    const messageJSON = JSON.stringify({
+      graph: JSON.parse(graph),
+      isEnded: global_cont == null,
+      info: value,
+    });
     app.ports.messageProceedReceiver.send(messageJSON);
   } catch (e) {
     alert(e);
@@ -80,8 +52,7 @@ const proceed = () => {
 // along to the WebSocket.
 app.ports.sendMessageProceed.subscribe(function (message) {
   // receive a message from elm frontent
-  console.log("Send", message);
-  // myCallback();
+  console.log("Proceed", message);
   if (!global_cont) {
     alert("cannot proceed more");
     return;
@@ -89,12 +60,6 @@ app.ports.sendMessageProceed.subscribe(function (message) {
 
   proceed();
 });
-
-// When a message comes into our WebSocket, we pass the message along
-// to the `messageReceiver` port.
-// socket.addEventListener("message", function (event) {
-//   app.ports.messageReceiver.send(event.data);
-// });
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

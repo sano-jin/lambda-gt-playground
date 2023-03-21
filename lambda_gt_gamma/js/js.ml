@@ -6,17 +6,11 @@ type ('a, 'b) k = K of ((unit -> ('a, 'b) k) option * 'a * 'b)
 
 let rec k_of_cont = function
   | Either.Right v ->
-      print_endline @@ "Right1";
-      print_endline @@ "Right2" ^ Vis.pretty_graph v;
-      print_endline @@ "Right3";
       K
         ( None,
           Js.string @@ Vis.pretty_graph v,
           Js.string @@ Eval.string_of_graph v )
   | Either.Left (cont, v) ->
-      print_endline @@ "Left1";
-      print_endline @@ "Left2" ^ Vis.pretty_graph v;
-      print_endline @@ "Left3";
       K
         ( Some (fun () -> k_of_cont @@ Vis.app_cont cont v),
           Js.string @@ Vis.pretty_graph v,
