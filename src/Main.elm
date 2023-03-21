@@ -192,7 +192,7 @@ update msg model =
         RecvRun (Ok { graph, isEnded, info }) ->
             let
                 msgString =
-                    info ++ ": " ++ PortGraph.toString String.fromInt graph
+                    info ++ "\n" ++ PortGraph.toString String.fromInt graph
             in
             ( { model
                 | messages = List.take 20 <| msgString :: model.messages
@@ -223,7 +223,7 @@ update msg model =
         RecvProceed (Ok { graph, isEnded, info }) ->
             let
                 msgString =
-                    info ++ ": " ++ PortGraph.toString String.fromInt graph
+                    info ++ "\n" ++ PortGraph.toString String.fromInt graph
             in
             ( { model
                 | messages = List.take 20 <| msgString :: model.messages
