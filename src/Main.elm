@@ -190,12 +190,12 @@ update msg model =
             )
 
         RecvRun (Ok { graph, isEnded, info }) ->
-            let
-                msgString =
-                    info ++ "\n" ++ PortGraph.toString String.fromInt graph
-            in
             ( { model
-                | messages = List.take 20 <| msgString :: model.messages
+                | messages =
+                    List.take 20 <|
+                        info
+                            :: PortGraph.toString String.fromInt graph
+                            :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
@@ -221,12 +221,12 @@ update msg model =
             )
 
         RecvProceed (Ok { graph, isEnded, info }) ->
-            let
-                msgString =
-                    info ++ "\n" ++ PortGraph.toString String.fromInt graph
-            in
             ( { model
-                | messages = List.take 20 <| msgString :: model.messages
+                | messages =
+                    List.take 20 <|
+                        info
+                            :: PortGraph.toString String.fromInt graph
+                            :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
