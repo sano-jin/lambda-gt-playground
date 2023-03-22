@@ -31,7 +31,7 @@ dlist2 =
     """% dlist2.lgt
 % Append two difference lists.
 
-% (λ x[Y, X] y[Y, X].x[y[Y], X]) (_X) 
+% (λ x[Y, X] y[Y, X]. x[y[Y], X]) (_X) 
 %   Cons (1, Cons (2, Cons (3, Y, X), X), X)
 %   Cons (4, Cons (5, Y, X), X)
 
@@ -57,7 +57,7 @@ dlist3 =
     """% dlist3.lgt
 %  Rotate a difference list (push an element to front from back. length 5).
 
-%  Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, _Y)))), _X)
+% Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, _Y)))), _X)
 let dlist[_Y, _X] = {Log} {nu _Z1 _Z2 _Z3 _Z4. (
     nu _X1. (Cons (_X1, _Z1, _X),  1 (_X1)),
     nu _X1. (Cons (_X1, _Z2, _Z1), 2 (_X1)),
@@ -67,9 +67,9 @@ let dlist[_Y, _X] = {Log} {nu _Z1 _Z2 _Z3 _Z4. (
     )}
 in
 
-%  case Cons (1, _Y, _X) of
-%    | dlist [Cons (h, _Y), _X] -> Cons (h, dlist [_Y])
-%    | otherwise -> Error
+% case Cons (1, _Y, _X) of
+%   | dlist [Cons (h, _Y), _X] -> Cons (h, dlist [_Y])
+%   | otherwise -> Error
 let rotate[_X] = {(\\dlist[_Y, _X]. 
   case {dlist[_Y, _X]} of
     {nu _W1 _W2. (dlist [_W2, _X], Cons (_W1, _Y, _W2), h [_W1])} 
@@ -135,7 +135,7 @@ in
 let dlist[_Y, _X] = {Log} (
       {pop[_X]} {dlist[_Y, _X]}) in
 
-%  Loop `f` to the `dlist`.
+%  Loop applying `f` to the `dlist`.
 let rec loop[_X] f[_X] dlist[_Y, _X] = 
   let dlist'[_Y, _X] = {Log} ({f[_X]} {dlist[_Y, _X]}) in
   {loop[_X]} {f[_X]} {dlist'[_Y, _X]}
@@ -146,7 +146,8 @@ in
 
 
 dlist5 =
-    """% case Cons (Val, _Y, _X) of
+    """
+% case Cons (Val, _Y, _X) of
 %   | nodes [Cons (h, _Y), _X] -> nodes [_Y, _X]
 %   | otherwise -> Error
 
