@@ -1,5 +1,7 @@
 # A Reference Interpreter of the Lambda GT Language
 
+**We are currently developping this in branch [icgt2023](https://github.com/sano-jin/lambda-gt-alpha/tree/icgt2023). Please visit there.**
+
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano_jn-blue?style=flat-square)](https://twitter.com/sano_jn)
 
