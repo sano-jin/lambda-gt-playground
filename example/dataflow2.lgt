@@ -41,13 +41,11 @@ let rec proceed[_Z] g[_In,_Out] =
   | otherwise -> case {g[_In,_Out]} of
     {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
        M(_V,_X),v[_V],rest[_X,_Y1,_Y2,_In,_Out])} ->
-      case {pred[_Z]} {v[_Z]} of
-        {True(_Z)} -> 
-          {proceed[_Z]} {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
-                           M(_V,_Y1),v[_V],rest[_X,_Y1,_Y2,_In,_Out])}
-      | otherwise -> 
-          {proceed[_Z]} {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
-                           M(_V,_Y2),v[_V],rest[_X,_Y1,_Y2,_In,_Out])} 
+      {proceed[_Z]} case {pred[_Z]} {v[_Z]} of
+        {True(_Z)} -> {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
+                         M(_V,_Y1),v[_V],rest[_X,_Y1,_Y2,_In,_Out])}
+       | otherwise -> {nu _X _Y1 _Y2 _P _V.(N3(_P,_X,_Y1,_Y2),pred[_P],
+                         M(_V,_Y2),v[_V],rest[_X,_Y1,_Y2,_In,_Out])} 
   | otherwise -> case {g[_In,_Out]} of
     {nu _V.(M(_V,_Out),v[_V],rest[_In,_Out])} -> {v[_Z]}
   | otherwise -> {Error4} in
