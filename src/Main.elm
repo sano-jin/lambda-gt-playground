@@ -19,6 +19,7 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import Bootstrap.ListGroup as ListGroup
+import Bootstrap.Modal as Modal
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Tab as Tab
 import Browser
@@ -82,6 +83,8 @@ type Msg
     | ShowVisSettingsMsg Bool
     | LoadCode String
     | ViewSettingsMsg ViewSettings.Msg
+    | CloseAboutModal
+    | ShowAboutModal
 
 
 type alias Model =
@@ -94,6 +97,7 @@ type alias Model =
     , viewSettings : ViewSettings.Model {}
     , hasNext : Bool
     , graphTerm : String
+    , aboutModal : Modal.Visibility
     }
 
 
@@ -125,6 +129,7 @@ init _ =
       , viewSettings = ViewSettings.initializeModel graph
       , hasNext = False
       , graphTerm = ""
+      , aboutModal = Modal.hidden
       }
     , Cmd.batch
         [ Cmd.map EditorMsg editorCmd
@@ -154,7 +159,12 @@ update msg model =
                 ( viewSettingsModel, config ) =
                     ViewSettings.update viewSettingsMsg model.viewSettings
             in
-            ( { model | viewSettings = viewSettingsModel, visGraph = VisGraph.configGraph config model.visGraph }, Cmd.none )
+            ( { model
+                | viewSettings = viewSettingsModel
+                , visGraph = VisGraph.configGraph config model.visGraph
+              }
+            , Cmd.none
+            )
 
         LoadCode code ->
             ( updateCode code model, Cmd.none )
@@ -180,22 +190,18 @@ update msg model =
             ( { model | visGraph = visGraphModel }, Cmd.map VisGraphMsg visGraphCmd )
 
         SendRun ->
-            ( { model | messages = List.take 20 <| "Send" :: model.messages }
+            ( { model | messages = "Send" :: model.messages }
             , sendMessage <| model.editor.code
             )
 
         RecvRun (Err err) ->
-            ( { model | messages = List.take 20 <| Decode.errorToString err :: model.messages }
+            ( { model | messages = Decode.errorToString err :: model.messages }
             , Cmd.none
             )
 
         RecvRun (Ok { graph, isEnded, info }) ->
             ( { model
-                | messages =
-                    List.take 20 <|
-                        info
-                            :: PortGraph.toString String.fromInt graph
-                            :: model.messages
+                | messages = info :: PortGraph.toString String.fromInt graph :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
@@ -208,7 +214,7 @@ update msg model =
 
         SendProceed ->
             if model.hasNext then
-                ( { model | messages = List.take 20 <| "Send" :: model.messages }
+                ( { model | messages = "Send" :: model.messages }
                 , sendMessageProceed "Proceed"
                 )
 
@@ -222,11 +228,7 @@ update msg model =
 
         RecvProceed (Ok { graph, isEnded, info }) ->
             ( { model
-                | messages =
-                    List.take 20 <|
-                        info
-                            :: PortGraph.toString String.fromInt graph
-                            :: model.messages
+                | messages = info :: PortGraph.toString String.fromInt graph :: model.messages
                 , visGraph =
                     VisGraph.updateGraph { settings = model.viewSettings.settings, reheat = True }
                         (PortGraph.initPortAngles PortGraph.initialPortAngles graph)
@@ -239,6 +241,16 @@ update msg model =
 
         TabMsg state ->
             ( { model | tabState = state }
+            , Cmd.none
+            )
+
+        CloseAboutModal ->
+            ( { model | aboutModal = Modal.hidden }
+            , Cmd.none
+            )
+
+        ShowAboutModal ->
+            ( { model | aboutModal = Modal.shown }
             , Cmd.none
             )
 
@@ -262,13 +274,142 @@ viewSettingsButton model =
         [ text "Settings" ]
 
 
+viewAboutModel : Model -> Html Msg
+viewAboutModel model =
+    Modal.config CloseAboutModal
+        |> Modal.large
+        |> Modal.h5 [] [ text "A Playground of the ", viewIcon, text " Language" ]
+        |> Modal.scrollableBody True
+        |> Modal.body []
+            [ Html.p []
+                [ text """
+                This is a playground of the λGT language.
+                """
+                ]
+            , Html.h6 [] [ text "About the language" ]
+            , Html.p []
+                [ text """
+                λGT is a new purely functional language
+                that handles graphs as immutable, first-class data structures 
+                with pattern matching.
+                """
+                ]
+            , Html.p []
+                [ text """
+                A graph is a generalized concept that encompasses more complex data structures than trees, 
+                such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees. 
+                """
+                ]
+            , Html.p []
+                [ text """
+                Normally, these structures are handled with destructive assignments to heaps, 
+                as opposed to a purely functional programming style.
+                These low-level operations are tedious and error prone 
+                and their verifications are not straightforward.
+                """
+                ]
+            , Html.p []
+                [ text """
+                To overcome the situation, we are developping a new functional language, λGT.
+                The key features of λGT are follows:
+                """
+                ]
+            , Html.ul []
+                [ Html.li []
+                    [ text "Hypergraphs as first-class data." ]
+                , Html.li []
+                    [ text "Patterns matchings on hypergraphs." ]
+                , Html.li []
+                    [ text "Pure." ]
+                , Html.li []
+                    [ text "First-class functions." ]
+                , Html.li []
+                    [ text "Type system." ]
+                ]
+            , Html.h6 [] [ text "Syntax of the language" ]
+            , Html.p []
+                [ text """
+                The concrete syntax of the language is follows:
+                """
+                , Html.img
+                    [ HAttrs.style "max-width" "100%"
+                    , HAttrs.src "syntax.png"
+                    , HAttrs.alt "The syntax of the λGT language."
+                    ]
+                    []
+                ]
+            , Html.p []
+                [ text """
+                We have also enabled logging (breakpoints). 
+                `{Log}` exp evaluates exp, prints the value, and returns the value; 
+                i.e., an identity function.
+                The visualiser displays the value on the right pane
+                and stops at the breakpoint.
+                """
+                ]
+            , Html.p []
+                [ text """
+                For the semantics, readers are referred to 
+                """
+                , Html.a [ HAttrs.href "https://doi.org/10.2197/ipsjjip.31.112" ]
+                    [ text """
+                      J.Sano et al, 
+                      Type Checking Data Structures More Complex than Trees,
+                      Journal of Information Processing, 2023.
+                      """
+                    ]
+                ]
+            , Html.h6 [] [ text "How to use the playground" ]
+            , Html.p []
+                [ text """
+                Fill in the code of λGT in the left pane.
+                Then press `Run` button.
+                The backend interpreter runs the code and stops 
+                at the point it cannot evaluate eny more or
+                at the breakpoints (`{Log}`).
+                The right pane of the visualiser displays the graph 
+                returned by the interpreter.
+                To proceed, run `Proceed` button.
+                """
+                ]
+            , Html.h6 [] [ text "Source code and more description" ]
+            , Html.p []
+                [ text """
+                The source code and the description of the PoC interpreter and this playground 
+                are available on GitHub from:
+                """
+                ]
+            , Html.ul []
+                [ Html.li []
+                    [ Html.a [ HAttrs.href "https://github.com/sano-jin/lambda-gt-alpha" ]
+                        [ text "https://github.com/sano-jin/lambda-gt-alpha" ]
+                    ]
+                , Html.li []
+                    [ Html.a [ HAttrs.href "https://github.com/sano-jin/lambda-gt-playground" ]
+                        [ text "https://github.com/sano-jin/lambda-gt-playground" ]
+                    ]
+                ]
+            , Html.p []
+                [ text """
+                respectively.
+                """
+                ]
+            ]
+        |> Modal.footer []
+            [ Button.button
+                [ Button.outlinePrimary
+                , Button.attrs [ HEvents.onClick CloseAboutModal ]
+                ]
+                [ text "Close" ]
+            ]
+        |> Modal.view model.aboutModal
+
+
 viewNavbar : Model -> Html Msg
 viewNavbar model =
     Navbar.config NavbarMsg
         |> Navbar.withAnimation
-        -- |> Navbar.fixBottom
         |> Navbar.dark
-        -- |> Navbar.attrs [ HAttrs.style "padding" "100px" ]
         |> Navbar.brand [ HAttrs.href "#" ] [ viewIcon ]
         |> Navbar.customItems
             [ Navbar.formItem [] [ viewSettingsButton model ] ]
@@ -283,7 +424,7 @@ viewNavbar model =
                 , HAttrs.style "padding-top" "0"
                 ]
                 [ Button.button
-                    [ Button.secondary
+                    [ Button.info
                     , Button.disabled <| not model.hasNext
                     , Button.onClick <| SendProceed
                     ]
@@ -314,8 +455,13 @@ viewNavbar model =
                     ]
                 }
             , Navbar.itemLink
-                [ HAttrs.href "https://github.com/sano-jin/lambda-gt-alpha" ]
-                [ text "About" ]
+                [ HAttrs.style "padding-bottom" "0"
+                , HAttrs.style "padding-top" "0"
+                ]
+                [ Button.button
+                    [ Button.secondary, Button.attrs [ HEvents.onClick ShowAboutModal ] ]
+                    [ text "About" ]
+                ]
             ]
         |> Navbar.view model.navbarState
 
@@ -343,7 +489,8 @@ view model =
                                         [ -- Block.titleH4 [] [ text "Block title" ]
                                           Block.text []
                                             [ text "Some block content" ]
-                                        , Block.link [ HAttrs.href "#" ] [ text "MyLink" ]
+
+                                        -- , Block.link [ HAttrs.href "#" ] [ text "MyLink" ]
                                         ]
                                     |> Card.view
 
@@ -404,6 +551,7 @@ view model =
                             [ text <| model.graphTerm ]
                         ]
                     ]
+                , viewAboutModel model
                 ]
             ]
     in
