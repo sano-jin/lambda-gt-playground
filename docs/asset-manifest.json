@@ -1,7 +1,7 @@
 {
-  "main.css": "./static/css/main.a51effe7.chunk.css",
-  "main.js": "./static/js/main.2a9c46d3.chunk.js",
-  "main.js.map": "./static/js/main.2a9c46d3.chunk.js.map",
+  "main.css": "./static/css/main.b2983823.chunk.css",
+  "main.js": "./static/js/main.8cfa49e1.chunk.js",
+  "main.js.map": "./static/js/main.8cfa49e1.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.d5752d2f.js",
   "runtime~main.js.map": "./static/js/runtime~main.d5752d2f.js.map",
   "vendors~main.js": "./static/js/vendors~main.354e092f.chunk.js",
@@ -11,6 +11,7 @@
   "index.html": "./index.html",
   "logo.svg": "./logo.svg",
   "manifest.json": "./manifest.json",
-  "precache-manifest.0a5c82ddf5a32d12e7d52cee2a010fcc.js": "./precache-manifest.0a5c82ddf5a32d12e7d52cee2a010fcc.js",
-  "runtime.js": "./runtime.js"
+  "precache-manifest.e4918af04f1e2d1f07c7fa895c2ebb37.js": "./precache-manifest.e4918af04f1e2d1f07c7fa895c2ebb37.js",
+  "runtime.js": "./runtime.js",
+  "syntax.png": "./syntax.png"
 }
