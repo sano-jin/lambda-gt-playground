@@ -1,4 +1,3 @@
-(* open Util open Eval open Vis *)
 open Util
 open Js_of_ocaml
 
@@ -19,15 +18,9 @@ let rec k_of_cont = function
 let extract_k = function K k -> k
 let eval_grad exp = k_of_cont @@ Vis.eval [] exp (Vis.Cont Either.right)
 
-(* let exec code = let exp = Parse.parse_exp code in let rec helper = function |
-   K (None, v) -> v | K (Some k, v) -> print_endline @@ string_of_graph v;
-   print_endline @@ dot_of_atoms v; helper @@ k () in helper @@ eval_grad exp *)
-
 let () =
   print_endline "LambdaGT v3";
 
-  (* let graph = exec @@ read_file Sys.argv.(1) in print_endline @@ "// " ^
-     Eval.string_of_graph_with_nu graph; print_endline @@ dot_of_atoms graph; *)
   Js.export "LambdaGT"
     (object%js
        method extractk = extract_k
