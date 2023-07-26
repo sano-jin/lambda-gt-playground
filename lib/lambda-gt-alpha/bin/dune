@@ -1,4 +1,0 @@
-(executable
- (public_name lambda_gt_alpha)
- (name main)
- (libraries lambda_gt_alpha.util lambda_gt_alpha.eval))

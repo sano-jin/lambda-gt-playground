@@ -1,3 +1,0 @@
-(test
- (name test)
- (libraries lambda_gt_alpha.util lambda_gt_alpha.parser lambda_gt_alpha.eval))

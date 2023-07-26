@@ -1,8 +1,0 @@
-(library
- (public_name lambda_gt_alpha.vis)
- (name vis)
- (libraries
-  lambda_gt_alpha.parser
-  lambda_gt_alpha.util
-  lambda_gt_alpha.eval
-  yojson))
