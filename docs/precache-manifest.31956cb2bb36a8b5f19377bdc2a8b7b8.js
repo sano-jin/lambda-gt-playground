@@ -8,16 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "./index.html"
   },
   {
-    "revision": "6ead519905b7b907c00965be37dd5cd7",
-    "url": "./logo.svg"
-  },
-  {
     "revision": "1c82903c2994c2507b385b9042bbfac5",
     "url": "./manifest.json"
-  },
-  {
-    "revision": "85d08fcd4c00b71a6ed27976bb2344f4",
-    "url": "./runtime.js"
   },
   {
     "revision": "ab9145e911af780ad74c",
