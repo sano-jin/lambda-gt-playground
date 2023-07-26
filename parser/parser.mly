@@ -42,7 +42,9 @@
 %token LCBRACKET      (**  '{' *)
 %token RCBRACKET      (**  '}' *)
 %token LT             (**  '<' *)
+(*
 %token GT             (**  '>' *)
+*)
 
 (** End of file *)
 %token EOF
@@ -50,6 +52,8 @@
 (** Operator associativity *)
 %nonassoc  DOT
 %left      COMMA
+%left      EQ
+%left      LT
 %left      PLUS MINUS
 %left      TIMES
 %nonassoc  LET IN CASE ARROW
@@ -74,7 +78,7 @@ let args_inner := ~ = separated_list(COMMA, LINK); <>
 
 atom_name:
   | CONSTR { PConstr ($1) }
-  | LT LAMBDA ctx DOT exp GT { PLam ($3, $5) }
+  | LPAREN LAMBDA ctx DOT exp RPAREN { PLam ($3, $5) }
   | INT { PInt ($1) }
   | MINUS INT { PInt (- $2) }
 
@@ -116,11 +120,11 @@ exp_single:
   | CASE exp OF LCBRACKET graph RCBRACKET ARROW exp VBAR OTHERWISE ARROW exp
       { Case ($2, $5, $8, $12) }
 
-  | LET REC ctx ctx EQ exp IN exp
-      { LetRec ($3, $4, $6, $8) }
+  | LET REC ctx ctx ctx* EQ exp IN exp
+      { LetRec ($3, $4, List.fold_right (make_lambda $3) $5 $7, $9) }
 
-  | LET ctx EQ exp IN exp
-      { Let ($2, $4, $6) }
+  | LET ctx ctx* EQ exp IN exp
+      { Let ($2, List.fold_right (make_lambda $2) $3 $5, $7) }
  
   | LPAREN exp RPAREN { $2 }
 
@@ -131,6 +135,8 @@ exp:
   | exp PLUS exp   { BinOp (( + ), "+", $1, $3) }
   | exp MINUS exp  { BinOp (( - ), "-", $1, $3) }
   | exp TIMES exp  { BinOp (( * ), "*", $1, $3) }
+  | exp LT exp     { RelOp (( < ), "<", $1, $3) }
+  | exp EQ exp     { RelOp (( = ), "=", $1, $3) }
 
 
 (** the whole program *)

@@ -5,8 +5,6 @@
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano_jn-blue?style=flat-square)](https://twitter.com/sano_jn)
 
-![examples of graphs](docs/graphs-image.svg)
-
 Graphs are a generalized concept that encompasses more complex data structures than trees,
 such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
 Normally, these structures are handled with destructive assignments to heaps,
@@ -17,10 +15,11 @@ that handles graphs as immutable, first-class data structures with
 a pattern matching mechanism based on Graph Transformation.
 
 We implemented a reference interpreter, a reference implementation of the language.
-We believe this is usable for further investigation, including in the design of real languages based on λGT.
-The interpreter is written in only 500 lines of OCaml code.
+We believe this is usable for further investigation,
+including in the design of full-fledged languages based on λGT.
+The interpreter is written in only about 500 lines of OCaml code.
 
-We also have [a visualizing tool that runs on a browser](https://sano-jin.github.io/lambda-gt-online/).
+We also have [a visualiser that runs on a browser](https://sano-jin.github.io/lambda-gt-playground/).
 
 ## Getting Started
 
@@ -50,30 +49,35 @@ See [/example](example) for more examples.
 ## Syntax
 
 ```
-Expression     e ::= { T }                                  // Graph
-                  |  e1 e2                                  // Application
-                  |  case e1 of e2 -> e3 | otherwise -> e4  // Case Expression
+Expression     e ::= { T }                                     // Graph
+                  |  e1 e2                                     // Application
+                  |  case e1 of { T } -> e2 | otherwise -> e3  // Case Expression
+                  |  e1 + e2
+                  |  e1 * e2
+                  |  e1 - e2
+
+                  // Definition (n >= 0)
+                  |  let x[_X1, ..., _Xm] x_1[_X1_1, ..., _X1_m] ... x_n[_Xn_m, ..., _Xn_m] = e1 in e2
+
+                  // Recursive Definition (n >= 1)
+                  |  let rec x[_X1, ..., _Xm] x_1[_X1_1, ..., _X1_m] ... x_n[_Xn_m, ..., _Xn_m] = e1 in e2
+
 
 Graph Template T ::= v (_X1, ..., _Xn)                      // Atom
                   |  _X >< _Y                               // Fusion
-                  |  x[_X1, ..., _Xn]                      // Graph Context
+                  |  x[_X1, ..., _Xn]                       // Graph Context
                   |  (T, T)                                 // Molecule
                   |  nu _X. T                               // Link Creation
 
 Atom Name      v ::= Constr                                 // Constructor Name
-                  |  <\x[_X1, ..., _Xn]. e>                 // Lambda Abstraction
+                  |  (\x[_X1, ..., _Xn]. e)                 // Lambda Abstraction
 ```
 
-For the syntax and semantics, please see
-[the paper[1]](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf).
+For the semantics, please see
+<https://doi.org/10.2197/ipsjjip.31.112>.
 
-- We have enabled logging.
-
-  ```ocaml
-  {Log} exp
-  ```
-
-  evaluates `exp`, prints the value, and results in the value.
+We have enabled logging.
+`{Log} exp` evaluates `exp`, prints the value, and returns the value; i.e., an identity function.
 
 ## Development
 
@@ -84,7 +88,7 @@ Please give me issues or pull requests if you find any bugs or solutions for the
 We aim to build the simplest implementation.
 Thus, we may not accept a request for an enhancement.
 However, we appreciate it because it will be helpful in the design and implementation
-of the _real_ language based on this POC.
+of the full-fledged language based on this PoC.
 
 ### Testing
 
@@ -129,46 +133,6 @@ lexical/syntactical analyzer
 | [parser.mly](parser/parser.mly) | Defines a grammar for parsing |
 | [parse.ml](parser/parse.ml)     | Parser                        |
 
-## Citation
-
-1. ([pdf](http://jssst.or.jp/files/user/taikai/2022/papers/20-L.pdf),
-   [slide](https://www.ueda.info.waseda.ac.jp/~sano/materials/jssst2022.pdf))
-   A functional language with graphs as first-class data,
-   In Proc. The 39th JSSST Annual Conference, 2022
-   (15pp. unreferred).
-   <details><summary>Abstract</summary><div>
-     Graphs are a generalized concept that encompasses more complex data structures than trees,
-     such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees. Normally, these structures are handled
-     with destructive assignments to heaps, as opposed to a purely functional programming style. We proposed
-     a new purely functional language, λGT, that handles graphs as immutable, first-class data structures with
-     a pattern matching mechanism based on Graph Transformation. Since graphs can be more complex than
-     trees and require non-trivial formalism, the implementation of the language is also more complicated than
-     ordinary functional languages. λGT is even more advanced than the ordinary graph transformation systems.
-     We implemented a reference interpreter, a reference implementation of the language. We believe this
-     is usable for further investigation, including in the design of real languages based on λGT. The interpreter
-     is written in only 500 lines of OCaml code.
-   </div></details>
-2. ([arXiv](https://arxiv.org/abs/2209.05149),
-   [slide](https://www.ueda.info.waseda.ac.jp/~sano/materials/pro2022.pdf))
-   Type checking data structures more complex than tree,
-   to be appeared in Journal of Information Processing, 2022 (19pp. refferred).
-   <details><summary>Abstract</summary><div>
-     Graphs are a generalized concept that encompasses more complex data structures than trees,
-     such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
-     Normally, these structures are handled with destructive assignments to heaps,
-     which is opposed to a purely functional programming style and makes verification difficult.
-     We propose a new
-     purely functional language, \\(\lambda_{GT}\\), that handles graphs as immutable,
-     first-class data structures with a pattern matching mechanism
-     based on Graph Transformation and developed a new type system, \\(F_{GT}\\), for the language.
-     Our approach is in contrast with the analysis of pointer manipulation programs
-     using separation logic, shape analysis, etc. in that
-     (i) we do not consider destructive operations
-     but pattern matchings over graphs provided by the new higher-level language that
-     abstract pointers and heaps away and that
-     (ii) we pursue what properties can be established automatically using a rather simple typing framework.
-   </div></details>
-
 ## Contact
 
 Please feel free to contact me (ask me any questions about this).
@@ -180,4 +144,4 @@ Please feel free to contact me (ask me any questions about this).
 
 MIT
 
-[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/master/
+[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/icgt2023/

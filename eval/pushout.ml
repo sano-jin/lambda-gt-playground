@@ -19,7 +19,12 @@ let synthesis theta template_graph =
   let atoms = List.map (make_closure theta) atoms in
   let subst_graph i ctx =
     match List.find_opt (check_functor ctx <. fst) theta with
-    | None -> failwith @@ "unbound graph context " ^ fst ctx
+    | None ->
+        failwith @@ "unbound graph context " ^ fst ctx ^ " in "
+        ^ String.concat ", "
+            (List.map
+               (fun ((x, xs), _) -> x ^ "/" ^ string_of_int (List.length xs))
+               theta)
     | Some (ctx2, graph) ->
         let link_theta = List.combine (snd ctx2) (snd ctx) in
         alpha_atoms (i, link_theta) graph

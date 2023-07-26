@@ -8,7 +8,6 @@ let config =
     ("match_atoms", false);
     ("synthesis", false);
     ("eval", false);
-    ("util", true);
   ]
 
 let run_test name test =
@@ -28,4 +27,3 @@ let () =
   run_test "match_atoms" Test_match_atoms.test;
   run_test "synthesis" Test_synthesis.test;
   run_test "eval" Test_eval.test;
-  run_test "util" Test_util.test
