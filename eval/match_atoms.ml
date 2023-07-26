@@ -23,7 +23,7 @@ let check_link link_env = function
 (** [match_atom link_env (v1, args1) (v2, args2)] matches an atom [(v1, args1)]
     in the host graph and an atom [(v2, args2)] in the graph tempate with the
     [link_env]. Returns the new [link_env] if it succeeds to match. *)
-let match_atom link_env (v1, args1) (v2, args2) =
+let match_atom link_env ((_, v1), args1) ((_, v2), args2) =
   if v1 <> v2 then None
   else
     ListExtra.combine_opt args1 args2 >>= OptionExtra.foldM check_link link_env

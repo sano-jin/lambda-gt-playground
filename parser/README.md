@@ -32,12 +32,4 @@ ocamlfind ocamlc -I lib -package menhirLib -i mockfile.ml > sigfile
 
 menhir --explain --inspection --table --dump --infer-read-reply sigfile parser.mly
 # to generate especially parser_e.ml, parser_e.mli, .conflicts and automaton.
-
-rm mockfile.ml
-rm parser.automaton
-rm parser.conflicts
-rm parser.mli
-rm sigfile
-rm syntax.cmi
-rm syntax.cmo
 ```

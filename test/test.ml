@@ -2,12 +2,12 @@
 
 let config =
   [
-    ("parse", true);
+    ("parse", false);
     ("preprocess", false);
     ("matching", false);
     ("match_atoms", false);
     ("synthesis", false);
-    ("eval", false);
+    ("eval", true);
   ]
 
 let run_test name test =

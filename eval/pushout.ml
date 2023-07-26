@@ -5,7 +5,7 @@ open Preprocess
 
 (** lambda abstraction atom を評価した時に，クロージャにする *)
 let make_closure theta = function
-  | Lam (ctx, e, _), links -> (Lam (ctx, e, theta), links)
+  | (i, Lam (ctx, e, _)), links -> ((i, Lam (ctx, e, theta)), links)
   | atom -> atom
 
 (** Check that the given two atoms or graph contexts have the same functors. *)
@@ -19,12 +19,7 @@ let synthesis theta template_graph =
   let atoms = List.map (make_closure theta) atoms in
   let subst_graph i ctx =
     match List.find_opt (check_functor ctx <. fst) theta with
-    | None ->
-        failwith @@ "unbound graph context " ^ fst ctx ^ " in "
-        ^ String.concat ", "
-            (List.map
-               (fun ((x, xs), _) -> x ^ "/" ^ string_of_int (List.length xs))
-               theta)
+    | None -> failwith @@ "unbound graph context " ^ fst ctx
     | Some (ctx2, graph) ->
         let link_theta = List.combine (snd ctx2) (snd ctx) in
         alpha_atoms (i, link_theta) graph
@@ -35,7 +30,7 @@ let synthesis theta template_graph =
 (** Get fusing links from an atom. At least one of the links should be a local
     link. *)
 let get_local_fusion_opt = function
-  | Constr "><", ([ (LocalLink _ as x); y ] | [ y; (LocalLink _ as x) ]) ->
+  | (_, Constr "><"), ([ (LocalLink _ as x); y ] | [ y; (LocalLink _ as x) ]) ->
       Some (x, y)
   | _ -> None
 

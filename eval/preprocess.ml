@@ -9,17 +9,18 @@ let get_link link_env x =
     atoms.
 
     @param i the seed for the indentifier of local links. *)
+
 let rec alpha i link_env = function
   | Zero -> (i, ([], []))
   | Atom (v, args) ->
-      let v =
+      let v = 
         match v with
         | PConstr constr -> Constr constr
         | PInt i -> Int i
         | PLam (ctx, e) -> Lam (ctx, e, [])
       in
       let links = List.map (get_link link_env) args in
-      (i, ([ (v, links) ], []))
+      (i, ([ ((Util.unique (), v), links) ], []))
   | Ctx (x, args) ->
       let links = List.map (get_link link_env) args in
       (i, ([], [ (x, links) ]))
@@ -44,3 +45,15 @@ let alpha_atom link_env (v, args) =
 let alpha_atoms (i, link_env) atoms =
   let (i, _), atoms = List.fold_left_map alpha_atom (i, link_env) atoms in
   (i, atoms)
+
+
+(** アトムを id でソートして，id を振り直す *)
+let reid atoms =
+  let atoms = List.sort (fun ((i, _), _) ((j, _), _) -> compare i j) atoms in
+  let rec helper ids = function
+    | [] -> []
+    | ((i, v), args) :: t ->
+        let i = if List.mem i ids then Util.unique () else i in
+        ((i, v), args) :: helper (i :: ids) t
+  in
+  helper [] atoms

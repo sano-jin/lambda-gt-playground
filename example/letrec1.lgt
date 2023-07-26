@@ -1,5 +1,9 @@
-%  letrec1.lgt
-%  Pop all the elements from back of a difference list.
+% letrec1.lgt
+% Pop all the elements from back of a difference list.
+
+% case Cons (Val, _Y, _X) of
+%   | nodes [Cons (h, _Y), _X] -> nodes [_Y, _X]
+%   | otherwise -> Error
 
 let rec f[_X] nodes[_Y, _X] = 
   case { Log } {nodes[_Y, _X]} of
@@ -7,10 +11,10 @@ let rec f[_X] nodes[_Y, _X] =
     | otherwise -> { Empty }
 in
   {f[_X]} 
-    {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), 1 (_Z1), Cons (_Z3, _Y, _Z2), 2 (_Z3))}
+    {nu _Z1. nu _Z2. nu _Z3. (Cons (_Z1, _Z2, _X), Val1 (_Z1), Cons (_Z3, _Y, _Z2), Val2 (_Z3))}
 
-%  --->
-%  > {nu _L0 _L1 _L2. (Cons (_L0, _L1, _X), 1 (_L0), Cons (_L2, _Y, _L1), 2 (_L2))}
-%  > {nu _L0. (1 (_L0), Cons (_L0, _Y, _X))}
-%  > {_Y >< _X}
-%  {Empty}
+% --->
+% > {nu _L0. nu _L1. nu _L2. (Cons (_L0, _L1, _X), Val1 (_L0), Cons (_L2, _Y, _L1), Val2 (_L2))}
+% > {nu _L0. (Val1 (_L0), Cons (_L0, _Y, _X))}
+% > {_Y >< _X}
+% {Empty ()}

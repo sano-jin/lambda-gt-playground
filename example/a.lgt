@@ -1,7 +1,7 @@
-%  a.lgt
-%  A graph with an nullary atom `A`.
+% a.lgt
+% A graph with an nullary atom `A`.
 
 {A}
 
-%  --->
-%  {A}
+% --->
+% {A ()}

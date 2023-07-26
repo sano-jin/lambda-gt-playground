@@ -2,10 +2,7 @@
 
 open Eval
 open Parse
-
-(** pretty print list with the given pretty printer of the elements *)
-let string_of_list string_of_elem ls =
-  "[" ^ String.concat "; " (List.map string_of_elem ls) ^ "]"
+open Util
 
 let string_of_ctx (x, args) =
   if args = [] then x else x ^ "[" ^ String.concat ", " args ^ "]"
@@ -65,4 +62,4 @@ let string_of_theta (theta : theta) =
   let helper (ctx, graph) =
     string_of_ctx ctx ^ " -> " ^ Eval.string_of_graph graph
   in
-  string_of_list helper theta
+  ListExtra.string_of_list helper theta

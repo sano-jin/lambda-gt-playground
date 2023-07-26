@@ -5,7 +5,7 @@ let alpha_min = snd <. alpha_atoms (0, [])
 
 let string_of_link_env =
   let helper (x, y) = string_of_link (LocalLink x) ^ "->" ^ string_of_link y in
-  Pretty.string_of_list helper
+  ListExtra.string_of_list helper
 
 let test_find_atoms host_graph template_graph =
   prerr_endline @@ "testing whether a host graph '" ^ host_graph

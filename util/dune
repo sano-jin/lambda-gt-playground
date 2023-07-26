@@ -1,4 +1,4 @@
 (library
  (name util)
- (public_name lambda_gt_beta.util)
+ (public_name lambda_gt_alpha.util)
  (libraries unix))
