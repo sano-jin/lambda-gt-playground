@@ -13,14 +13,14 @@ let get_link link_env x =
 let rec alpha i link_env = function
   | Zero -> (i, ([], []))
   | Atom (v, args) ->
-      let v = 
+      let v =
         match v with
         | PConstr constr -> Constr constr
         | PInt i -> Int i
         | PLam (ctx, e) -> Lam (ctx, e, [])
       in
       let links = List.map (get_link link_env) args in
-      (i, ([ ((Util.unique (), v), links) ], []))
+      (i, ([ (v, links) ], []))
   | Ctx (x, args) ->
       let links = List.map (get_link link_env) args in
       (i, ([], [ (x, links) ]))
@@ -46,8 +46,9 @@ let alpha_atoms (i, link_env) atoms =
   let (i, _), atoms = List.fold_left_map alpha_atom (i, link_env) atoms in
   (i, atoms)
 
+(** アトムを id でソートして，id を振り直す
 
-(** アトムを id でソートして，id を振り直す *)
+    使われていない． *)
 let reid atoms =
   let atoms = List.sort (fun ((i, _), _) ((j, _), _) -> compare i j) atoms in
   let rec helper ids = function

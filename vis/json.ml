@@ -23,10 +23,10 @@ type graph_ = { atoms_ : atom_ list; hlinks_ : hlink_ list }
 let portgraph_of_atoms (atoms : graph) =
   (* リンク名からポートの集合への写像を作る． *)
   let link_map =
-    let helper ((atom_i, _), args) =
+    let helper atom_i (_, args) =
       List.mapi (fun arg_i link -> (link, (atom_i, arg_i))) args
     in
-    List.concat_map helper atoms
+    List.concat @@ List.mapi helper atoms
   in
   let link_dict = ListExtra.gather link_map in
 
@@ -77,7 +77,7 @@ let portgraph_of_atoms (atoms : graph) =
   (* atoms *)
   let atoms_ =
     (* (int * atom_name) * link list *)
-    let atom_of ((atom_id, atom_name), links) =
+    let atom_of atom_id (atom_name, links) =
       {
         atom_id;
         atom_label = string_of_atom_name atom_name;
@@ -92,7 +92,7 @@ let portgraph_of_atoms (atoms : graph) =
             links;
       }
     in
-    List.map atom_of atoms
+    List.mapi atom_of atoms
   in
   { atoms_; hlinks_ }
 
