@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 dune build
 dune build js
-cat _build/default/js/js.bc.js >../docs/runtime.js
+cp _build/default/js/js.bc.js ../docs/runtime.js
