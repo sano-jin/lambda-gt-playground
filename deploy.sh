@@ -2,10 +2,16 @@
 
 set -eux
 
+rootdir="$PWD"
+
 # Build backend
 cd lambda_gt_alpha
-./deploy.sh
-cd ..
+
+dune build
+dune build js
+cp _build/default/js/js.bc.js "$rootdir/docs/runtime.js"
+
+cd "$rootdir"
 
 # Build frontend
 PUBLIC_URL=./ elm-app build
