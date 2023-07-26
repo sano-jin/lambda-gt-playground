@@ -1,22 +1,12 @@
 # A Reference Interpreter of the Lambda GT Language
 
-**We are currently developping this in branch [icgt2023](https://github.com/sano-jin/lambda-gt-alpha/tree/icgt2023). Please visit there.**
-
 [![License](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](#license)
 [![Twitter](https://img.shields.io/badge/twitter-%40sano_jn-blue?style=flat-square)](https://twitter.com/sano_jn)
 
-Graphs are a generalized concept that encompasses more complex data structures than trees,
-such as difference lists, doubly-linked lists, skip lists, and leaf-linked trees.
-Normally, these structures are handled with destructive assignments to heaps,
-as opposed to a purely functional programming style.
-
-We propose a new purely functional language, λGT,
+We designed a new purely functional language, λGT,
 that handles graphs as immutable, first-class data structures with
-a pattern matching mechanism based on Graph Transformation.
-
-We implemented a reference interpreter, a reference implementation of the language.
-We believe this is usable for further investigation,
-including in the design of full-fledged languages based on λGT.
+a pattern matching mechanism based on graph transformation.
+Here, we implemented a reference interpreter of the language.
 The interpreter is written in only about 500 lines of OCaml code.
 
 We also have [a visualiser that runs on a browser](https://sano-jin.github.io/lambda-gt-playground/).
