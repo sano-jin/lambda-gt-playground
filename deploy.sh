@@ -3,7 +3,7 @@
 set -eux
 
 # Build backend
-cd lambda_gt_gamma
+cd lambda_gt_alpha
 ./deploy.sh
 cd ..
 
