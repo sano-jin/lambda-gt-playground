@@ -11,20 +11,6 @@ The interpreter is written in only about 500 lines of OCaml code.
 
 We also have [a visualiser that runs on a browser](https://sano-jin.github.io/lambda-gt-playground/).
 
-## Memo
-
-このリポジトリは，
-visualiser に渡すために JSON へ変換するコードと，
-javascript として解釈実行するためのコードを含んでいる．
-
-TODO: それぞれの使い方を整理してまとめる．
-
-visualiser のために，アトムに id を振っているけど，
-この id は不要かも知れない．
-現状の visualiser は使っていないはず．
-コードを綺麗にするために，これを削除するのはありかも．
-どうしても必要になったら，Magic で物理アドレスを取得してそれを使えば良い？
-
 ## Getting Started
 
 ### Prerequisites
