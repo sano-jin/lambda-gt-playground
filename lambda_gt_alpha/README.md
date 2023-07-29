@@ -11,20 +11,6 @@ The interpreter is written in only about 500 lines of OCaml code.
 
 We also have [a visualiser that runs on a browser](https://sano-jin.github.io/lambda-gt-playground/).
 
-## Memo
-
-このリポジトリは，
-visualiser に渡すために JSON へ変換するコードと，
-javascript として解釈実行するためのコードを含んでいる．
-
-TODO: それぞれの使い方を整理してまとめる．
-
-visualiser のために，アトムに id を振っているけど，
-この id は不要かも知れない．
-現状の visualiser は使っていないはず．
-コードを綺麗にするために，これを削除するのはありかも．
-どうしても必要になったら，Magic で物理アドレスを取得してそれを使えば良い？
-
 ## Getting Started
 
 ### Prerequisites
@@ -85,8 +71,6 @@ We have enabled logging.
 
 ## Development
 
-![dependency graph](docs/dependency.svg)
-
 Please give me issues or pull requests if you find any bugs or solutions for them.
 
 We aim to build the simplest implementation.
@@ -144,8 +128,17 @@ Please feel free to contact me (ask me any questions about this).
 - [twitter@sano_jn](https://twitter.com/sano_jn)
 - [homepage](https://www.ueda.info.waseda.ac.jp/~sano/)
 
-## License
+## Citation
 
-MIT
-
-[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/icgt2023/
+1. ([paper](https://link.springer.com/chapter/10.1007/978-3-031-36709-0_14),
+   [slide](https://conf.researchr.org/details/icgt-2023/icgt-2023-papers/15/Implementing-the-GT-Language-A-Functional-Language-with-Graphs-as-First-Class-Data))
+   **Jin Sano** and Kazunori Ueda,
+   Implementing the λGT Language: A Functional Language with Graphs as First-Class Data.
+   In Proc. 16th International Conference on Graph Transformation (ICGT 2023),
+   LNCS 13961, Springer-Verlag, 2023, pp.263-277, DOI:<https://doi.org/10.1007/978-3-031-36709-0_14>.
+2. ([paper](https://doi.org/10.2197/ipsjjip.31.112),
+   [slide](./materials/pro2022.pdf))
+   **Jin Sano**, Naoki Yamamoto, and Kazunori Ueda:
+   Type checking data structures more complex than tree,
+   Journal of Information Processing,
+   Vol.31, 2023, pp.112-130. DOI: <https://doi.org/10.2197/ipsjjip.31.112>.

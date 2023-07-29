@@ -16,7 +16,7 @@ type atom_name =
   | RecLam of Parse.ctx * Parse.ctx * exp * theta
       (** Lambda Abstraction with a name for a recursive definition. *)
 
-and atom = (int * atom_name) * link list
+and atom = atom_name * link list
 
 and ctx = string * link list
 (** Graph context. *)
@@ -37,9 +37,9 @@ let string_of_atom_name = function
   | Lam _ | RecLam _ -> "<fun>"
 
 let string_of_atom = function
-  | (_, Constr "><"), [ x; y ] -> string_of_link x ^ " >< " ^ string_of_link y
-  | (_, atom_name), [] -> string_of_atom_name atom_name
-  | (_, atom_name), args ->
+  | Constr "><", [ x; y ] -> string_of_link x ^ " >< " ^ string_of_link y
+  | atom_name, [] -> string_of_atom_name atom_name
+  | atom_name, args ->
       string_of_atom_name atom_name
       ^ " ("
       ^ String.concat ", " (List.map string_of_link args)
@@ -47,7 +47,7 @@ let string_of_atom = function
 
 (** [fusion_of x y] creates a fusion atom ['><'(x, y)] from the link names [x]
     and [y]. *)
-let fusion_of x y = ((unique (), Constr "><"), [ x; y ])
+let fusion_of x y = (Constr "><", [ x; y ])
 
 (** [is_free_link x] tests whether the [x] is a free link or not. *)
 let is_free_link = function LocalLink _ -> false | FreeLink _ -> true
