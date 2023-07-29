@@ -13,6 +13,8 @@ cp _build/default/js/js.bc.js "$rootdir/docs/runtime.js"
 
 cd "$rootdir"
 
+# lambda_gt_alpha/_build/default/js/js.bc.js docs/runtime.js
+
 # Build frontend
 PUBLIC_URL=./ elm-app build
 rm -rf docs
