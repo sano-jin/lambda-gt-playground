@@ -128,8 +128,17 @@ Please feel free to contact me (ask me any questions about this).
 - [twitter@sano_jn](https://twitter.com/sano_jn)
 - [homepage](https://www.ueda.info.waseda.ac.jp/~sano/)
 
-## License
+## Citation
 
-MIT
-
-[repo]: https://github.com/sano-jin/lambda-gt-alpha/tree/icgt2023/
+1. ([paper](https://link.springer.com/chapter/10.1007/978-3-031-36709-0_14),
+   [slide](https://conf.researchr.org/details/icgt-2023/icgt-2023-papers/15/Implementing-the-GT-Language-A-Functional-Language-with-Graphs-as-First-Class-Data))
+   **Jin Sano** and Kazunori Ueda,
+   Implementing the λGT Language: A Functional Language with Graphs as First-Class Data.
+   In Proc. 16th International Conference on Graph Transformation (ICGT 2023),
+   LNCS 13961, Springer-Verlag, 2023, pp.263-277, DOI:<https://doi.org/10.1007/978-3-031-36709-0_14>.
+2. ([paper](https://doi.org/10.2197/ipsjjip.31.112),
+   [slide](./materials/pro2022.pdf))
+   **Jin Sano**, Naoki Yamamoto, and Kazunori Ueda:
+   Type checking data structures more complex than tree,
+   Journal of Information Processing,
+   Vol.31, 2023, pp.112-130. DOI: <https://doi.org/10.2197/ipsjjip.31.112>.
