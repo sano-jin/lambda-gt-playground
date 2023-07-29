@@ -19,8 +19,18 @@ type hlink_ = {
 
 type graph_ = { atoms_ : atom_ list; hlinks_ : hlink_ list }
 
-(** アトムリストを可視化しやすいデータ構造に変換する *)
-let portgraph_of_atoms (atoms : graph) =
+(** 局所リンクで端点が二つしか無いリンク (normal link) と，そうでは無いものに分離する．*)
+let partition_links link_dict =
+  let helper = function
+    | LocalLink x, [ p1; p2 ] -> Either.Left (x, (p1, p2))
+    | mapping -> Either.Right mapping
+  in
+  List.partition_map helper link_dict
+
+(** アトムリストを可視化しやすいデータ構造に変換する．
+
+    @author simplify 局所リンクを除去する． *)
+let portgraph_of_atoms ~simplify (atoms : graph) =
   (* リンク名からポートの集合への写像を作る． *)
   let link_map =
     let helper atom_i (_, args) =
@@ -32,11 +42,7 @@ let portgraph_of_atoms (atoms : graph) =
 
   (* 局所リンクで端点が二つしか無いリンク (normal link) と，そうでは無いものに分離する．*)
   let normal_link_dict, hlink_dict =
-    let helper = function
-      | LocalLink x, [ p1; p2 ] -> Either.Left (x, (p1, p2))
-      | mapping -> Either.Right mapping
-    in
-    List.partition_map helper link_dict
+    if simplify then partition_links link_dict else ([], link_dict)
   in
 
   (* リンク名から，hlink の id への写像 *)
@@ -134,5 +140,6 @@ let json_of_graph graph_ =
     ]
 
 (** 可視化のために，アトムリストを JSON の文字列に変換する *)
-let pretty_graph graph =
-  Yojson.Basic.pretty_to_string @@ json_of_graph @@ portgraph_of_atoms graph
+let pretty_graph =
+  Yojson.Basic.pretty_to_string <. json_of_graph
+  <. portgraph_of_atoms ~simplify:false
