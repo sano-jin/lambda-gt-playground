@@ -30,7 +30,7 @@ let portgraph_of_atoms (atoms : graph) =
   in
   let link_dict = ListExtra.gather link_map in
 
-  (* 端点が二つしか無いリンク (normal link) と，そうでは無いものに分離する．*)
+  (* 局所リンクで端点が二つしか無いリンク (normal link) と，そうでは無いものに分離する．*)
   let normal_link_dict, hlink_dict =
     let helper = function
       | LocalLink x, [ p1; p2 ] -> Either.Left (x, (p1, p2))
