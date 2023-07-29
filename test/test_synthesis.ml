@@ -6,7 +6,7 @@ let alpha_min = snd <. alpha_atoms (0, [])
 
 let match_and_synthesis graph1 lhs graph2 =
   let+ theta = Eval.match_ lhs graph1 in
-  Eval.synthesis theta graph2
+  Eval.subst theta graph2
 
 let test_synthesis graph1 lhs graph2 =
   prerr_endline @@ "testing whether '" ^ graph1 ^ "' can be matched with ("

@@ -33,7 +33,7 @@ let rec eval theta exp cont =
       | _ ->
           failwith @@ "integers are expected for " ^ op ^ " but were "
           ^ string_of_graph v1 ^ " and " ^ string_of_graph v2)
-  | Graph graph -> app_cont cont @@ fuse_fusions @@ synthesis theta graph
+  | Graph graph -> app_cont cont @@ fuse_fusions @@ subst theta graph
   | App (e1, e2) -> (
       eval theta e1 @@ k
       @@ fun v1 ->

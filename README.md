@@ -71,8 +71,6 @@ We have enabled logging.
 
 ## Development
 
-![dependency graph](docs/dependency.svg)
-
 Please give me issues or pull requests if you find any bugs or solutions for them.
 
 We aim to build the simplest implementation.

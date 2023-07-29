@@ -12,9 +12,9 @@ let make_closure theta = function
 let check_functor (v1, args1) (v2, args2) =
   (v1, List.length args1) = (v2, List.length args2)
 
-(** [synthesis theta template_graph] substitutes with [theta] to
-    [template_graph]. *)
-let synthesis theta template_graph =
+(** [subst theta template_graph] substitutes graph contexts in [template_graph]
+    with [theta]. *)
+let subst theta template_graph =
   let i, (atoms, ctxs) = alpha 0 [] template_graph in
   let atoms = List.map (make_closure theta) atoms in
   let subst_graph i ctx =

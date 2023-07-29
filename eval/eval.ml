@@ -10,7 +10,7 @@ include Postprocess
 let ctx_of (x, args) = (x, List.map (fun x -> FreeLink x) args)
 
 let rec eval theta = function
-  | Graph graph -> fuse_fusions @@ synthesis theta graph
+  | Graph graph -> fuse_fusions @@ subst theta graph
   | RelOp (f, op, e1, e2) -> (
       match (eval theta e1, eval theta e2) with
       | [ (Int i1, xs1) ], [ (Int i2, _) ] ->

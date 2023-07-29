@@ -1,4 +1,6 @@
-% Memo
+---
+title: Memo
+---
 
 # Repairing λGT
 
@@ -21,6 +23,11 @@ preprocessing したグラフと，
 あくまでポートや hyperlink から出る辺は一本で，他のポートに直接繋がるか，
 ハイパーリンクに接続されるかのどちらか．
 
+# todo
+
+Fusion の扱い方を変えて，
+free link 周りのグラフのマッチングを再実装する．
+
 # このリポジトリについて
 
 このリポジトリは，
@@ -29,8 +36,18 @@ javascript として解釈実行するためのコードを含んでいる．
 
 TODO: それぞれの使い方を整理してまとめる．
 
-visualiser のために，アトムに id を振っているけど，
-この id は不要かも知れない．
-現状の visualiser は使っていないはず．
-コードを綺麗にするために，これを削除するのはありかも．
-どうしても必要になったら，Magic で物理アドレスを取得してそれを使えば良い？
+ディレクトリ構成
+
+- bin: インタプリタを起動する，entry point.
+- docs: ドキュメント．
+- dune-project
+- eval: evaluator
+- example: 例題．
+- js: visualiser の backend としてインタプリタを用いるためのコード．
+- lib: 使っていない．全部この下に配置し直すべきかも．
+- parser: parser.
+- run: インタプリタを実行する shell script.
+- scripts: 使い捨ての (shell) script などを置いておくためのディレクトリ．
+- test: テストコード．ounit とかを使うようにするべきかも．
+- util: 共用関数などを置いておくディレクトリ．base で置き換えられるかも．
+- vis: graph を visualiser が扱いやすい形に変換して json で出力するコード．
